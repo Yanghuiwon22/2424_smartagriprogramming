@@ -13,7 +13,7 @@ obsr_spot_code = ''
 
 # api를 통해 데이터 얻기
 url = f'https://apis.data.go.kr/1390802/AgriWeather/WeatherObsrInfo/V2/GnrlWeather/getWeatherTenMinList?serviceKey={key}&Page_No={page_no}&Page_Size={page_size}&date={date}&time={time}&obsr_Spot_Nm={obsr_spot_np}&obsr_Spot_Code={obsr_spot_code}'
-response = requests.get(url)
+response = requests.get(url, verify =False)
 content_xml = response.text
 
 # xml -> dict -> json
