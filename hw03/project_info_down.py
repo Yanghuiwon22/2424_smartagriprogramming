@@ -20,6 +20,7 @@ response =requests.get(url)
 content =response.text
 # json 변환
 xml_dict = xmltodict.parse(content)
-json_data = json.dumps(xml_dict)
+# json_data = json.dumps(xml_dict)
 
-print(json_data)
+content = xml_dict['response']['body']['items']['item'][0]
+print(content)
