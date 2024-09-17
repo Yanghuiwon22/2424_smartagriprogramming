@@ -2,34 +2,28 @@ import requests
 import pandas as pd
 from io import StringIO
 
-authKey = '1XPJ7YqLRkuzye2KiyZLhg'
-# URL 문자열
-url = 'https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php?tm=202211300900&stn=0&help=1&authKey=1XPJ7YqLRkuzye2KiyZLhg'
+#기상청 API허브 --> 시단위 제공
+def get_si_data():
 
-# 헤더 설정
-headers = {'Content-Type': 'application/xml'}
+    authKey = '1XPJ7YqLRkuzye2KiyZLhg'
+    # URL 문자열
+    url = f'https://apihub.kma.go.kr/api/typ01/url/kma_sfctm2.php?tm=202211300900&stn=0&help=1&authKey={authKey}'
 
-# GET 요청을 보내고 응답을 받습니다.
-response = requests.get(url, headers=headers)
+    # 헤더 설정
+    headers = {'Content-Type': 'application/xml'}
 
-if response.status_code == 200:
-    df = pd.read_fwf(StringIO(response.text),
-                     widths=[12, 4, 4, 5, 4, 6, 4, 7, 7, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 26, 4, 4, 4, 9,
-                             5, 5, 5, 9, 4, 5, 4, 6, 7, 7, 7, 7, 4, 4, 4, 4])
+    # GET 요청을 보내고 응답을 받습니다.
+    response = requests.get(url, headers=headers)
 
-    # 필요한 부분만 남기고 df
-    df = df[df['#START7777'].apply(lambda x: len(x) == 12)] ## chatGPT
-    df['#START7777'] = pd.to_numeric(df['#START7777'], errors='coerce')  ## chatGPT
-    df = df[df['#START7777'].notna()]  ## chatGPT
-    print(df)
+    if response.status_code == 200:
+        df = pd.read_fwf(StringIO(response.text),
+                         widths=[12, 4, 4, 5, 4, 6, 4, 7, 7, 3, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 2, 2, 26, 4, 4, 4, 9,
+                                 5, 5, 5, 9, 4, 5, 4, 6, 7, 7, 7, 7, 4, 4, 4, 4])
+
+        df.columns = df.iloc[51].values  ## chatGPT
+        df = df[53:].reset_index(drop=True)  ## chatGPT
+
+    else:
+        print(response.status_code)
 
 
-    # with open(response.text)
-
-else:
-    print(response.status_code)
-
-# 응답을 JSON 형태로 변환
-# json_response = response.json()
-
-# print(json_response)
