@@ -40,9 +40,9 @@ df = df.drop(columns=['no', 'stn_Code'])
 df_key = df.keys()
 df_re_key = ['관측지점명', '관측시각', '기온(℃)', '최고기온(℃)', '최저기온(℃)', '습도(%)', '풍향', '풍속(m/s)', '최대풍속(m/s)',
              '강수량(mm)', '일조시간(MM)', '일사량(MJ/m²)', '결로시간(MM)', '초상온도(℃)', '지중온도(℃)', '토양수분보정값(%)']
-df.rename()
+# df.rename()
 print(df)
 
-# df.to_csv('weather_data.csv')
+df.to_csv('weather_data.csv')
 
 
