@@ -51,10 +51,12 @@ def fetch_weather_data(date, time):
 
 def api_get(start_date=datetime.now()):
 # 병렬 처리로 데이터를 가져옴
+    start_date = datetime.strptime(start_date, "%Y-%m-%d")
     with ThreadPoolExecutor(max_workers=10) as executor:
         futures = []
         for i in range(days):
-            end_date = start_date + timedelta(days=i)
+            end_date = start_date - timedelta(days=i)
+            print(end_date)
             date = end_date.strftime("%Y-%m-%d")
             current_time = start_time
 
@@ -76,12 +78,17 @@ def api_get(start_date=datetime.now()):
 
     # 데이터프레임 확인
     df.sort_values(by=['date', 'time'], inplace=True)  # 날짜와 시간 순으로 정렬
-    df.to_csv('weather_data.csv', index=False)
+
+
+    df.to_csv('static/weather_data.csv', index=False)
+
+    draw_graph()
+
 
 
 
 def draw_graph():
-    df = pd.read_csv('result/weather_data.csv')
+    df = pd.read_csv('static/weather_data.csv')
     # 날짜와 시간을 결합하여 x축 데이터 생성
     print(df.head(144))
 
@@ -119,7 +126,7 @@ def draw_graph():
 
     # ax.set_xticks(rotation=45)  # x축 라벨 회전
     fig.tight_layout()
-    fig.savefig('temp.png')
+    fig.savefig('./static/img/temp.png')
     fig.show()
 
 # api_get()

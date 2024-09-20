@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,7 @@
         <label for="address">주소를 입력하세요:</label><br>
         <input type="text" id="address" name="address" required><br><br>
 
-        <label for="date">날짜를 입력해주세요(default=today):</label><br>
+        <label for="date">날짜를 입력해주세요:</label><br>
         <input type="text" id="date" name="date" required><br><br>
         <input type="submit" value="기상 데이터 조회"><br>
     </form>
@@ -22,6 +22,12 @@
 
     {% if date %}
     <h2>입력된 날짜: {{ date }}</h2>
+
+
+    <img src="{{ url_for('static', path='img/temp.png')}}" alt="이미지">
     {% endif %}
+
+
+
 </body>
 </html>
