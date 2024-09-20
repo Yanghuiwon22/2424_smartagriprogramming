@@ -1,75 +1,110 @@
-import datetime
 import requests
-import json
 import xmltodict
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timedelta
+import pandas as pd
 from matplotlib import pyplot as plt
-import matplotlib.font_manager as fm
 
-
-#데이터는 임시로 썼음
-#요청인자
-
+# 요청 인자
 page_no = "1"
-page_size ="20"
+page_size = "20"
 spot_nm = "가평군 "
 spot_code = ""
 
 # key
-service_key = "wIdqPjRtIkrKsaya4kGkAD%2Bo8FsV1GsN4rIyX6ntn7GlYSZr%2FgP%2FtVa1ZDeRcP04jDjy93oziypc5RMFwFM4Mg%3D%3D"
-# 데이터 반복해서 가져오기
-start_date = datetime.datetime(2024, 1, 10)
+service_key = "cnFWOksdH2rQuZ9YQs2IR3frMjm2kgy8eauRY4ujdTSTvGEeDGXulTzCIJtU7htSZeFnoof4l6RGh3EpVIbo1Q%3D%3D"
+
+# 시작 날짜 및 기간
+start_date = datetime(2024, 1, 10)
 days = 7
+time_format = "%H%M"
+start_time = datetime.strptime("0010", time_format)
 
-#일주일 날씨 데이터
-week_temp =[]
-week_date = []
+# 결과를 저장할 리스트
+results = []
 
-for i in range(days):
-    end_date = start_date - datetime.timedelta(days=i)
-    date = end_date.strftime("%Y-%m-%d")
-
-    time = "1300"
-
-    url =f"http://apis.data.go.kr/1390802/AgriWeather/WeatherObsrInfo/V2/GnrlWeather/getWeatherTenMinList?serviceKey={service_key}&Page_No={page_no}&Page_Size={page_size}&date={date}&time={time}&obsr_Spot_Nm={spot_nm}&obsr_Spot_Code={spot_code}"
-
-    response =requests.get(url)
-    content =response.text
-    # json 변환
+def fetch_weather_data(date, time):
+    """날짜와 시간을 받아 API로부터 데이터를 가져오는 함수"""
+    if time == '0000':
+        time = "2400"
+    url = f"http://apis.data.go.kr/1390802/AgriWeather/WeatherObsrInfo/V2/GnrlWeather/getWeatherTenMinList?serviceKey={service_key}&Page_No={page_no}&Page_Size={page_size}&date={date}&time={time}&obsr_Spot_Nm={spot_nm}&obsr_Spot_Code={spot_code}"
+    response = requests.get(url)
+    content = response.text
     xml_dict = xmltodict.parse(content)
 
-    # 데이터 리스트에 넣기
+    # 필요한 데이터 추출
     if 'response' in xml_dict and 'body' in xml_dict['response']:
         content = xml_dict['response']['body']['items']['item']
-        week_temp.append(content['temp'])
-        week_date.append(content['date'])
+        date__ = content['date'].split(' ')[0]
+        time__ = content['date'].split(' ')[1]
 
-        # 날짜 뒤 13:00 시간 자르기(2024-01-04 13:00 -> 2024-01-04)
-        week_date = [date.split()[0] for date in week_date]
+        # print(date__, time__, content['temp'])
+        if time__ == "24:00":
+            time__ = "00:00"
+            date__ = (datetime.strptime(date__, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
 
-week_temp.reverse()
-week_date.reverse()
-# 리스트 "0.4"-> 0.4 (float 형식)으로 바꾸기
-week_temp = [float(temp.replace("'", "")) for temp in week_temp]
+            return (date__, time__, content['temp'])
 
-print(week_temp)
-print(week_date)
-
-# 데이터 그래프
-x = week_date
-y = week_temp
-
-# 한글 폰트, 음수 오류 잡기
-plt.rcParams['font.family'] = 'NanumGothic'
-plt.rcParams['axes.unicode_minus'] = False
-
-#그래프 그리기
-plt.figure(figsize=(10, 5))
-plt.plot(x,y, color ='red', marker='o')
-
-plt.title("일주일 기온")
-plt.xlabel('날짜')
-plt.ylabel('기온 (°C)')
-
-plt.show()
+        else:
+            return (date__, time__, content['temp'])
 
 
+def api_get():
+# 병렬 처리로 데이터를 가져옴
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = []
+        for i in range(days):
+            end_date = start_date + timedelta(days=i)
+            date = end_date.strftime("%Y-%m-%d")
+            current_time = start_time
+
+            # 10분 간격으로 날씨 데이터를 가져오는 작업을 병렬로 처리
+            for j in range(24 * 7):
+                time = current_time.strftime(time_format)
+                a = executor.submit(fetch_weather_data, date, time)
+                futures.append(a)
+                current_time += timedelta(minutes=10)
+
+        print(len(futures))
+        # 결과 처리
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                results.append(result)
+
+    print(f"""================= results =================
+    {results}
+    """)
+        # 리스트를 데이터프레임으로 변환
+    df = pd.DataFrame(results, columns=['date', 'time', 'temp'])
+    #
+    # 데이터프레임 확인
+    df.sort_values(by=['date', 'time'], inplace=True)  # 날짜와 시간 순으로 정렬
+    df.to_csv('weather_data.csv', index=False)
+
+
+
+def draw_graph():
+    df = pd.read_csv('weather_data.csv')
+    # 날짜와 시간을 결합하여 x축 데이터 생성
+    print(df.head(144))
+
+    plt.rcParams['font.family'] = 'NanumGothic'
+    plt.rcParams['axes.unicode_minus'] = False
+
+    df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'].str[:2] + ':' + df['time'].str[3:])
+
+    # 그래프 그리기
+    plt.figure(figsize=(10, 5))
+    plt.plot(df['datetime'], df['temp'], color='red', marker='o')
+
+    plt.title("일주일 기온")
+    plt.xlabel('날짜 및 시간')
+    plt.ylabel('기온 (°C)')
+
+    plt.xticks(rotation=45)  # x축 라벨 회전
+    plt.tight_layout()
+    plt.show()
+
+# api_get()
+draw_graph()
