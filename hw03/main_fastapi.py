@@ -2,17 +2,23 @@ import uvicorn
 from fastapi import FastAPI, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.requests import Request
-
 from fastapi.responses import HTMLResponse
 
+from weather_visual import fetch_weather_data, api_get, draw_graph
 
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
 
 
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
-
+@app.post("/weather")
+async def weather(request: Request, address: str = Form(...), date: str = Form(...)):
+    # 입력된 주소를 다시 템플릿으로 넘겨서 화면에 표시
+    return templates.TemplateResponse("index.html", {"request": request, "address": address, "date": date})
 
 # test
 @app.get("/index", response_class=HTMLResponse)
