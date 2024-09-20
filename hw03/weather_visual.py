@@ -95,21 +95,27 @@ def draw_graph():
 
     ax1.plot(df['datetime'], df['temp'], color = '#f05650', lw=2)
     ax1.grid(axis="y", alpha=0.5,)
-    # ax1.set_title("일주일 기온")
-    # ax1.set_xlabel('날짜 및 시간')
-    # ax1.set_ylabel('기온 (°C)')
-    # ax1.grid(True, axis='y')
+    ax1.set_title("일주일 기온")
+    ax1.set_xlabel('날짜 및 시간')
+    ax1.set_ylabel('기온 (°C)')
+    ax1.xtick
 
     # 습도 그래프 그리기
     ax2 = ax1.twinx()
     ax2.plot(df['datetime'],df['hum'], color='#1560BD',lw=2)
     ax2.grid(axis="y",alpha=0.5)
-    # ax.set_ylabel('습도')
+    ax2.set_ylabel('습도')
+    ax2.spines['left'].set_color('#f05650')
+    ax2.spines['right'].set_color('#1560BD')
+
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+
+    plt.legend(('temp', 'hum'))
 
     # for s in ["left", "right", "top"]:
     #     ax.spines[s].set_visible(False)
-    #
-    # ax.grid(axis="y")
 
     # ax.set_xticks(rotation=45)  # x축 라벨 회전
     fig.tight_layout()
