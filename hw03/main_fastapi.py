@@ -14,15 +14,19 @@ templates = Jinja2Templates(directory="templates")
 
 
 
-
+# test
 @app.get("/index", response_class=HTMLResponse)
 async def read_form(request: Request):
     return templates.TemplateResponse("form.html", {"request": request})
 
+#test
 @app.post("/submit")
 async def handle_form(name: str = Form(...), age: int = Form(...)):
     return {"name": name, "age": age}
 
+
+
+# ===================================================
 # @app.get('/address/')
 # def address(address_input: str):
 #     return {'address_text': address_input}
@@ -40,6 +44,7 @@ async def handle_form(name: str = Form(...), age: int = Form(...)):
 #         webdriver_element = browser.find_element(By.XPATH, '//*[@id="header"]/div/div/div[3]/button/span[1]')
 #         webdriver_element.click()
 #         time.sleep(100)
+# ===================================================
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
