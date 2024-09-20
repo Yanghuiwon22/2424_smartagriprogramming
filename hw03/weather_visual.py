@@ -15,7 +15,7 @@ spot_code = ""
 service_key = "cnFWOksdH2rQuZ9YQs2IR3frMjm2kgy8eauRY4ujdTSTvGEeDGXulTzCIJtU7htSZeFnoof4l6RGh3EpVIbo1Q%3D%3D"
 
 # 시작 날짜 및 기간
-start_date = datetime(2024, 1, 10)
+# start_date = datetime(2024, 1, 10)
 days = 7
 time_format = "%H%M"
 start_time = datetime.strptime("0010", time_format)
@@ -49,7 +49,7 @@ def fetch_weather_data(date, time):
             return (date__, time__, content['temp'], content['hum'], content['wind'])
 
 
-def api_get():
+def api_get(start_date=datetime.now()):
 # 병렬 처리로 데이터를 가져옴
     with ThreadPoolExecutor(max_workers=10) as executor:
         futures = []
@@ -81,7 +81,7 @@ def api_get():
 
 
 def draw_graph():
-    df = pd.read_csv('weather_data.csv')
+    df = pd.read_csv('result/weather_data.csv')
     # 날짜와 시간을 결합하여 x축 데이터 생성
     print(df.head(144))
 
@@ -100,7 +100,8 @@ def draw_graph():
 
     plt.xticks(rotation=45)  # x축 라벨 회전
     plt.tight_layout()
+    plt.savefig('temp.png')
     plt.show()
 
-api_get()
-# draw_graph()
+# api_get()
+draw_graph()
