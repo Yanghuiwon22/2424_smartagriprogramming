@@ -90,9 +90,20 @@ def draw_graph():
 
     df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'].str[:2] + ':' + df['time'].str[3:])
 
-    # 그래프 그리기
-    plt.figure(figsize=(10, 5))
-    plt.plot(df['datetime'], df['temp'], color='red', marker='o')
+    # 기온 그래프 그리기
+    fig, ax1 = plt.subplots(figsize=(10,5))
+
+    ax1.plot(df['datetime'], df['temp'], color='red', lw=3)
+
+    # 습도 그래프 그리기
+    fig, ax2 = plt.subplots(figsize=(10,5))
+
+    ax2.plot(df['datetime'],df['hum'], color='blue',lw=3)
+
+    plt.grid(True, axis='y')
+    plt.gca().spines['right'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
+    plt.gca().spines['left'].set_visible(False)
 
     plt.title("일주일 기온")
     plt.xlabel('날짜 및 시간')
@@ -102,5 +113,5 @@ def draw_graph():
     plt.tight_layout()
     plt.show()
 
-api_get()
-# draw_graph()
+# api_get()
+draw_graph()
