@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 import matplotlib.font_manager as fm
 
 
+#데이터는 임시로 썼음
 #요청인자
 
 page_no = "1"
@@ -70,3 +71,5 @@ plt.xlabel('날짜')
 plt.ylabel('기온 (°C)')
 
 plt.show()
+
+
