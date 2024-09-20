@@ -93,26 +93,28 @@ def draw_graph():
     # 기온 그래프 그리기
     fig, ax1 = plt.subplots(figsize=(10,5))
 
-    ax1.plot(df['datetime'], df['temp'], color='red', lw=3)
+    ax1.plot(df['datetime'], df['temp'], color = '#f05650', lw=2)
+    ax1.grid(axis="y", alpha=0.5,)
+    # ax1.set_title("일주일 기온")
+    # ax1.set_xlabel('날짜 및 시간')
+    # ax1.set_ylabel('기온 (°C)')
+    # ax1.grid(True, axis='y')
 
     # 습도 그래프 그리기
-    fig, ax2 = plt.subplots(figsize=(10,5))
+    ax2 = ax1.twinx()
+    ax2.plot(df['datetime'],df['hum'], color='#1560BD',lw=2)
+    ax2.grid(axis="y",alpha=0.5)
+    # ax.set_ylabel('습도')
 
-    ax2.plot(df['datetime'],df['hum'], color='blue',lw=3)
+    # for s in ["left", "right", "top"]:
+    #     ax.spines[s].set_visible(False)
+    #
+    # ax.grid(axis="y")
 
-    plt.grid(True, axis='y')
-    plt.gca().spines['right'].set_visible(False)
-    plt.gca().spines['top'].set_visible(False)
-    plt.gca().spines['left'].set_visible(False)
-
-    plt.title("일주일 기온")
-    plt.xlabel('날짜 및 시간')
-    plt.ylabel('기온 (°C)')
-
-    plt.xticks(rotation=45)  # x축 라벨 회전
-    plt.tight_layout()
-    plt.savefig('temp.png')
-    plt.show()
+    # ax.set_xticks(rotation=45)  # x축 라벨 회전
+    fig.tight_layout()
+    fig.savefig('temp.png')
+    fig.show()
 
 # api_get()
 draw_graph()
