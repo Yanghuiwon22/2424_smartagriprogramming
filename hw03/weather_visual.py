@@ -43,10 +43,10 @@ def fetch_weather_data(date, time):
             time__ = "00:00"
             date__ = (datetime.strptime(date__, "%Y-%m-%d") + timedelta(days=1)).strftime("%Y-%m-%d")
 
-            return (date__, time__, content['temp'])
+            return (date__, time__, content['temp'], content['hum'], content['wind'])
 
         else:
-            return (date__, time__, content['temp'])
+            return (date__, time__, content['temp'], content['hum'], content['wind'])
 
 
 def api_get():
@@ -65,19 +65,15 @@ def api_get():
                 futures.append(a)
                 current_time += timedelta(minutes=10)
 
-        print(len(futures))
         # 결과 처리
         for future in as_completed(futures):
             result = future.result()
             if result:
                 results.append(result)
 
-    print(f"""================= results =================
-    {results}
-    """)
         # 리스트를 데이터프레임으로 변환
-    df = pd.DataFrame(results, columns=['date', 'time', 'temp'])
-    #
+    df = pd.DataFrame(results, columns=['date', 'time', 'temp', 'hum', 'wind'])
+
     # 데이터프레임 확인
     df.sort_values(by=['date', 'time'], inplace=True)  # 날짜와 시간 순으로 정렬
     df.to_csv('weather_data.csv', index=False)
@@ -106,5 +102,5 @@ def draw_graph():
     plt.tight_layout()
     plt.show()
 
-# api_get()
-draw_graph()
+api_get()
+# draw_graph()
