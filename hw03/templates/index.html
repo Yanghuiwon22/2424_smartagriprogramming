@@ -77,6 +77,8 @@
     <br>
 
     <img id="weather-image" alt="Weather Image"/>
+    <img id="vpd-image" alt="Weather Image"/>
+
 </div>
 <script>
     let spot_code = ''
@@ -155,6 +157,8 @@
                 console.log('서버 응답:', data);  // 서버에서 받은 응답 처리
 
                 document.getElementById('weather-image').src = 'static/img/temp.png'
+                document.getElementById('vpd-image').src = 'static/img/vpd.png'
+
             })
             .catch(error => {
                 console.error('에러 발생:', error);
