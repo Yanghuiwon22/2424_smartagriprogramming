@@ -19,7 +19,10 @@
     <p id="textDiv"></p>
     <p id="textDate"></p>
 
+
+
     <button onclick="sendData()">데이터 전송하기</button>
+    <img id="weather-image" alt="Weather Image" />
 
 <script>
     let spot_code = ''
@@ -59,7 +62,7 @@
                     button.innerText = item['지점명2'];  // 지점명이 없으면 기본 값
 
                     button.addEventListener('click', () => {
-                        spot_code = item['지점명2']
+                        spot_code = item['지점코드']
 
                         const textDiv = document.getElementById('textDiv')
                         textDiv.innerText = item['도명'] + ' ' + item['지점명1'] + ' ' + item['지점명2']
@@ -90,17 +93,26 @@
                 if (!response.ok) {
                     throw new Error('POST 요청 실패: ' + response.statusText);
                 }
-                return response.json();
+                console.log(response)
+                return response.text();
 
             })
             .then(data => {
                 console.log('서버 응답:', data);  // 서버에서 받은 응답 처리
+
+                document.getElementById('weather-image').src = 'static/img/temp.png'
             })
             .catch(error => {
                 console.error('에러 발생:', error);
             });
     }
 </script>
+
+    {% if image_path %}
+        <img src="{{ image_path }}" alt="기상 데이터 이미지">
+    {% else %}
+        <p>이미지가 없습니다.</p>
+    {% endif %}
 
 </body>
 </html>

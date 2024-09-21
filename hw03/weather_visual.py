@@ -10,7 +10,7 @@ import numpy as np
 # 요청 인자
 page_no = "1"
 page_size = "20"
-spot_nm = "가평군 "
+spot_nm = ""
 spot_code = ""
 
 # key
