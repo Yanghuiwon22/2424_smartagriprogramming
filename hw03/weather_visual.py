@@ -102,22 +102,31 @@ def draw_graph():
     fig, ax1 = plt.subplots(figsize=(10,5))
 
     ax1.plot(df['datetime'], df['temp'], color = '#f05650', lw=2, label='온도')
-    ax1.grid(axis="y", alpha=0.5,)
+    ax1.grid(axis="y", alpha=0.5)
     ax1.set_title("일주일 기온")
     ax1.set_xlabel('날짜 및 시간')
     ax1.set_ylabel('기온 (°C)')
+    ax1.spines['left'].set_visible(False)
+    ax1.spines['right'].set_visible(False)
+    ax1.spines['top'].set_visible(False)
     ax1.tick_params(axis='y', color='#f05650',labelcolor='#f05650')
     ax1.set_yticks(np.arange(-15, 45.5, 5.5))
+    # ax1.set_yticks(np.linspace(-15, 45, 5))
 
     # 습도 그래프 그리기
     ax2 = ax1.twinx()
     ax2.plot(df['datetime'],df['hum'], color='#1560BD',lw=2, label='습도')
-    ax2.grid(axis="y",alpha=0.5)
+    ax2.grid(axis="y",alpha=0.5, linestyle = '--')
     ax2.set_ylabel('습도')
-    ax2.spines['left'].set_color('#f05650')
-    ax2.spines['right'].set_color('#1560BD')
+    # ax2.spines['left'].set_color('#f05650')
+    # ax2.spines['right'].set_color('#1560BD')
+    ax2.spines['left'].set_visible(False)
+    ax2.spines['right'].set_visible(False)
+    ax2.spines['top'].set_visible(False)
     ax2.tick_params(axis='y', color='#1560BD', labelcolor='#1560BD')
     ax2.set_yticks(np.arange(0, 110, 10))
+    # ax2.set_yticks(np.linspace(0, 100, 5))
+
 
     # 범례
     ax1.legend(loc='lower right',bbox_to_anchor=(0.9,1.0))
