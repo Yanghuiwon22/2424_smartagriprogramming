@@ -125,7 +125,6 @@ def draw_graph():
 
     fig.tight_layout()
     fig.savefig('./static/img/temp.png')
-    fig.show()
 
 # api_get()
 draw_graph()
