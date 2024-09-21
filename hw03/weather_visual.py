@@ -170,6 +170,7 @@ def draw_graph():
     vpd = est-ea
     print(vpd)
 
+
     # vpd 그래프 그리기
     ax3.plot(df['datetime'],vpd, color='green',lw=2, label='VPD(수증기압포차)')
     ax3.set_title("VPD (수증기압포차)")
@@ -179,6 +180,12 @@ def draw_graph():
     ax3.spines['left'].set_visible(False)
     ax3.spines['right'].set_visible(False)
     ax3.spines['top'].set_visible(False)
+
+    # gdd 구하기
+    # gdd = (tmax + tmin)/2 - tmean
+
+
+
 
     # 범례
     ax3.axhspan(0.5, 1.25, fc="lightgreen", alpha=0.3, label='적정 VPD')
