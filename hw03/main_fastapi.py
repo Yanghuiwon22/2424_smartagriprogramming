@@ -26,6 +26,7 @@ async def weather(request: Request):
     try:
         # 요청 본문이 비어있을 경우를 대비해 예외 처리
         data = await request.json()
+        print(f'data => {data}')
         address = data.get('address')
         date = data.get('date')
 
@@ -33,7 +34,7 @@ async def weather(request: Request):
             return JSONResponse({"error": "Invalid data received"}, status_code=400)
 
         # API 호출 및 추가 작업 수행
-        api_get(date)
+        api_get(date, address)
 
         return templates.TemplateResponse("index.html", {"request": request, "address": address, "date": date})
 

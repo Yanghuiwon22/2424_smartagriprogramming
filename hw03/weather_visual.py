@@ -88,7 +88,7 @@ def fetch_weather_data(date, time, spot_code):
             return (date__, time__, content['temp'], content['hum'], content['wind'])
 
 
-def api_get(start_date=datetime.now()):
+def api_get(start_date, spot_code):
 # 병렬 처리로 데이터를 가져옴
     start_date = datetime.strptime(start_date, "%Y-%m-%d")
     with ThreadPoolExecutor(max_workers=10) as executor:
@@ -102,7 +102,7 @@ def api_get(start_date=datetime.now()):
             # 10분 간격으로 날씨 데이터를 가져오는 작업을 병렬로 처리
             for j in range(24 * 7):
                 time = current_time.strftime(time_format)
-                a = executor.submit(fetch_weather_data, date, time)
+                a = executor.submit(fetch_weather_data, date, time, spot_code)
                 futures.append(a)
                 current_time += timedelta(minutes=10)
 
