@@ -135,7 +135,7 @@ def draw_graph():
     df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'].str[:2] + ':' + df['time'].str[3:])
 
     # 기온 그래프 그리기
-    fig, (ax1,ax) = plt.subplots(2,1,figsize=(10,8))
+    fig, ax1 = plt.subplots(figsize=(10,6))
 
     ax1.plot(df['datetime'], df['temp'], color = '#f05650', lw=2, label='온도')
     ax1.set_title("일주일 기온")
@@ -162,34 +162,6 @@ def draw_graph():
     ax1.legend(loc='lower right',bbox_to_anchor=(0.9,1.0))
     ax2.legend(loc='lower right',bbox_to_anchor=(1.0,1.0))
 
-    # vpd 구하기
-    vpd_temp = df['temp']
-    vpd_hum = df['hum']
-    est = 0.6108 * np.exp(17.27 * vpd_temp / (vpd_temp + 237.3) )
-    ea = est * (vpd_hum / 100)
-    vpd = est-ea
-    print(vpd)
-
-
-    # vpd 그래프 그리기
-    ax.plot(df['datetime'],vpd, color='green',lw=2, label='VPD(수증기압포차)')
-    ax.set_title("VPD (수증기압포차)")
-    ax.set_xlabel('날짜 및 시간')
-    ax.set_ylabel('VPD (kPa)')
-
-    ax.spines['left'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
-
-    # gdd 구하기
-    # gdd = (tmax + tmin)/2 - tmean
-
-
-
-
-    # 범례
-    ax.axhspan(0.5, 1.25, fc="lightgreen", alpha=0.3, label='적정 VPD')
-    ax.legend(loc='lower right', ncol=2 ,bbox_to_anchor=(1.0, 1.0))
 
     fig.tight_layout()
     fig.show()
@@ -206,7 +178,7 @@ def draw_vpd_graph():
     df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'].str[:2] + ':' + df['time'].str[3:])
 
     # 기온 그래프 그리기
-
+    fig, ax = plt.subplots(figsize=(10,6))
     # 습도 그래프 그리기
 
     # vpd 구하기
@@ -240,11 +212,11 @@ def draw_vpd_graph():
 
     fig.tight_layout()
     fig.show()
-    fig.savefig('./static/img/temp.png')
+    fig.savefig('./static/img/vpd.png')
 
 
 # api_get()
-# draw_graph()
+draw_graph()
 # get_address('전라북도 익산시')
 # get_button('경상북도 구미시')
-draw_vpd_graph()
+# draw_vpd_graph()
