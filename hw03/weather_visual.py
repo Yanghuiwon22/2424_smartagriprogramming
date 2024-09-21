@@ -24,32 +24,37 @@ start_time = datetime.strptime("0010", time_format)
 
 # 결과를 저장할 리스트
 results = []
-def get_address(address_input):
-
+def get_button(address_input):
     address_do = address_input.split(' ')[0]
     address_si = address_input.split(' ')[1]
-
-    # df = pd.read_csv('static/spot_nm.txt')
-    #
-    # df = df[['도명', '지점명', '지점코드']]
-    # df['지점명1'] = df['지점명'].apply(lambda x: x.split(' ')[0])
-    # df['지점명2'] = df['지점명'].apply(lambda x: x.split(' ')[1])
-    #
-    # df.insert(1, '지점명1', df.pop('지점명1'))
-    # df.insert(2, '지점명2', df.pop('지점명2'))
-    # df = df.drop(columns=['지점명'])
-    # df.to_csv('static/df_after.csv')
 
     df = pd.read_csv('static/df_after.csv')
     try:
         if address_do in df['도명'].values:
             if address_si in df['지점명1'].values:
-                print(address_do, address_si)
+                button_row = df[df['지점명1'] == address_si]  # --> 조건에 맞는 행의 수 구하기
+                return button_row
+
+    except:
+        pass
+
+def get_address(address_input):
+    address_input = '경상북도 구미시'
+
+    address_do = address_input.split(' ')[0]
+    address_si = address_input.split(' ')[1]
+
+    df = pd.read_csv('static/df_after.csv')
+    try:
+        if address_do in df['도명'].values:
+            if address_si in df['지점명1'].values:
+
+                row = df[df['지점명1'] == address_si] # --> 조건에 맞는 행의 수 구하기
+                buttons = [f"{df['지점명2'][i]}" for i in row.index]
                 index = df[df['지점명1'] == address_si].index
-                print(df['지점코드'][index])
-                return f'{address_do} {address_si}'
+                return (buttons)
             else:
-                return f'{address_do} {address_si}에 대한 데이터 없습니다.'
+                return f'{address_si}에 대한 데이터 없습니다.'
         else:
             print(f'{address_do}에 대한 데이터 없습니다')
             return f'{address_do}에 대한 데이터 없습니다'
@@ -119,8 +124,6 @@ def api_get(start_date=datetime.now()):
     draw_graph()
 
 
-
-
 def draw_graph():
     df = pd.read_csv('static/weather_data.csv')
     # 날짜와 시간을 결합하여 x축 데이터 생성
@@ -185,6 +188,8 @@ def draw_graph():
     fig.show()
     fig.savefig('./static/img/temp.png')
 
+
 # api_get()
-draw_graph()
-# get_address('전라북도 전주시')
+# draw_graph()
+# get_address('전라북도 익산시')
+get_button('경상북도 구미시')

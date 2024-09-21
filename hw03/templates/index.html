@@ -6,64 +6,129 @@
     <title>Weather Data</title>
 </head>
 <body>
-    <h1>주소로 기상데이터 받아오기</h1>
+<h1>주소로 기상데이터 받아오기</h1>
 <!--        주소 처리하기 -->
 
+<form action="/button" method="post">
+    <label for="address">주소를 입력하세요(OOO도 OO시):</label><br>
+    <input type="text" id="address" placeholder="전라북도 전주시" required>
+    <button onclick="getInputValue()">제출</button>
+    <br><br>
+<!--</form>-->
+<!--<form action="/button" method="post">-->
+    <p>검색 가능한 지역</p>
+    <p id="result"></p><br>
 
-    <form action="/weather" method="post">
-        <label for="address">주소를 입력하세요(OOO도 OO시):</label><br>
-        <input type="text" id="address" placeholder="전라북도 전주시" required>
-        <button onclick="getInputValue()">제출</button><br><br>
-
-        <p>검색 가능한 지역</p>
+<!--    {% for button in buttons %}-->
+<!--    <button>{{ button }}</button>-->
+<!--    {% endfor %}-->
 
 
-<!--        <label for="address2">주소를 입력하세요:</label><br>-->
-<!--        <input type="text" id="address2" name="address2" required><br><br>-->
+    <!--        <label for="address2">주소를 입력하세요:</label><br>-->
+    <!--        <input type="text" id="address2" name="address2" required><br><br>-->
 
-<!--        <label for="date">날짜를 입력해주세요:</label><br>-->
-<!--        <input type="text" id="date" name="date" placeholder="2024-09-21" required><br><br>-->
+<!--    <label for="date">날짜를 입력해주세요:</label><br>-->
+<!--    <input type="text" id="date" name="date" placeholder="2024-09-21" required><br><br>-->
 
-<!--        <input type="submit" value="기상 데이터 조회"><br>-->
-    </form>
-    <p id="result"></p>
 
-    <script>
-        function getInputValue() {
-            // 입력된 값 가져오기
-            var inputVal = document.getElementById('address').value;
+<!--    <input type="submit" value="기상 데이터 조회"><br>-->
+<!--    <button onclick="sendData()">데이터 전송하기</button>-->
 
-            // document.getElementById('result').innerText = '입력된 값: ' + inputVal
+    <p id="textDiv"></p>
+
+</form>
+
+<script>
+    function getInputValue() {
+        // 입력된 값 가져오기
+        var inputVal = document.getElementById('address').value;
+
+        // document.getElementById('result').innerText = '입력된 값: ' + inputVal
 
         //     파이썬 서버로 post요청 보내기
-            fetch('/process', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ value: inputVal})
+        fetch('/button', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({value: inputVal})
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('POST 요청 실패: ' + response.statusText);  // 요청 실패 시 오류 처리
+                }
+                return response.text();  // 응답을 JSON으로 변환
             })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('result').innerText = '주소: ' +data.result;
-                })
-                .catch(error => console.error('Error:', error))
-        }
-    </script>
 
-    {% if address %}
-    <h2>입력된 주소: {{ address }}</h2>
-    {% endif %}
+            .then(text => {
+                const data = JSON.parse(text);  // 수동으로 JSON 파싱
+                console.log('받은 데이터:', data);  // data가 무엇인지 확인
 
-    {% if date %}
-    <h2>입력된 날짜: {{ date }}</h2>
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';  // 기존 내용을 지움
 
 
-    <img src="{{ url_for('static', path='img/temp.png')}}" alt="이미지">
-    {% endif %}
+                data.result.forEach(item => {
+                    console.log(item);  // 서버에서 받은 각 아이템 출력
+
+                    const button = document.createElement('button');
+                    button.innerText = item['지점명2'];  // 지점명이 없으면 기본 값
+
+                    button.addEventListener('click', () => {
+                        var spot_code = item['지점명2']
+
+                        const textDiv = document.getElementById('textDiv')
+                        textDiv.innerText = item['도명'] + ' ' + item['지점명1'] + ' ' + item['지점명2']
+
+                        // const textDiv = document.getElementById('textDiv');  // 텍스트를 표시할 요소
+                        // textDiv.innerText = '지점코드: ' + (item['지점코드'] || '코드 없음');  // 지점코드 표시
+                    });
+
+                    resultDiv.appendChild(button);  // 버튼을 resultDiv에 추가
+                });
+            })
+        // .catch(error => {
+        //     console.error('Error:', error);  // 오류 처리
+        // });
+    }
+
+    function sendData() {
+        const address = document.getElementById('textDiv').innerText;  // textDiv에서 텍스트 가져오기
+        const date = new Date().toISOString().slice(0, 10);  // 현재 날짜 가져오기 (YYYY-MM-DD 형식)
+
+        fetch('/weather', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({address: address, date: date})  // address와 date를 서버로 전송
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('POST 요청 실패: ' + response.statusText);
+                }
+                return response.json();
+
+            })
+            .then(data => {
+                console.log('서버 응답:', data);  // 서버에서 받은 응답 처리
+            })
+            .catch(error => {
+                console.error('에러 발생:', error);
+            });
+    }
+</script>
+
+{% if address %}
+<h2>입력된 주소: {{ address }}</h2>
+{% endif %}
+
+{% if date %}
+<h2>입력된 날짜: {{ date }}</h2>
 
 
-
+<img src="{{ url_for('static', path='img/temp.png')}}" alt="이미지">
+{% endif %}
 
 
 </body>
