@@ -122,6 +122,7 @@ def api_get(start_date, spot_code):
     df.to_csv('static/weather_data.csv', index=False)
 
     draw_graph()
+    draw_vpd_graph()
 
 
 def draw_graph():
