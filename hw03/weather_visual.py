@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 import pandas as pd
 from matplotlib import pyplot as plt
+import numpy as np
 
 # 요청 인자
 page_no = "1"
@@ -100,31 +101,28 @@ def draw_graph():
     # 기온 그래프 그리기
     fig, ax1 = plt.subplots(figsize=(10,5))
 
-    ax1.plot(df['datetime'], df['temp'], color = '#f05650', lw=2)
+    ax1.plot(df['datetime'], df['temp'], color = '#f05650', lw=2, label='온도')
     ax1.grid(axis="y", alpha=0.5,)
     ax1.set_title("일주일 기온")
     ax1.set_xlabel('날짜 및 시간')
     ax1.set_ylabel('기온 (°C)')
-    ax1.xtick
+    ax1.tick_params(axis='y', color='#f05650',labelcolor='#f05650')
+    ax1.set_yticks(np.arange(-15, 45.5, 5.5))
 
     # 습도 그래프 그리기
     ax2 = ax1.twinx()
-    ax2.plot(df['datetime'],df['hum'], color='#1560BD',lw=2)
+    ax2.plot(df['datetime'],df['hum'], color='#1560BD',lw=2, label='습도')
     ax2.grid(axis="y",alpha=0.5)
     ax2.set_ylabel('습도')
     ax2.spines['left'].set_color('#f05650')
     ax2.spines['right'].set_color('#1560BD')
+    ax2.tick_params(axis='y', color='#1560BD', labelcolor='#1560BD')
+    ax2.set_yticks(np.arange(0, 110, 10))
 
-    lines1, labels1 = ax1.get_legend_handles_labels()
-    lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+    # 범례
+    ax1.legend(loc='lower right',bbox_to_anchor=(0.9,1.0))
+    ax2.legend(loc='lower right',bbox_to_anchor=(1.0,1.0))
 
-    plt.legend(('temp', 'hum'))
-
-    # for s in ["left", "right", "top"]:
-    #     ax.spines[s].set_visible(False)
-
-    # ax.set_xticks(rotation=45)  # x축 라벨 회전
     fig.tight_layout()
     fig.savefig('./static/img/temp.png')
     fig.show()
