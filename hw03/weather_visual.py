@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 import pandas as pd
 from matplotlib import pyplot as plt
+from matplotlib.patches import Patch
 import numpy as np
 
 # 요청 인자
@@ -131,10 +132,9 @@ def draw_graph():
     df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'].str[:2] + ':' + df['time'].str[3:])
 
     # 기온 그래프 그리기
-    fig, ax1 = plt.subplots(figsize=(10,5))
+    fig, (ax1,ax3) = plt.subplots(2,1,figsize=(10,8))
 
     ax1.plot(df['datetime'], df['temp'], color = '#f05650', lw=2, label='온도')
-
     ax1.set_title("일주일 기온")
     ax1.set_xlabel('날짜 및 시간')
     ax1.set_ylabel('기온 (°C)')
@@ -147,7 +147,7 @@ def draw_graph():
     # 습도 그래프 그리기
     ax2 = ax1.twinx()
     ax2.plot(df['datetime'],df['hum'], color='#1560BD',lw=2, label='습도')
-    ax2.set_ylabel('습도')
+    ax2.set_ylabel('습도 (%)')
 
     ax2.spines['left'].set_visible(False)
     ax2.spines['right'].set_visible(False)
@@ -159,14 +159,31 @@ def draw_graph():
     ax1.legend(loc='lower right',bbox_to_anchor=(0.9,1.0))
     ax2.legend(loc='lower right',bbox_to_anchor=(1.0,1.0))
 
+    # vpd 구하기
+    vpd_temp = df['temp']
+    vpd_hum = df['hum']
+    est = 0.6108 * np.exp(17.27 * vpd_temp / (vpd_temp + 237.3) )
+    ea = est * (vpd_hum / 100)
+    vpd = est-ea
+    print(vpd)
+
+    # vpd 그래프 그리기
+    ax3.plot(df['datetime'],vpd, color='green',lw=2, label='VPD(수증기압포차)')
+    ax3.set_title("VPD (수증기압포차)")
+    ax3.set_xlabel('날짜 및 시간')
+    ax3.set_ylabel('VPD (kPa)')
+
+    ax3.spines['left'].set_visible(False)
+    ax3.spines['right'].set_visible(False)
+    ax3.spines['top'].set_visible(False)
+
+    # 범례
+    ax3.axhspan(0.5, 1.25, fc="lightgreen", alpha=0.3, label='적정 VPD')
+    ax3.legend(loc='lower right', ncol=2 ,bbox_to_anchor=(1.0, 1.0))
+
     fig.tight_layout()
     fig.show()
     fig.savefig('./static/img/temp.png')
-
-
-
-
-
 
 # api_get()
 draw_graph()
