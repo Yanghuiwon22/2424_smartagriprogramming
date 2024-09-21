@@ -140,10 +140,9 @@ def get_address(address_input):
     address_si = address_input.split(' ')[1]
 
     df = pd.read_csv('static/spot_nm.txt')
-    df.rename(axis=0, index)
-
-
-
+    # df.set_index(df.iloc[0], inplace=True)
+    # df = df[1:]
+    df = df[['도명', '지점명', '지점코드']]
     print(df)
 
 # api_get()
