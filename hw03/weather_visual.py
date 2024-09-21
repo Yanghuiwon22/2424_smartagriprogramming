@@ -102,7 +102,7 @@ def draw_graph():
     fig, ax1 = plt.subplots(figsize=(10,5))
 
     ax1.plot(df['datetime'], df['temp'], color = '#f05650', lw=2, label='온도')
-    ax1.grid(axis="y", alpha=0.5)
+    # ax1.grid(axis="y", alpha=0.5)
     ax1.set_title("일주일 기온")
     ax1.set_xlabel('날짜 및 시간')
     ax1.set_ylabel('기온 (°C)')
@@ -116,7 +116,7 @@ def draw_graph():
     # 습도 그래프 그리기
     ax2 = ax1.twinx()
     ax2.plot(df['datetime'],df['hum'], color='#1560BD',lw=2, label='습도')
-    ax2.grid(axis="y",alpha=0.5, linestyle = '--')
+    # ax2.grid(axis="y",alpha=0.5, linestyle = '--')
     ax2.set_ylabel('습도')
     # ax2.spines['left'].set_color('#f05650')
     # ax2.spines['right'].set_color('#1560BD')
