@@ -23,8 +23,40 @@ start_time = datetime.strptime("0010", time_format)
 
 # 결과를 저장할 리스트
 results = []
+def get_address(address_input):
 
-def fetch_weather_data(date, time):
+    address_do = address_input.split(' ')[0]
+    address_si = address_input.split(' ')[1]
+
+    # df = pd.read_csv('static/spot_nm.txt')
+    #
+    # df = df[['도명', '지점명', '지점코드']]
+    # df['지점명1'] = df['지점명'].apply(lambda x: x.split(' ')[0])
+    # df['지점명2'] = df['지점명'].apply(lambda x: x.split(' ')[1])
+    #
+    # df.insert(1, '지점명1', df.pop('지점명1'))
+    # df.insert(2, '지점명2', df.pop('지점명2'))
+    # df = df.drop(columns=['지점명'])
+    # df.to_csv('static/df_after.csv')
+
+    df = pd.read_csv('static/df_after.csv')
+    try:
+        if address_do in df['도명'].values:
+            if address_si in df['지점명1'].values:
+                print(address_do, address_si)
+                index = df[df['지점명1'] == address_si].index
+                print(df['지점코드'][index])
+                return f'{address_do} {address_si}'
+            else:
+                return f'{address_do} {address_si}에 대한 데이터 없습니다.'
+        else:
+            print(f'{address_do}에 대한 데이터 없습니다')
+            return f'{address_do}에 대한 데이터 없습니다'
+    except:
+        return '로드 실패 : 관리자에게 문의'
+
+def fetch_weather_data(date, time, spot_code):
+
     """날짜와 시간을 받아 API로부터 데이터를 가져오는 함수"""
     if time == '0000':
         time = "2400"
@@ -131,15 +163,10 @@ def draw_graph():
     fig.show()
     fig.savefig('./static/img/temp.png')
 
-def get_address(address_input):
-    address_do = address_input.split(' ')[0]
-    address_si = address_input.split(' ')[1]
 
-    df = pd.read_csv('static/spot_nm.txt')
-    # df.set_index(df.iloc[0], inplace=True)
-    # df = df[1:]
-    df = df[['도명', '지점명', '지점코드']]
-    print(df)
+
+
+
 
 # api_get()
 draw_graph()

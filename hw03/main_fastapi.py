@@ -7,7 +7,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 
 
-from weather_visual import api_get
+
+
+from weather_visual import get_address, api_get
 #
 app = FastAPI()
 
@@ -28,8 +30,11 @@ async def weather(request: Request, address: str = Form(...), date: str = Form(.
 async def process_input(request: Request):
     data = await request.json()
     input_value = data['value']
-    result = some_python_function(input_value)
-    return JSONResponse(content={'result: result'})
+    print(f'input_value ==> {input_value}')
+    result = get_address(input_value)
+    print(f'result ==> {result}')
+
+    return JSONResponse(content={'result': result})
 
 # test
 # @app.get("/index", response_class=HTMLResponse)
