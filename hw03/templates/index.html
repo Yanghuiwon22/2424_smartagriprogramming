@@ -7,14 +7,46 @@
 </head>
 <body>
     <h1>주소로 기상데이터 받아오기</h1>
+<!--        주소 처리하기 -->
+
+
     <form action="/weather" method="post">
-        <label for="address">주소를 입력하세요:</label><br>
-        <input type="text" id="address" name="address" required><br><br>
+        <label for="address">주소를 입력하세요(OOO도 OO시):</label><br>
+        <input type="text" id="address" placeholder="전라북도 전주시" required>
+        <button onclick="getInputValue()">제출</button><br><br>
+
+<!--        <label for="address2">주소를 입력하세요:</label><br>-->
+<!--        <input type="text" id="address2" name="address2" required><br><br>-->
 
         <label for="date">날짜를 입력해주세요:</label><br>
-        <input type="text" id="date" name="date" required><br><br>
+        <input type="text" id="date" name="date" placeholder="2024-09-21" required><br><br>
+
         <input type="submit" value="기상 데이터 조회"><br>
     </form>
+    <p id="result"></p>
+
+    <script>
+        function getInputValue() {
+            // 입력된 값 가져오기
+            var inputVal = document.getElementById('address').value;
+
+            // document.getElementById('result').innerText = '입력된 값: ' + inputVal
+
+        //     파이썬 서버로 post요청 보내기
+            fetch('/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ value: inputVal})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').innerText = '파이썬 함수 결과: ' +data.result;
+                })
+                .catch(error => console.error('Error:', error))
+        }
+    </script>
 
     {% if address %}
     <h2>입력된 주소: {{ address }}</h2>
@@ -26,6 +58,8 @@
 
     <img src="{{ url_for('static', path='img/temp.png')}}" alt="이미지">
     {% endif %}
+
+
 
 
 

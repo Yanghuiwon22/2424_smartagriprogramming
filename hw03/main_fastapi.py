@@ -4,9 +4,11 @@ from fastapi.templating import Jinja2Templates
 from fastapi.requests import Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
+
 
 from weather_visual import api_get
-
+#
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
@@ -21,6 +23,13 @@ async def index(request: Request):
 async def weather(request: Request, address: str = Form(...), date: str = Form(...)):
     api_get(date)
     return templates.TemplateResponse("index.html", {"request": request, "address": address, "date": date})
+
+@app.post('/process')
+async def process_input(request: Request):
+    data = await request.json()
+    input_value = data['value']
+    result = some_python_function(input_value)
+    return JSONResponse(content={'result: result'})
 
 # test
 # @app.get("/index", response_class=HTMLResponse)

@@ -135,5 +135,17 @@ def draw_graph():
     fig.tight_layout()
     fig.savefig('./static/img/temp.png')
 
+def get_address(address_input):
+    address_do = address_input.split(' ')[0]
+    address_si = address_input.split(' ')[1]
+
+    df = pd.read_csv('static/spot_nm.txt')
+    df.rename(axis=0, index)
+
+
+
+    print(df)
+
 # api_get()
-draw_graph()
+# draw_graph()
+get_address('전라북도 전주시')
