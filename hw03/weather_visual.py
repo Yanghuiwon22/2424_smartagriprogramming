@@ -105,7 +105,6 @@ def draw_graph():
     ax1.set_title("일주일 기온")
     ax1.set_xlabel('날짜 및 시간')
     ax1.set_ylabel('기온 (°C)')
-    ax1.xtick
 
     # 습도 그래프 그리기
     ax2 = ax1.twinx()
@@ -127,7 +126,6 @@ def draw_graph():
     # ax.set_xticks(rotation=45)  # x축 라벨 회전
     fig.tight_layout()
     fig.savefig('./static/img/temp.png')
-    fig.show()
 
 # api_get()
 draw_graph()
