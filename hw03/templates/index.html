@@ -4,26 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Data</title>
+    <style>
+        body {
+            background-color: #c1b6a3;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .input-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1em;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .weather-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .weather-section img {
+            max-width: 100%;
+            height: auto;
+        }
+        .weather-section p {
+            font-size: 1.2em;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
+
 <h1>주소로 기상데이터 받아오기</h1>
 
+<div class="input-container">
     <label for="address">주소를 입력하세요(OOO도 OO시):</label><br>
     <input type="text" id="address" placeholder="전라북도 전주시" required>
     <button onclick="getInputValue()">제출</button>
-    <br><br>
-
-    <p>검색 가능한 지역</p>
+</div>
+<div class="weather-section">
     <p id="result"></p><br>
-
     <p id="textDiv"></p>
     <p id="textDate"></p>
 
-
-
     <button onclick="sendData()">데이터 전송하기</button>
-    <img id="weather-image" alt="Weather Image" />
+    <br>
 
+    <img id="weather-image" alt="Weather Image"/>
+</div>
 <script>
     let spot_code = ''
 
@@ -108,11 +162,11 @@
     }
 </script>
 
-    {% if image_path %}
-        <img src="{{ image_path }}" alt="기상 데이터 이미지">
-    {% else %}
-        <p>이미지가 없습니다.</p>
-    {% endif %}
+{% if image_path %}
+<img src="{{ image_path }}" alt="기상 데이터 이미지">
+{% else %}
+<p>이미지가 없습니다.</p>
+{% endif %}
 
 </body>
 </html>
