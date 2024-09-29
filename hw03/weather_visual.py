@@ -6,6 +6,8 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.patches import Patch
 import numpy as np
+from matplotlib import rc  ### 이 줄과
+
 
 # 요청 인자
 page_no = "1"
@@ -130,8 +132,9 @@ def draw_graph():
     # 날짜와 시간을 결합하여 x축 데이터 생성
     print(df.head(144))
 
-    plt.rcParams['font.family'] = 'NanumGothic'
-    plt.rcParams['axes.unicode_minus'] = False
+    rc('font', family='AppleGothic')  ## 이 두 줄을
+    plt.rcParams['axes.unicode_minus'] = False  ## 추가해줍니다.
+
 
     df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'].str[:2] + ':' + df['time'].str[3:])
 
@@ -173,8 +176,8 @@ def draw_vpd_graph():
     # 날짜와 시간을 결합하여 x축 데이터 생성
     print(df.head(144))
 
-    plt.rcParams['font.family'] = 'NanumGothic'
-    plt.rcParams['axes.unicode_minus'] = False
+    rc('font', family='AppleGothic')  ## 이 두 줄을
+    plt.rcParams['axes.unicode_minus'] = False  ## 추가해줍니다.
 
     df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'].str[:2] + ':' + df['time'].str[3:])
 
@@ -217,7 +220,7 @@ def draw_vpd_graph():
 
 
 # api_get()
-draw_graph()
+# draw_graph()
 # get_address('전라북도 익산시')
 # get_button('경상북도 구미시')
-# draw_vpd_graph()
+draw_vpd_graph()

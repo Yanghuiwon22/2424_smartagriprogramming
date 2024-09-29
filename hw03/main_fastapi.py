@@ -39,13 +39,7 @@ async def weather(request: Request):
 
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=400)
-@app.post('/process')
-async def process_input(request: Request):
-    data = await request.json()
-    input_value = data['value']
-    result = get_address(input_value)
 
-    return JSONResponse(content={'result': result})
 @app.post("/button")
 async def make_button(request: Request):
     data = await request.json()
@@ -55,4 +49,4 @@ async def make_button(request: Request):
     return JSONResponse(content={"result": result})
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=8080)
