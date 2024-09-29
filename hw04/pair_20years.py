@@ -149,10 +149,10 @@ def get_flowering_date():
             df_sacheon = pd.concat([df_sacheon, df_dic])
 
     df_naju.to_csv('output/naju/flowering_date_naju.csv')
-    df_icheon.to_csv('output/Ichen/flowering_date_icheon.csv')
-    df_cheonan.to_csv('output/Cheonan/flowering_date_cheonan.csv')
-    df_sangju.to_csv('output/Sangju/flowering_date_sangju.csv')
-    df_yoengcheon.to_csv('output/Yeongcheon/flowering_date_yoengcheon.csv')
+    df_icheon.to_csv('output/Ichen/flowering_date_Ichen.csv')
+    df_cheonan.to_csv('output/Cheonan/flowering_date_Cheonan.csv')
+    df_sangju.to_csv('output/Sangju/flowering_date_Sangju.csv')
+    df_yoengcheon.to_csv('output/Yeongcheon/flowering_date_Yeongcheon.csv')
     df_wanju.to_csv('output/wanju/flowering_date_wanju.csv')
     df_ulju.to_csv('output/ulju/flowering_date_ulju.csv')
     df_sacheon.to_csv('output/sacheon/flowering_date_sacheon.csv')
@@ -191,10 +191,46 @@ def get_other_region_data():
             except:
                 pass
 
+# def main():
+#
+#
+#     # DVR모델을 위한 데이터 수집
+#     get_data(2004, 2024)
+#     get_other_region_data()
+#     DVR_model()
+#     get_flowering_date()
+
 def main():
-    DVR_model()
-    # get_flowering_date()
-    # get_other_region_data()
+    output_path = 'output'
+    # output_list = os.listdir(output_path)
+
+    output_list = ['Ichen'] # 테스트를 위한 데이터 정리
+    for station in output_list:
+        print(station)
+
+        df = pd.DataFrame()
+
+        obj_date = pd.read_csv(f'output/{station}/flowering_date_{station}.csv')
+        dvs_date = pd.read_csv(f'output/{station}/DVS_{station}_model')
+
+        df['station'] = [station for i in range(len(obj_date))]
+        df['year'] = obj_date['Date'].apply(lambda x: x.split('-')[0])
+
+        df['obj_date'] = obj_date['Date']
+        df['DVS_date'] = dvs_date['Date']
+
+        # 'obj_date'와 'DVS_date'를 datetime 형식으로 변환
+        df['obj_date'] = pd.to_datetime(df['obj_date'])
+        df['DVS_date'] = pd.to_datetime(df['DVS_date'])
+
+        # 월-일만 추출해서 새로운 열에 저장
+        df['obj_date'] = df['obj_date'].dt.strftime('%m-%d')
+        df['DVS_date'] = df['DVS_date'].dt.strftime('%m-%d')
+
+        print(df)
+
+
+
 
 if __name__ == '__main__':
     main()
