@@ -7,7 +7,7 @@ pear_b = 0.9
 # 일평균
 day_temp = []
 
-DVRi = 1/(pear_a *(pear_b**day_temp))
+DVRi = 1/(pear_a *(pear_b**day_temp)) * 100
 
 # DVRi 누적값 100 -> 예상 만개기
 
@@ -57,3 +57,55 @@ def DVR_2():
     return DVR_2
 
 # DVR_2합 = 0.9593 -> 예상 만개기
+
+# CD 모델
+# 냉각량  <- 내생휴면 해재 -> 가온량
+
+tmax = ['최고기온']
+tmin = ['최저기온']
+tavg = ['평균기온']
+# tavg = (tmax + tmin) /2
+
+# tc = 기준온도, cr = 저온요구도, hr = 고온요구도
+tc = 5.4
+cr = -86.4
+hr = 272
+
+# 냉각량(내생휴면해재 이전)
+cd = ['냉각량']
+
+def chill_days():
+    if 0 <= tc <= tmin <= tmax:
+        cd = 0
+    elif 0 <= tmin <= tc < tmax:
+        cd = -((tavg - tmin)-(tmax - tc)**2 / 2(tmax - tmin))
+    elif 0 <= tmin <= tmax <= tc:
+        cd = -(tavg - tmin)
+    elif tmin < 0 <= tmax <= tc:
+        cd = -(tmax**2 /2(tmax - tmin))
+    elif tmin < 0 < tc < tmax:
+        cd = - (tmax**2 / 2(tmax - tmin)) - ((tmax - tc)**2 / 2(tmax - tmin))
+
+    return cd
+
+# 누적 냉각량 = cr -> 내생휴면해재, 가온량 계산 시작
+
+# 가온량 (내생휴면해재 이후)
+hr = ['가온량']
+
+def anti_chill_days():
+    if 0 <= tc <= tmin <= tmax:
+        hr = tavg - tc
+    elif 0 <= tmin <= tc < tmax:
+        hr = (tmax - tc)**2 / 2(tmax - tmin)
+    elif 0 <= tmin <= tmax <= tc:
+        hr = 0
+    elif tmin < 0 <= tmax <= tc:
+        hr = 0
+    elif tmin < 0 < tc < tmax:
+        hr = (tmax - tc)**2 / 2(tmax - tmin)
+
+    return hr
+
+# 누적가온량 = 저온요구량(|cr| = 86.4) -> 강제휴면파타(발아)
+# 누적가온량 = hr -> 만개기
