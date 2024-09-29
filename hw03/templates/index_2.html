@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Data</title>
+    <style>
+        .header-space {
+            width: 100%;
+            height: 50px;
+
+            background-color: beige;
+
+        }
+
+        .site-header {
+            width: 100%;
+            height: 200px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background-color: saddlebrown;
+
+            font-family: monospace;
+            color: white;
+            font-size: 25px;
+        }
+
+        .site-body{
+            background-color: beige;
+        }
+
+
+
+    </style>
+</head>
+<body>
+<div class="header-space"></div>
+
+<div class="site-header">
+
+    <div class="title">
+        <h1>주소로 기상데이터 받아오기</h1>
+    </div>
+</div>
+<div class="site-body">
+
+    <div class="input-container">
+        <label for="address">주소를 입력하세요(OOO도 OO시):</label><br>
+        <input type="text" id="address" placeholder="전라북도 전주시" required>
+        <button onclick="getInputValue()">제출</button>
+    </div>
+    <div class="weather-section">
+        <p id="result"></p><br>
+        <p id="textDiv"></p>
+        <p id="textDate"></p>
+
+        <button onclick="sendData()">데이터 전송하기</button>
+        <br>
+
+        <img id="weather-image" alt="Weather Image"/>
+        <img id="vpd-image" alt="Weather Image"/>
+
+    </div>
+</div>
+<script>
+    let spot_code = ''
+
+    function getInputValue() {
+        // 입력된 값 가져오기
+        var inputVal = document.getElementById('address').value;
+
+        document.getElementById('textDate').innerText = new Date().toISOString().slice(0, 10);
+
+        //     파이썬 서버로 post요청 보내기
+        fetch('/button', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({value: inputVal})
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('POST 요청 실패: ' + response.statusText);  // 요청 실패 시 오류 처리
+                }
+                return response.text();  // 응답을 JSON으로 변환
+            })
+
+            .then(text => {
+                const data = JSON.parse(text);  // 수동으로 JSON 파싱
+                console.log('받은 데이터:', data);  // data가 무엇인지 확인
+
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';  // 기존 내용을 지움
+
+                data.result.forEach(item => {
+                    console.log(item);  // 서버에서 받은 각 아이템 출력
+
+                    const button = document.createElement('button');
+                    button.innerText = item['지점명2'];  // 지점명이 없으면 기본 값
+
+                    button.addEventListener('click', () => {
+                        spot_code = item['지점코드']
+
+                        const textDiv = document.getElementById('textDiv')
+                        textDiv.innerText = item['도명'] + ' ' + item['지점명1'] + ' ' + item['지점명2']
+
+                        // const textDiv = document.getElementById('textDiv');  // 텍스트를 표시할 요소
+                        // textDiv.innerText = '지점코드: ' + (item['지점코드'] || '코드 없음');  // 지점코드 표시
+                    });
+
+                    resultDiv.appendChild(button);  // 버튼을 resultDiv에 추가
+                });
+            })
+        // .catch(error => {
+        //     console.error('Error:', error);  // 오류 처리
+        // });
+    }
+
+    function sendData() {
+        // const address = document.getElementById('textDiv').innerText;  // textDiv에서 텍스트 가져오기
+        const date = document.getElementById('textDate').innerText
+        fetch('/weather', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({address: spot_code, date: date})  // address와 date를 서버로 전송
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('POST 요청 실패: ' + response.statusText);
+                }
+                console.log(response)
+                return response.text();
+
+            })
+            .then(data => {
+                console.log('서버 응답:', data);  // 서버에서 받은 응답 처리
+
+                document.getElementById('weather-image').src = 'static/img/temp.png'
+                document.getElementById('vpd-image').src = 'static/img/vpd.png'
+
+            })
+            .catch(error => {
+                console.error('에러 발생:', error);
+            });
+    }
+</script>
+
+<!--{% if image_path %}-->
+<!--<img src="{{ image_path }}" alt="기상 데이터 이미지">-->
+<!--{% else %}-->
+<!--<p>이미지가 없습니다.</p>-->
+<!--{% endif %}-->
+
+</body>
+</html>
