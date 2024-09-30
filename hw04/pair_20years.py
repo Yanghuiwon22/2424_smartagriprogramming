@@ -1,5 +1,6 @@
 import os
 
+import matplotlib.pyplot as plt
 import numpy as np
 import requests
 import pandas as pd
@@ -38,20 +39,22 @@ def DVR_model(): # --> DVR모델
     output_path = 'output'
     output_list = os.listdir(output_path)
 
+    # output_list = ['Ichen'] # 테스트를 위한 데이터 정리
     for output_folder in output_list:
         file_list = os.listdir(os.path.join(output_path, output_folder))
-        print(file_list)
         file_list.sort()
         flowering_df = pd.DataFrame()
 
-        if not f'DVS_{output_folder}_model' in file_list:
-
+        if not f'DVS_{output_folder}_model.csv' in file_list:
             for i in file_list: #하나의 파일 ex.Icheon_2004
+                print(output_folder)
 
                 if i != f'flowering_date_{output_folder}.csv':
-                    df = pd.read_csv(os.path.join(output_path, output_folder, i))
+                    print(i)
 
-                    print(df)
+                    df = pd.read_csv(os.path.join(output_path, output_folder, i))
+                    # print(df)
+
                     # DVR모델 계산
                     pear_a = 107.94
                     pear_b = 0.9
@@ -69,12 +72,15 @@ def DVR_model(): # --> DVR모델
                                 df_save = pd.DataFrame([dic])
 
                                 flowering_df = pd.concat([flowering_df, df_save])
+                                print(flowering_df)
                                 break
-                        flowering_df.to_csv(f'output/{output_folder}/DVS_{output_folder}_model')
+                    flowering_df.to_csv(f'output/{output_folder}/DVS_{output_folder}_model.csv')
+                        # print(f'output/{output_folder}/DVS_{output_folder}_model.csv')
 
-                    else:
-                        pass
+                else:
+                    pass
 
+# 지역별로 실제 만개일 정리
 def get_flowering_date():
     input_file = 'obs_date.txt'
     output_file = 'flowering_date.csv'
@@ -157,6 +163,34 @@ def get_flowering_date():
     df_ulju.to_csv('output/ulju/flowering_date_ulju.csv')
     df_sacheon.to_csv('output/sacheon/flowering_date_sacheon.csv')
 
+
+# 2004 - 2024년까지 실제 만개일 ( 없으면 NaN으로 )
+def sort_flowering_date():  # 2004 - 2024년까지 실제 만개일
+    # 파일 로드 --> 8개 지역
+    output_path = 'output'
+    output_list = os.listdir(output_path)
+    for output_folder in output_list:
+        print(output_folder)
+
+        file_path = os.path.join(output_path, output_folder, f'flowering_date_{output_folder}.csv')
+        flowering_date_df = pd.read_csv(file_path)
+        flowering_date_df = pd.DataFrame(flowering_date_df)
+
+        years = list(range(2004, 2025))
+        years.sort(reverse=True)
+
+        df_full = pd.DataFrame({
+            "year": years,
+            "station": output_folder,
+            "Date": np.nan
+        })
+
+        result = flowering_date_df.combine_first(df_full)
+        # result = result.drop(columns=['Unnamed: 0'])
+
+        result = result[['station', 'year', 'Date']]
+        # print(result)
+        result.to_csv(f'output/{output_folder}/flowering_date_{output_folder}.csv', index=False, encoding='utf-8-sig')
 def get_other_region_data():
     file_list = ['aws_data.csv', 'aws_data_2.csv', 'aws_data_3.csv']
     for file in file_list:
@@ -190,15 +224,13 @@ def get_other_region_data():
 
             except:
                 pass
+#
 
 # def main():
-#
-#
 #     # DVR모델을 위한 데이터 수집
 #     get_data(2004, 2024)
 #     get_other_region_data()
 #     DVR_model()
-#     get_flowering_date()
 
 def main():
     output_path = 'output'
@@ -208,29 +240,39 @@ def main():
     for station in output_list:
         print(station)
 
-        df = pd.DataFrame()
-
         obj_date = pd.read_csv(f'output/{station}/flowering_date_{station}.csv')
-        dvs_date = pd.read_csv(f'output/{station}/DVS_{station}_model')
+        dvs_date = pd.read_csv(f'output/{station}/DVS_{station}_model.csv')
 
-        df['station'] = [station for i in range(len(obj_date))]
-        df['year'] = obj_date['Date'].apply(lambda x: x.split('-')[0])
+        # # 'obj_date'와 'DVS_date'를 datetime 형식으로 변환
+        obj_date['Date'] = pd.to_datetime(obj_date['Date'], errors='coerce')
+        dvs_date['Date'] = pd.to_datetime(dvs_date['Date'])
+        dvs_date['year'] = dvs_date['Date'].dt.year
 
-        df['obj_date'] = obj_date['Date']
-        df['DVS_date'] = dvs_date['Date']
+        # # 월-일만 추출해서 새로운 열에 저장
+        obj_date['obj_date'] = obj_date['Date'].apply(lambda x: x.strftime('%m-%d'))
+        dvs_date['DVS_date'] = dvs_date['Date'].apply(lambda x: x.strftime('%m-%d'))
 
-        # 'obj_date'와 'DVS_date'를 datetime 형식으로 변환
-        df['obj_date'] = pd.to_datetime(df['obj_date'])
-        df['DVS_date'] = pd.to_datetime(df['DVS_date'])
+        # # 데이터프레임으로 그래프 그리기
+        plt.figure(figsize=(10, 6))
 
-        # 월-일만 추출해서 새로운 열에 저장
-        df['obj_date'] = df['obj_date'].dt.strftime('%m-%d')
-        df['DVS_date'] = df['DVS_date'].dt.strftime('%m-%d')
+        # obj_date 그래프
+        plt.plot(obj_date['year'], obj_date['obj_date'].dropna(), marker='o', linestyle='-', color='b', label='obj_date')
 
-        print(df)
+        # DVS_date 그래프
+        plt.plot(dvs_date['year'], dvs_date['DVS_date'], marker='o', linestyle='-', color='r', label='DVS_date')
+
+        # 그래프 제목과 축 레이블 설정
+        plt.title('Obj Date and DVS Date over the Years')
+        plt.xlabel('Year')
+        plt.ylabel('Date')
+
+        plt.legend()
+
+        plt.show()
 
 
-
+#
 
 if __name__ == '__main__':
     main()
+# DVR_model()
