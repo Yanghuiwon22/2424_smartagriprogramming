@@ -4,31 +4,32 @@ import math
 pear_a = 107.94
 pear_b = 0.9
 
-# 일평균
-day_temp = []
+def mDVR_model():
+    # 일평균
+    day_temp = []
 
-DVRi = 1/(pear_a *(pear_b**day_temp)) * 100
+    DVRi = 1/(pear_a *(pear_b**day_temp)) * 100
 
-# DVRi 누적값 100 -> 예상 만개기
+    # DVRi 누적값 100 -> 예상 만개기
 
-# mDVR model
-# DVR_1이 1 이면 자발휴면 타파, 2이면 저온감응기 종료, 이후 DVR_2 계산, 누적 최종적으로 DVR_2가 0.9593 -> 만개
+    # mDVR model
+    # DVR_1이 1 이면 자발휴면 타파, 2이면 저온감응기 종료, 이후 DVR_2 계산, 누적 최종적으로 DVR_2가 0.9593 -> 만개
 
-# 시간별 기온
-temp = ['시간별 기온']
-# 최고기온(h), 최저기온(m), 전날최고기온(hy), 다음날 최저 기온(mt)
-hour = ['시간']
-h = ['오늘 최고기온']
-m = ['오늘 최저기온']
-hy = ['전날 최고기온']
-mt = ['다음날 최저기온']
+    # 시간별 기온
+    temp = ['시간별 기온']
+    # 최고기온(h), 최저기온(m), 전날최고기온(hy), 다음날 최저 기온(mt)
+    hour = ['시간']
+    h = ['오늘 최고기온']
+    m = ['오늘 최저기온']
+    hy = ['전날 최고기온']
+    mt = ['다음날 최저기온']
 
-if 0 <= hour <= 3:
-    temp = (hy - m) * math.sin((4 - hour) * 3.14 / 30)**2 + m
-elif 4 <= hour <= 13:
-    temp = (h - m) * math.sin((hour - 4) * 3.14 / 18)**2 + m
-elif 14 <= hour <= 23:
-    temp = (h - mt) * math.sin((28 - hour) * 3.14 / 30)**2 + mt
+    if 0 <= hour <= 3:
+        temp = (hy - m) * math.sin((4 - hour) * 3.14 / 30)**2 + m
+    elif 4 <= hour <= 13:
+        temp = (h - m) * math.sin((hour - 4) * 3.14 / 18)**2 + m
+    elif 14 <= hour <= 23:
+        temp = (h - mt) * math.sin((28 - hour) * 3.14 / 30)**2 + mt
 
 
 # DVR_1

@@ -234,7 +234,6 @@ def get_other_region_data():
 
 def main():
     output_path = 'output'
-    # output_list = os.listdir(output_path)
 
     output_list = ['Ichen'] # 테스트를 위한 데이터 정리
     for station in output_list:
@@ -267,12 +266,14 @@ def main():
         plt.ylabel('Date')
 
         plt.legend()
-
         plt.show()
 
 
-#
+# def main():
+#     get_data(2004, 2024)
+#     get_other_region_data()
+#     get_flowering_date()
+#     DVR_model()
 
 if __name__ == '__main__':
     main()
-# DVR_model()
