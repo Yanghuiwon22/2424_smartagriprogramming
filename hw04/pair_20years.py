@@ -8,7 +8,7 @@ import requests
 import pandas as pd
 
 import csv
-
+from datetime import datetime
 import math
 
 def get_data(sy, ey):  # -> api를 통해서 데이터 받아오기
@@ -148,7 +148,7 @@ def get_flowering_date():
             df_dic = pd.DataFrame([dic_wanju])
             df_wanju = pd.concat([df_wanju, df_dic])
 
-        elif df.iloc[i]['생육일조사지역'] == '울주':
+        elif df.iloc[i]['생육일조사지역'] == '울산':
             dic_ulju = {'station':'ulju', 'year':df.iloc[i]['만개기'].split('-')[0], 'Date':df.iloc[i]['만개기']}
             df_dic = pd.DataFrame([dic_ulju])
             df_ulju = pd.concat([df_ulju, df_dic])
@@ -254,7 +254,6 @@ def get_dvr_graph():
         df['obj_date'] = pd.to_datetime(df['obj_date'], format='%m-%d')
         df['dvs_date'] = pd.to_datetime(df['dvs_date'], format='%m-%d')
 
-
         # # 그래프 그리기
         fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -264,24 +263,24 @@ def get_dvr_graph():
         # 첫 번째 y축: DVS_date
         plt.plot(df['year'], df['dvs_date'], label='dvs_date', color='b', marker='o')
         ax.set_xlabel('Year', fontweight = 'bold')
-        # ax.set_ylabel('DVdate', color='b')
-        # ax.tick_params(axis='y', labelcolor='b')
+
 
         # 두 번째 y축: obj_date
         plt.plot(df['year'], df['obj_date'], label='obj_date', color='r', marker='x')
 
         # 그래프 제목과 축 레이블 설정
-        # plt.title(f'{station}',position=(0.5,-0.5))
         plt.suptitle(f'{station}', fontsize=20, position=(0.5, 0.87))
         plt.ylabel('Full bloom dates', fontweight = 'bold')
         plt.grid(True, alpha=0.5, color='gray')
 
-        # plt.xticks(dvs_date['year'])
+        ax.set_ylim([mdates.date2num(datetime(1900, 3, 16)), mdates.date2num(datetime(1900, 5, 10))])
+
+        plt.xticks(dvs_date['year'])
 
         # 그래프 제목 및 레이아웃 설정
-        # plt.title('DVS_date and obj_date over Years (Shared Y-axis)')
         fig.tight_layout()
         plt.show()
+        plt.savefig()
 
 
 def mDVR_hourly_temp():
@@ -427,7 +426,7 @@ def main():
     # # DVR모델을 위한 데이터 수집
     # # get_data(2004, 2024)
     # # get_other_region_data()
-    # # get_flowering_date()
+    # get_flowering_date()
     # # DVR_model()
     get_dvr_graph()
 
