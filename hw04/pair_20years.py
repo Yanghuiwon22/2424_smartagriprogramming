@@ -290,27 +290,29 @@ def mDVR_hourly_temp():
     # 데이터 불러오기
     output_path = 'output'
     output_list = os.listdir(output_path)
+    output_list = ['Ichen'] # 테스트를 위한 데이터 정리
     for output_folder in output_list:
         file_path = os.listdir(os.path.join(output_path, output_folder))
         for station_file in file_path:
 
             # 현재 데이터 없어서 처리 -> 데이터 생기면 삭제 (보성)
             if not ('wanju' in station_file or 'ulju' in station_file or 'sacheon' in station_file or 'naju' in station_file):
-
-                if not ('flowering_date' in station_file or 'DVS' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
+                if not ('flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
                     df = pd.read_csv(os.path.join(output_path, output_folder, station_file))
-                    print(station_file)
+                    df_hourly_temp = pd.DataFrame()
+
+                    dvr1_sum = 0
+                    dvr2_sum = 0
+                    save_date = None
+                    mDVR_date = None
 
                     for idx, row in df.iterrows():
                         if idx != 0 and idx != len(df)-1:
-                            print(idx)
+
                             hy = df.iloc[idx-1]['tmax']
                             mt = df.iloc[idx+1]['tmin']
                             h = row['tmax']
                             m = row['tmin']
-
-                            test_df = pd.DataFrame()
-                            test_df['시간'] = [i for i in range(24)]
 
                             for i in range(24):
                                 hour = i
@@ -322,7 +324,69 @@ def mDVR_hourly_temp():
                                 elif 14 <= hour <= 23:
                                     temp = (h - mt) * math.sin((28 - hour) * 3.14 / 30) ** 2 + mt
 
-                            test_df.iloc[i]['시간별 기온'] = temp
+                                if 0 <= temp <= 6:
+                                    DVR_1 = 1.333 * 10**-3
+                                elif 6 < temp <= 9:
+                                    DVR_1 = 2.276 * 10**-3 - 1.571 * 10**-4 * temp
+                                elif 9 < temp <= 12:
+                                    DVR_1 = 3.448 * 10**-3 - 2.874 * 10**-4 * temp
+
+                                try:
+                                    dvr1_sum += DVR_1
+                                except:
+                                    pass
+
+                                if dvr1_sum >= 2:
+                                    if not save_date:
+                                        print(f'저온감응기 종료 : {row["Date"]}')
+                                        save_date = row['Date']
+                                    else:
+                                        if temp <= 20:
+                                            DVR_2 = math.exp(35.27 - 12094 * ((temp + 273) ** -1))
+                                        elif 20 <= temp:
+                                            DVR_2 = math.exp(5.82 - 3474 * ((temp + 273) ** -1))
+
+                                        dvr2_sum += DVR_2
+
+                                        if dvr2_sum >= 0.9593:
+                                            if not mDVR_date:
+                                                mDVR_date = row['Date']
+                                                print(f'mDVR 예상 만개일 : {row["Date"]}')
+ 
+
+
+
+
+
+
+
+
+
+                                # if dvr1_sum >= 2:
+                                #     save_date = row['Date']
+                                #     print(f'저온감응기 종료 : {save_date}')
+                                #
+                                #     if dvr2_sum == 0:
+                                #         dvr_list.pop()
+                                #
+                                #     if temp <= 20:
+                                #         DVR_2 = math.exp(35.27 - 12094 * ((temp + 273) ** -1))
+                                #     elif 20 <= temp:
+                                #         DVR_2 = math.exp(5.82 - 3474 * ((temp + 273) ** -1))
+                                #     else:
+                                #         DVR_2 = 0
+                                #
+                                #     dvr2_sum += DVR_2
+                                #     dvr_list.append(DVR_2)
+                                #
+                                #     if dvr2_sum >= 0.9593:
+                                #         print(f'mDVR 예상 만개일 : {row["Date"]}')
+                                #         break
+
+                            # test_df['DVR_1'] = dvr_list
+                            # test_df['시간별 기온'] = temp_list
+
+                            # df_hourly_temp = pd.concat([df_hourly_temp, test_df])
 
                         elif idx == len(df)-1: # 마지막 행은 다음날 행이 없음 ( 구해야 함)
                             pass
@@ -332,6 +396,10 @@ def mDVR_hourly_temp():
                         else: # 첫번째 행일 경우 : 전날의 기상데이터 불러와야 함 (2004년 1월 1일은 전날 데이터가 없음)
                             # print('첫번째 행입니다.')
                             pass
+
+                    if not os.path.exists(f'output/{output_folder}/mDVR'):
+                        os.makedirs(f'output/{output_folder}/mDVR')
+                    df_hourly_temp.to_csv(f'output/{output_folder}/mDVR/{station_file}_hourly_temp.csv', index=False, encoding='utf-8-sig')
 
 
 
