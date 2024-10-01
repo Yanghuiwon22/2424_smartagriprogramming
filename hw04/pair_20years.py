@@ -234,7 +234,6 @@ def main():
 
 def main():
     output_path = 'output'
-    # output_list = os.listdir(output_path)
 
     output_list = ['Ichen'] # 테스트를 위한 데이터 정리
     for station in output_list:
@@ -268,13 +267,13 @@ def main():
 
         # 그래프 제목과 축 레이블 설정
         # plt.title(f'{station}',position=(0.5,-0.5))
-        plt.suptitle( f'{station}' ,fontsize = 20 ,position=(0.5,0.8))
+        plt.suptitle( f'{station}' ,fontsize = 20 ,position=(0.5,0.87))
         plt.xlabel('Year')
         plt.ylabel('Date')
         plt.grid(True, alpha=0.5, color='gray')
 
         plt.legend()
-
+        plt.tight_layout()
         plt.show()
         print(type(obj_date['obj_date']))
         print(type(dvs_date['year']))
@@ -288,8 +287,12 @@ def main():
 
 
 
+# def main():
+#     get_data(2004, 2024)
+#     get_other_region_data()
+#     get_flowering_date()
+#     DVR_model()
 
 
 if __name__ == '__main__':
     main()
-# DVR_model()
