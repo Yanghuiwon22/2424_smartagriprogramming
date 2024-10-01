@@ -1,6 +1,8 @@
 import os
 
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+
 import numpy as np
 import requests
 import pandas as pd
@@ -234,7 +236,6 @@ def main():
     get_other_region_data()
     DVR_model()
 
-
 def get_dvr_graph():
     output_path = 'output'
 
@@ -242,64 +243,46 @@ def get_dvr_graph():
     for station in output_list:
 
         obj_date = pd.read_csv(f'output/{station}/flowering_date_{station}.csv')
+        obj_date = obj_date[['station', 'year', 'Date']]
+        obj_date = obj_date.sort_values(by='year', ascending=True, ignore_index=True)
+        obj_date = obj_date.rename(columns={'Date':'obj_date'})
+        obj_date['station'] = station
+
         dvs_date = pd.read_csv(f'output/{station}/DVS_{station}_model.csv')
+        dvs_date['year'] = dvs_date['Date'].str.split('-').str[0].astype(int)
+        dvs_date = dvs_date[['Station', 'year', 'Date']]
+        dvs_date = dvs_date.rename(columns={'Date':'dvs_date', 'Station':'station'})
 
-        # # 'obj_date'와 'DVS_date'를 datetime 형식으로 변환
-        obj_date['Date'] = pd.to_datetime(obj_date['Date'], errors='coerce')
-        dvs_date['Date'] = pd.to_datetime(dvs_date['Date'])
-        dvs_date['year'] = dvs_date['Date'].dt.year
+        df = pd.merge(obj_date, dvs_date, on=['station','year'], how='inner')
+        df['obj_date'] = df['obj_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2])
+        df['dvs_date'] = df['dvs_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2])
 
+        df['obj_date'] = pd.to_datetime(df['obj_date'], format='%m-%d')
+        df['dvs_date'] = pd.to_datetime(df['dvs_date'], format='%m-%d')
 
-        # # 월-일만 추출해서 새로운 열에 저장
-        obj_date['obj_date'] = obj_date['Date'].apply(lambda x: x.strftime('%m-%d'))
-        # obj_date['obj_date'] = obj_date['Date'].dt.strftime('%m-%d')
-        dvs_date['DVS_date'] = dvs_date['Date'].apply(lambda x: x.strftime('%m-%d'))
-        # dvs_date['DVS_date'] = pd.to_datetime(dvs_date['DVS_date'], format ='%m-%d')
+        # df['obj_date'] = df['obj_date'].dt.strftime('%m-%d')
+        # df['dvs_date'] = df['dvs_date'].dt.strftime('%m-%d')
 
+        print(df.info())
+        # # 그래프 그리기
+        fig, ax = plt.subplots(figsize=(10, 6))
 
-        # # 데이터프레임으로 그래프 그리기
-        plt.figure(figsize=(10, 6))
+        ax.yaxis.set_major_locator(mdates.DayLocator(interval=3))
+        ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
 
+        # 첫 번째 y축: DVS_date
+        plt.plot(df['year'], df['dvs_date'], label='dvs_date', color='b', marker='o')
+        ax.set_xlabel('Year')
+        # ax.set_ylabel('DVdate', color='b')
+        # ax.tick_params(axis='y', labelcolor='b')
 
-        # obj_date 그래프
-        plt.plot(obj_date['year'], obj_date['obj_date'].dropna(),
-                 marker='o', linestyle='-', color='b', label='obj_date')
+        # 두 번째 y축: obj_date
+        plt.plot(df['year'], df['obj_date'], label='obj_date', color='r', marker='x')
 
-        # DVS_date 그래프
-        plt.plot(dvs_date['year'], dvs_date['DVS_date'],
-                 marker='o', linestyle='-', color='r', label='DVS_date')
-
-        # 그래프 제목과 축 레이블 설정
-        # plt.title(f'{station}',position=(0.5,-0.5))
-        plt.suptitle( f'{station}' ,fontsize = 20 ,position=(0.5,0.87))
-        plt.xlabel('Year')
-        plt.ylabel('Date')
-        plt.grid(True, alpha=0.5, color='gray')
-
-        # print(dvs_date['year'])
-        plt.xticks(dvs_date['year'])
-
-
-        print(obj_date)
-        print(dvs_date['DVS_date'])
-        print(obj_date['obj_date'])
-
-
-
-        plt.legend()
-        plt.tight_layout()
+        # 그래프 제목 및 레이아웃 설정
+        plt.title('DVS_date and obj_date over Years (Shared Y-axis)')
+        fig.tight_layout()
         plt.show()
-
-def get_temp_data():
-    output_path = 'output'
-    output_list = os.listdir(output_path)
-
-    selected_columns = []
-    for output_folder in output_list:
-        tmin, tmax
-    # 상주는 tmin, tmax 데이터 있음
-
-
 def mDVR_hourly_temp():
     # 데이터 불러오기
     output_path = 'output'
