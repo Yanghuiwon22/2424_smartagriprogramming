@@ -265,17 +265,27 @@ def get_dvr_graph():
 
         # 첫 번째 y축: DVS_date
         plt.plot(df['year'], df['dvs_date'], label='dvs_date', color='b', marker='o')
-        ax.set_xlabel('Year')
+        ax.set_xlabel('Year', fontweight = 'bold')
         # ax.set_ylabel('DVdate', color='b')
         # ax.tick_params(axis='y', labelcolor='b')
 
         # 두 번째 y축: obj_date
         plt.plot(df['year'], df['obj_date'], label='obj_date', color='r', marker='x')
 
+        # 그래프 제목과 축 레이블 설정
+        # plt.title(f'{station}',position=(0.5,-0.5))
+        plt.suptitle(f'{station}', fontsize=20, position=(0.5, 0.87))
+        plt.ylabel('Full bloom dates', fontweight = 'bold')
+        plt.grid(True, alpha=0.5, color='gray')
+
+        # plt.xticks(dvs_date['year'])
+
         # 그래프 제목 및 레이아웃 설정
-        plt.title('DVS_date and obj_date over Years (Shared Y-axis)')
+        # plt.title('DVS_date and obj_date over Years (Shared Y-axis)')
         fig.tight_layout()
         plt.show()
+
+
 def mDVR_hourly_temp():
     # 데이터 불러오기
     output_path = 'output'
