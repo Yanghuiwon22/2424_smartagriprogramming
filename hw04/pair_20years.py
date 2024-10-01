@@ -276,11 +276,10 @@ def main():
         plt.tight_layout()
         plt.show()
         print(type(obj_date['obj_date']))
-        print(type(dvs_date['year']))
         print(dvs_date)
         print(dvs_date.dtypes)
 
-        # if pd.api.types.is_datetime64_any_dtype(obj_date['Date']):
+        # if pd.api.types.is_datetime64_any_dtype(dvs_date['year']):
         #     print("이 열은 datetime 형식입니다.")
         # else:
         #     print("이 열은 datetime 형식이 아닙니다.")
