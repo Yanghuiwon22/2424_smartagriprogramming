@@ -12,7 +12,7 @@ from datetime import datetime
 import math
 
 def get_data(sy, ey):  # -> api를 통해서 데이터 받아오기
-    station_dic = {'Ichen':203, 'Cheonan':232, 'Sangju':137, 'Yeongcheon':281}
+    station_dic = {'Icheon':203, 'Cheonan':232, 'Sangju':137, 'Yeongcheon':281}
 
     for station, station_code in station_dic.items():
 
@@ -26,7 +26,7 @@ def get_data(sy, ey):  # -> api를 통해서 데이터 받아오기
                 format : 'csv'
             }
 
-            response = requests.get(url, params=params)
+            response = requests.get(url, params=params, verify=False)
             if response.status_code == 200:
                 content = response.json()
                 df = pd.DataFrame(content)
@@ -35,9 +35,10 @@ def get_data(sy, ey):  # -> api를 통해서 데이터 받아오기
                     os.makedirs(f'output/{station}')
 
                 df.to_csv(f'output/{station}/{station}_{sy+i}')
-                print(f'{sy+i}년도 데이터 저장 완.')
+                print(f'{sy+i}년도 데이터 저장 완료.')
             else:
                 print(response.status_code)
+
 
 def DVR_model(): # --> DVR모델
     output_path = 'output'
@@ -420,8 +421,8 @@ def mDVR_hourly_temp():
 
 def main():
 
-    # if not os.path.exists('output'):
-    #     os.makedirs('output')
+    if not os.path.exists('output'):
+        os.makedirs('output')
     #
     # # DVR모델을 위한 데이터 수집
     # # get_data(2004, 2024)
