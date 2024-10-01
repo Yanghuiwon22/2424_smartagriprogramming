@@ -234,6 +234,7 @@ def main():
     get_other_region_data()
     DVR_model()
 
+
 def get_dvr_graph():
     output_path = 'output'
 
@@ -253,10 +254,12 @@ def get_dvr_graph():
         obj_date['obj_date'] = obj_date['Date'].apply(lambda x: x.strftime('%m-%d'))
         # obj_date['obj_date'] = obj_date['Date'].dt.strftime('%m-%d')
         dvs_date['DVS_date'] = dvs_date['Date'].apply(lambda x: x.strftime('%m-%d'))
+        # dvs_date['DVS_date'] = pd.to_datetime(dvs_date['DVS_date'], format ='%m-%d')
 
 
         # # 데이터프레임으로 그래프 그리기
         plt.figure(figsize=(10, 6))
+
 
         # obj_date 그래프
         plt.plot(obj_date['year'], obj_date['obj_date'].dropna(),
@@ -273,14 +276,28 @@ def get_dvr_graph():
         plt.ylabel('Date')
         plt.grid(True, alpha=0.5, color='gray')
 
-        print(dvs_date['year'])
+        # print(dvs_date['year'])
         plt.xticks(dvs_date['year'])
+
+
+        print(obj_date)
+        print(dvs_date['DVS_date'])
+        print(obj_date['obj_date'])
 
 
 
         plt.legend()
         plt.tight_layout()
         plt.show()
+
+def get_temp_data():
+    output_path = 'output'
+    output_list = os.listdir(output_path)
+
+    selected_columns = []
+    for output_folder in output_list:
+        tmin, tmax
+    # 상주는 tmin, tmax 데이터 있음
 
 
 def mDVR_hourly_temp():
