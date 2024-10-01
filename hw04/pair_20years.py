@@ -8,7 +8,7 @@ import requests
 import pandas as pd
 
 import csv
-
+from datetime import datetime
 import math
 
 def get_data(sy, ey):  # -> api를 통해서 데이터 받아오기
@@ -255,7 +255,6 @@ def get_dvr_graph():
         df['obj_date'] = pd.to_datetime(df['obj_date'], format='%m-%d')
         df['dvs_date'] = pd.to_datetime(df['dvs_date'], format='%m-%d')
 
-
         # # 그래프 그리기
         fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -265,24 +264,24 @@ def get_dvr_graph():
         # 첫 번째 y축: DVS_date
         plt.plot(df['year'], df['dvs_date'], label='dvs_date', color='b', marker='o')
         ax.set_xlabel('Year', fontweight = 'bold')
-        # ax.set_ylabel('DVdate', color='b')
-        # ax.tick_params(axis='y', labelcolor='b')
+
 
         # 두 번째 y축: obj_date
         plt.plot(df['year'], df['obj_date'], label='obj_date', color='r', marker='x')
 
         # 그래프 제목과 축 레이블 설정
-        # plt.title(f'{station}',position=(0.5,-0.5))
         plt.suptitle(f'{station}', fontsize=20, position=(0.5, 0.87))
         plt.ylabel('Full bloom dates', fontweight = 'bold')
         plt.grid(True, alpha=0.5, color='gray')
 
-        # plt.xticks(dvs_date['year'])
+        ax.set_ylim([mdates.date2num(datetime(1900, 3, 16)), mdates.date2num(datetime(1900, 5, 10))])
+
+        plt.xticks(dvs_date['year'])
 
         # 그래프 제목 및 레이아웃 설정
-        # plt.title('DVS_date and obj_date over Years (Shared Y-axis)')
         fig.tight_layout()
         plt.show()
+        plt.savefig()
 
 
 def mDVR_hourly_temp():
@@ -428,8 +427,8 @@ def main():
     # # DVR모델을 위한 데이터 수집
     # # get_data(2004, 2024)
     # # get_other_region_data()
-    get_flowering_date()
-    DVR_model()
+    # get_flowering_date()
+    # # DVR_model()
     get_dvr_graph()
 
     # mDVR모델
@@ -439,102 +438,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# 기준온도, 저온요구도, 고온요구도 설정
-tc = 5.4
-cr = -86.4
-Hr = 272
-
-
-# 냉각량 계산 함수
-def chill_days(tmax, tmin, tavg):
-    if 0 <= tc <= tmin <= tmax:
-        cd = 0
-    elif 0 <= tmin <= tc < tmax:
-        cd = -((tavg - tmin) - (tmax - tc) ** 2 / (2 * (tmax - tmin)))
-    elif 0 <= tmin <= tmax <= tc:
-        cd = -(tavg - tmin)
-    elif tmin < 0 <= tmax <= tc:
-        cd = -(tmax ** 2 / (2 * (tmax - tmin)))
-    elif tmin < 0 < tc < tmax:
-        cd = -(tmax ** 2 / (2 * (tmax - tmin))) - ((tmax - tc) ** 2 / (2 * (tmax - tmin)))
-    else:
-        cd = 0
-    return cd
-
-
-# 가온량 계산 함수
-def anti_chill_days(tmax, tmin, tavg):
-    if 0 <= tc <= tmin <= tmax:
-        hr = tavg - tc
-    elif 0 <= tmin <= tc < tmax:
-        hr = (tmax - tc) ** 2 / (2 * (tmax - tmin))
-    elif 0 <= tmin <= tmax <= tc:
-        hr = 0
-    elif tmin < 0 <= tmax <= tc:
-        hr = 0
-    elif tmin < 0 < tc < tmax:
-        hr = (tmax - tc) ** 2 / (2 * (tmax - tmin))
-    else:
-        hr = 0
-    return hr
-
-
-def cd_model():
-    output_path = 'output'
-    output_list = os.listdir(output_path)
-    output_list = ['Ichen']
-    for output_folder in output_list:
-        file_path = os.listdir(os.path.join(output_path, output_folder))
-        for station_file in file_path:
-
-            if not (
-                    'wanju' in station_file or 'ulju' in station_file or 'sacheon' in station_file or 'naju' in station_file):
-                if not (
-                        'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file):  # 기상데이터만 남기기
-                    df = pd.read_csv(os.path.join(output_path, output_folder, station_file))
-
-                    # tavg 계산 추가
-                    df['tavg'] = (df['tmax'] + df['tmin']) / 2
-                    df['cd'] = 0.0  # 냉각량 초기화
-                    df['hr'] = 0.0  # 가온량 초기화
-
-                    cumulative_cd = 0
-                    cumulative_hr = 0
-                    dormancy_released = False
-                    flowering_date = None
-
-                    for idx, row in df.iterrows():
-                        tmax = row['tmax']
-                        tmin = row['tmin']
-                        tavg = row['tavg']
-
-                        # 냉각량 계산
-                        cd_value = chill_days(tmax, tmin, tavg)
-                        df.at[idx, 'cd'] = cd_value
-                        cumulative_cd += cd_value
-
-                        # 저온 요구량에 도달했을 때 내생휴면 해재
-                        if not dormancy_released and cumulative_cd <= cr:
-                            dormancy_released = True
-                            release_date = row['Date']
-                            print(f"내생휴면 해재일: {release_date}")
-
-                        # 내생휴면 해재 후 가온량 계산
-                        if dormancy_released:
-                            hr_value = anti_chill_days(tmax, tmin, tavg)
-                            df.at[idx, 'hr'] = hr_value
-                            cumulative_hr += hr_value
-
-                            # 누적 가온량이 고온 요구량에 도달했을 때 만개일 예측
-                            if cumulative_hr >= Hr and flowering_date is None:
-                                flowering_date = row['Date']
-                                print(f"예상 만개일: {flowering_date}")
-
-                    # 결과 DataFrame을 저장하거나 출력할 수 있음
-                    # df.to_csv(f"{output_folder}_processed.csv", index=False)
-                    print(df[['Date', 'tmax', 'tmin', 'tavg', 'cd', 'hr']])
-
-
-# 함수 실행
-cd_model()
