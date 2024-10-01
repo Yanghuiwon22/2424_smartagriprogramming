@@ -254,11 +254,14 @@ def get_dvr_graph():
         dvs_date = dvs_date.rename(columns={'Date':'dvs_date', 'Station':'station'})
 
         df = pd.merge(obj_date, dvs_date, on=['station','year'], how='inner')
-        df['obj_date'] = df['obj_date'].astype(str).apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2])
-        df['dvs_date'] = df['dvs_date'].astype(str).apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2])
+        df['obj_date'] = df['obj_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2])
+        df['dvs_date'] = df['dvs_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2])
 
-        df['obj_date'] = pd.to_datetime('1900-' + df['obj_date'], format='%Y-%m-%d')
-        df['dvs_date'] = pd.to_datetime('1900-' + df['dvs_date'], format='%Y-%m-%d')
+        df['obj_date'] = pd.to_datetime(df['obj_date'], format='%m-%d')
+        df['dvs_date'] = pd.to_datetime(df['dvs_date'], format='%m-%d')
+
+        # df['obj_date'] = df['obj_date'].dt.strftime('%m-%d')
+        # df['dvs_date'] = df['dvs_date'].dt.strftime('%m-%d')
 
         print(df.info())
         # # 그래프 그리기
