@@ -231,9 +231,10 @@ def get_other_region_data():
 #
 def get_dvr_graph():
     output_path = 'output'
+    output_list = os.listdir(output_path)
 
-    output_list = ['Ichen'] # 테스트를 위한 데이터 정리
     for station in output_list:
+        print(station)
 
         obj_date = pd.read_csv(f'output/{station}/flowering_date_{station}.csv')
         obj_date = obj_date[['station', 'year', 'Date']]
@@ -253,10 +254,7 @@ def get_dvr_graph():
         df['obj_date'] = pd.to_datetime(df['obj_date'], format='%m-%d')
         df['dvs_date'] = pd.to_datetime(df['dvs_date'], format='%m-%d')
 
-        # df['obj_date'] = df['obj_date'].dt.strftime('%m-%d')
-        # df['dvs_date'] = df['dvs_date'].dt.strftime('%m-%d')
 
-        print(df.info())
         # # 그래프 그리기
         fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -352,7 +350,7 @@ def mDVR_hourly_temp():
                                             if not mDVR_date:
                                                 mDVR_date = row['Date']
                                                 print(f'mDVR 예상 만개일 : {row["Date"]}')
- 
+
 
 
 
@@ -431,10 +429,10 @@ def main():
     # # get_other_region_data()
     # # get_flowering_date()
     # # DVR_model()
-    # get_dvr_graph()
+    get_dvr_graph()
 
     # mDVR모델
-    mDVR_hourly_temp()
+    # mDVR_hourly_temp()
 
 
 
