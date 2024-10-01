@@ -239,7 +239,6 @@ def get_dvr_graph():
 
     output_list = ['Ichen'] # 테스트를 위한 데이터 정리
     for station in output_list:
-        print(station)
 
         obj_date = pd.read_csv(f'output/{station}/flowering_date_{station}.csv')
         dvs_date = pd.read_csv(f'output/{station}/DVS_{station}_model.csv')
@@ -274,18 +273,14 @@ def get_dvr_graph():
         plt.ylabel('Date')
         plt.grid(True, alpha=0.5, color='gray')
 
+        print(dvs_date['year'])
+        plt.xticks(dvs_date['year'])
+
+
+
         plt.legend()
         plt.tight_layout()
         plt.show()
-        print(type(obj_date['obj_date']))
-        print(type(dvs_date['year']))
-        print(dvs_date)
-        print(dvs_date.dtypes)
-
-        # if pd.api.types.is_datetime64_any_dtype(obj_date['Date']):
-        #     print("이 열은 datetime 형식입니다.")
-        # else:
-        #     print("이 열은 datetime 형식이 아닙니다.")
 
 
 def mDVR_hourly_temp():
