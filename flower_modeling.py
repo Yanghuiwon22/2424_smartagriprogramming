@@ -1,4 +1,7 @@
 import math
+
+import pandas as pd
+
 # DVR model
 
 pear_a = 107.94
@@ -23,12 +26,19 @@ m = ['오늘 최저기온']
 hy = ['전날 최고기온']
 mt = ['다음날 최저기온']
 
-if 0 <= hour <= 3:
-    temp = (hy - m) * math.sin((4 - hour) * 3.14 / 30)**2 + m
-elif 4 <= hour <= 13:
-    temp = (h - m) * math.sin((hour - 4) * 3.14 / 18)**2 + m
-elif 14 <= hour <= 23:
-    temp = (h - mt) * math.sin((28 - hour) * 3.14 / 30)**2 + mt
+# mDVR model : 전날 최고기온/ 당일 최저기온으로 시간별 기온 구하기
+def mDVR_hourly_temp():
+    df = pd.DataFrame()
+    df['시간'] = [i for i in range(24)]
+    print(df)
+    if 0 <= hour <= 3:
+        temp = (hy - m) * math.sin((4 - hour) * 3.14 / 30)**2 + m
+    elif 4 <= hour <= 13:
+        temp = (h - m) * math.sin((hour - 4) * 3.14 / 18)**2 + m
+    elif 14 <= hour <= 23:
+        temp = (h - mt) * math.sin((28 - hour) * 3.14 / 30)**2 + mt
+
+
 
 
 # DVR_1
