@@ -267,11 +267,14 @@ def get_dvr_graph():
         # # 그래프 그리기
         fig, ax = plt.subplots(figsize=(10, 6))
 
+        ax.yaxis.set_major_locator(mdates.DayLocator(interval=3))
+        ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
+
         # 첫 번째 y축: DVS_date
         plt.plot(df['year'], df['dvs_date'], label='dvs_date', color='b', marker='o')
         ax.set_xlabel('Year')
-        ax.set_ylabel('DVS_date', color='b')
-        ax.tick_params(axis='y', labelcolor='b')
+        # ax.set_ylabel('DVdate', color='b')
+        # ax.tick_params(axis='y', labelcolor='b')
 
         # 두 번째 y축: obj_date
         plt.plot(df['year'], df['obj_date'], label='obj_date', color='r', marker='x')
