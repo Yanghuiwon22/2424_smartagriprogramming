@@ -7,6 +7,8 @@ import pandas as pd
 
 import csv
 
+import math
+
 def get_data(sy, ey):  # -> api를 통해서 데이터 받아오기
     station_dic = {'Ichen':203, 'Cheonan':232, 'Sangju':137, 'Yeongcheon':281}
 
@@ -232,12 +234,11 @@ def main():
     get_other_region_data()
     DVR_model()
 
-def main():
+def get_dvr_graph():
     output_path = 'output'
 
     output_list = ['Ichen'] # 테스트를 위한 데이터 정리
     for station in output_list:
-        print(station)
 
         obj_date = pd.read_csv(f'output/{station}/flowering_date_{station}.csv')
         dvs_date = pd.read_csv(f'output/{station}/DVS_{station}_model.csv')
@@ -272,25 +273,93 @@ def main():
         plt.ylabel('Date')
         plt.grid(True, alpha=0.5, color='gray')
 
+        print(dvs_date['year'])
+        plt.xticks(dvs_date['year'])
+
+
+
         plt.legend()
         plt.tight_layout()
         plt.show()
-        print(type(obj_date['obj_date']))
-        print(dvs_date)
-        print(dvs_date.dtypes)
-
-        # if pd.api.types.is_datetime64_any_dtype(dvs_date['year']):
-        #     print("이 열은 datetime 형식입니다.")
-        # else:
-        #     print("이 열은 datetime 형식이 아닙니다.")
 
 
+def mDVR_hourly_temp():
+    # 데이터 불러오기
+    output_path = 'output'
+    output_list = os.listdir(output_path)
+    for output_folder in output_list:
+        file_path = os.listdir(os.path.join(output_path, output_folder))
+        for station_file in file_path:
 
-# def main():
-#     get_data(2004, 2024)
-#     get_other_region_data()
-#     get_flowering_date()
-#     DVR_model()
+            # 현재 데이터 없어서 처리 -> 데이터 생기면 삭제 (보성)
+            if not ('wanju' in station_file or 'ulju' in station_file or 'sacheon' in station_file or 'naju' in station_file):
+
+                if not ('flowering_date' in station_file or 'DVS' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
+                    df = pd.read_csv(os.path.join(output_path, output_folder, station_file))
+                    print(station_file)
+
+                    for idx, row in df.iterrows():
+                        if idx != 0 and idx != len(df)-1:
+                            hy = df.iloc[idx-1]['tmax']
+                            mt = df.iloc[idx+1]['tmin']
+                            h = row['tmax']
+                            m = row['tmin']
+
+                            # print(hy, mt, h, m)
+
+                        elif idx == len(df)-1: # 마지막 행은 다음날 행이 없음 ( 구해야 함)
+                            print('마지막 행입니다.')
+
+
+                        else: # 첫번째 행일 경우 : 전날의 기상데이터 불러와야 함 (2004년 1월 1일은 전날 데이터가 없음)
+                            print('첫번째 행입니다.')
+
+
+
+
+
+                        # # 함수 작동 부분
+    # df = pd.DataFrame()
+    # df['시간'] = [i for i in range(24)]
+    #
+    # for i in range(len(df)):
+    #     hy = 전날 tmax
+    #     mt = 다음날 tmin
+    #     h = tmax
+    #     m = tmin
+    #
+    #     hour = i
+    #
+    #     if 0 <= hour <= 3:
+    #         temp = (hy - m) * math.sin((4 - hour) * 3.14 / 30)**2 + m
+    #     elif 4 <= hour <= 13:
+    #         temp = (h - m) * math.sin((hour - 4) * 3.14 / 18)**2 + m
+    #     elif 14 <= hour <= 23:
+    #         temp = (h - mt) * math.sin((28 - hour) * 3.14 / 30)**2 + mt
+    #
+    #     df.iloc[i]['시간별 기온'] = temp
+    #
+    # print(df)
+    # df.to_csv(f'output/{output_path}/mDVR/{station}_{year}_hourly_temp.csv', index=False, encoding='utf-8-sig'}
+    #
+
+# def mDVR_model():
+
+def main():
+
+    # if not os.path.exists('output'):
+    #     os.makedirs('output')
+    #
+    # # DVR모델을 위한 데이터 수집
+    # # get_data(2004, 2024)
+    # # get_other_region_data()
+    # # get_flowering_date()
+    # # DVR_model()
+    get_dvr_graph()
+
+    # mDVR모델
+    # mDVR_hourly_temp()
+
 
 
 if __name__ == '__main__':
