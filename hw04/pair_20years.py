@@ -226,11 +226,11 @@ def get_other_region_data():
                 pass
 #
 
-# def main():
-#     # DVR모델을 위한 데이터 수집
-#     get_data(2004, 2024)
-#     get_other_region_data()
-#     DVR_model()
+def main():
+    # DVR모델을 위한 데이터 수집
+    get_data(2004, 2024)
+    get_other_region_data()
+    DVR_model()
 
 def main():
     output_path = 'output'
@@ -248,30 +248,47 @@ def main():
         dvs_date['Date'] = pd.to_datetime(dvs_date['Date'])
         dvs_date['year'] = dvs_date['Date'].dt.year
 
+
         # # 월-일만 추출해서 새로운 열에 저장
         obj_date['obj_date'] = obj_date['Date'].apply(lambda x: x.strftime('%m-%d'))
+        # obj_date['obj_date'] = obj_date['Date'].dt.strftime('%m-%d')
         dvs_date['DVS_date'] = dvs_date['Date'].apply(lambda x: x.strftime('%m-%d'))
+
 
         # # 데이터프레임으로 그래프 그리기
         plt.figure(figsize=(10, 6))
 
         # obj_date 그래프
-        plt.plot(obj_date['year'], obj_date['obj_date'].dropna(), marker='o', linestyle='-', color='b', label='obj_date')
+        plt.plot(obj_date['year'], obj_date['obj_date'].dropna(),
+                 marker='o', linestyle='-', color='b', label='obj_date')
 
         # DVS_date 그래프
-        plt.plot(dvs_date['year'], dvs_date['DVS_date'], marker='o', linestyle='-', color='r', label='DVS_date')
+        plt.plot(dvs_date['year'], dvs_date['DVS_date'],
+                 marker='o', linestyle='-', color='r', label='DVS_date')
 
         # 그래프 제목과 축 레이블 설정
-        plt.title('Obj Date and DVS Date over the Years')
+        # plt.title(f'{station}',position=(0.5,-0.5))
+        plt.suptitle( f'{station}' ,fontsize = 20 ,position=(0.5,0.8))
         plt.xlabel('Year')
         plt.ylabel('Date')
+        plt.grid(True, alpha=0.5, color='gray')
 
         plt.legend()
 
         plt.show()
+        print(type(obj_date['obj_date']))
+        print(type(dvs_date['year']))
+        print(dvs_date)
+        print(dvs_date.dtypes)
+
+        # if pd.api.types.is_datetime64_any_dtype(obj_date['Date']):
+        #     print("이 열은 datetime 형식입니다.")
+        # else:
+        #     print("이 열은 datetime 형식이 아닙니다.")
 
 
-#
+
+
 
 if __name__ == '__main__':
     main()
