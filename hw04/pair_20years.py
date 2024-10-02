@@ -194,6 +194,25 @@ def sort_flowering_date():  # 2004 - 2024년까지 실제 만개일
         result = result[['station', 'year', 'Date']]
         # print(result)
         result.to_csv(f'output/{output_folder}/flowering_date_{output_folder}.csv', index=False, encoding='utf-8-sig')
+
+def get_other_minmax_data():
+    file_list = ['나주 2004 ~ 2013.xlsx', '나주 2014 ~ 2023.xlsx', '나주 2024.xlsx']
+
+    for file in file_list:
+        df = pd.read_excel(file)
+        df['년도'] = pd.to_datetime(df['일시']).dt.year
+        grouped = df.groupby('년도')
+
+        for year, group in grouped:
+            df_original = pd.read_csv(f'output/naju/naju_{year}.csv')
+            group = pd.merge(df_original, group, on=['지점','지점명','년도'], how='outer')
+            group = group.drop(columns=['일시_x', '일시_y'])
+            group = group.rename(columns={'평균기온(°C)':'tavg', '최저기온(°C)':'tmin', '최고기온(°C)':'tmax'})
+            group = group[['지점', '지점명', 'Date', '년도', 'tmin', 'tavg', 'tmax',]]
+
+            group.to_csv(f'output/naju/naju_{year}.csv', index=False, encoding='utf-8-sig')
+
+
 def get_other_region_data():
     file_list = ['aws_data.csv', 'aws_data_2.csv', 'aws_data_3.csv']
     for file in file_list:
@@ -309,10 +328,9 @@ def mDVR_hourly_temp():
     # 데이터 불러오기
     output_path = 'output'
     output_list = os.listdir(output_path)
-    output_list = ['Icheon'] # 테스트를 위한 데이터 정리
+    output_list = ['naju'] # 테스트를 위한 데이터 정리
     for output_folder in output_list:
         file_path = os.listdir(os.path.join(output_path, output_folder))
-        print(output_folder)
 
         df_mdvr_date = pd.DataFrame()
         df_mdvr_date['station'] = [output_folder] * 21
@@ -321,18 +339,26 @@ def mDVR_hourly_temp():
         df_mdvr_date['year'] = [i for i in range(2004, 2025)]
 
         for station_file in file_path:
-
+            print(station_file)
 
             # 현재 데이터 없어서 처리 -> 데이터 생기면 삭제 (보성)
-            if not ('wanju' in station_file or 'ulju' in station_file or 'sacheon' in station_file or 'naju' in station_file):
-                if not ('graph' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
-                    year = station_file.split('_')[1]
-                    print(year)
+            if not ('wanju' in station_file or 'ulju' in station_file or 'sacheon' in station_file):
 
-                    index = df_mdvr_date[df_mdvr_date['year'] == int(year)].index[0]
+                if not ('cd' in station_file or 'graph' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
+                    try:
+                        year = station_file.split('_')[1]
+                        index = df_mdvr_date[df_mdvr_date['year'] == int(year)].index[0]
 
-                    df = pd.read_csv(os.path.join(output_path, output_folder, station_file))
+                    except:
+                        year = station_file.split('_')[1].split('.')[0]
+                        index = df_mdvr_date[df_mdvr_date['year'] == int(year)].index[0]
+
+                    file_path = os.path.join(output_path, output_folder, station_file)
+                    print(file_path)
+                    df = pd.read_csv(file_path)
+                    print(df)
                     df_hourly_temp = pd.DataFrame()
+                    print(f'df_hourly_temp 생성 : \n{df_hourly_temp}')
 
                     dvr1_sum = 0
                     dvr2_sum = 0
@@ -400,7 +426,8 @@ def mDVR_hourly_temp():
 
                     if not os.path.exists(f'output/{output_folder}/mDVR'):
                         os.makedirs(f'output/{output_folder}/mDVR')
-                    df_hourly_temp.to_csv(f'output/{output_folder}/mDVR/{station_file}_hourly_temp.csv', index=False, encoding='utf-8-sig')
+
+                    # df_hourly_temp.to_csv(f'output/{output_folder}/mDVR/{output_folder}_{year}_hourly_temp.csv', index=False, encoding='utf-8-sig')
     df_mdvr_date.to_csv(f'output/{output_folder}/mDVR/{output_folder}_mDVR_date.csv', index=False, encoding='utf-8-sig')
 
                     # # 함수 작동 부분
@@ -517,6 +544,7 @@ def cd_model():
     print(df_cd_date)
     df_cd_date.to_csv(f'output/{output_folder}/cd_{output_folder}_date.csv', index=False, encoding='utf-8-sig')
 
+
 def main():
     if not os.path.exists('output'):
         os.makedirs('output')
@@ -526,13 +554,15 @@ def main():
     # get_other_region_data()
     # get_flowering_date()
     # DVR_model()
-    get_dvr_graph()
+    # get_dvr_graph()
 
     # mDVR모델
-    # mDVR_hourly_temp()
+    mDVR_hourly_temp()
 
     # cd모델
     # cd_model()
+
+    # get_other_minmax_data()
 
 
 
