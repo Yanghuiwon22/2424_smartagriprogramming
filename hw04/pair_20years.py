@@ -51,7 +51,7 @@ def DVR_model(): # --> DVR모델
 
         for file in file_list: #하나의 파일 ex.Icheon_2004
             print(file)
-            if not (f'png' in file or f'DVS_{output_folder}_model.csv' in file or 'input' in file or 'cd' in file or 'flowering_date' in file or 'mDVR' in file):
+            if not (f'png' in file or f'DVS_{output_folder}_model.csv' in file or 'data' in file or 'cd' in file or 'flowering_date' in file or 'mDVR' in file):
                 if file != f'DVS_{output_folder}_model.csv':
                     df = pd.read_csv(os.path.join(output_path, output_folder, file))
 
@@ -196,7 +196,7 @@ def get_other_region_data():
 
 
     for station in output_folder:
-        input_list = os.path.join(output_path, station, 'input')
+        input_list = os.path.join(output_path, station, 'data')
         input_file = os.listdir(input_list)
 
         for file in input_file:
@@ -310,7 +310,7 @@ def mDVR_hourly_temp():
             # 현재 데이터 없어서 처리 -> 데이터 생기면 삭제 (보성)
             # if not ('wanju' in station_file or 'ulju' in station_file or 'sacheon' in station_file):
 
-            if not ('input' in station_file or 'cd' in station_file or 'graph' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
+            if not ('data' in station_file or 'cd' in station_file or 'graph' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
                 try:
                     year = station_file.split('_')[1]
                     index = df_mdvr_date[df_mdvr_date['year'] == int(year)].index[0]
@@ -453,7 +453,7 @@ def cd_model():
         df_cd_date['station'] = [output_folder] * 21
         for station_file in file_path:
 
-            if not ('input' in station_file or
+            if not ('data' in station_file or
                     'cd' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file or 'graph' in station_file):  # 기상데이터만 남기기
                 try:
                     year = station_file.split('_')[1]
