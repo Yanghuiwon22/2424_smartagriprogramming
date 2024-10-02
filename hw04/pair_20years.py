@@ -43,21 +43,17 @@ def DVR_model(): # --> DVR모델
     output_path = 'output'
     output_list = os.listdir(output_path)
 
-    # output_list = ['Ichen'] # 테스트를 위한 데이터 정리
+    # output_list = ['naju'] # 테스트를 위한 데이터 정리
     for output_folder in output_list:
         file_list = os.listdir(os.path.join(output_path, output_folder))
         file_list.sort()
         flowering_df = pd.DataFrame()
 
-        if not f'DVS_{output_folder}_model.csv' in file_list:
-            for i in file_list: #하나의 파일 ex.Icheon_2004
-                print(output_folder)
-
-                if i != f'flowering_date_{output_folder}.csv':
-                    print(i)
-
-                    df = pd.read_csv(os.path.join(output_path, output_folder, i))
-                    # print(df)
+        for file in file_list: #하나의 파일 ex.Icheon_2004
+            print(file)
+            if not (f'png' in file or f'DVS_{output_folder}_model.csv' in file or 'input' in file or 'cd' in file or 'flowering_date' in file or 'mDVR' in file):
+                if file != f'DVS_{output_folder}_model.csv':
+                    df = pd.read_csv(os.path.join(output_path, output_folder, file))
 
                     # DVR모델 계산
                     pear_a = 107.94
@@ -76,10 +72,8 @@ def DVR_model(): # --> DVR모델
                                 df_save = pd.DataFrame([dic])
 
                                 flowering_df = pd.concat([flowering_df, df_save])
-                                print(flowering_df)
                                 break
                     flowering_df.to_csv(f'output/{output_folder}/DVS_{output_folder}_model.csv')
-                        # print(f'output/{output_folder}/DVS_{output_folder}_model.csv')
 
                 else:
                     pass
@@ -195,63 +189,34 @@ def sort_flowering_date():  # 2004 - 2024년까지 실제 만개일
         # print(result)
         result.to_csv(f'output/{output_folder}/flowering_date_{output_folder}.csv', index=False, encoding='utf-8-sig')
 
-def get_other_minmax_data():
-    file_list = ['나주 2004 ~ 2013.xlsx', '나주 2014 ~ 2023.xlsx', '나주 2024.xlsx']
-
-    for file in file_list:
-        df = pd.read_excel(file)
-        df['년도'] = pd.to_datetime(df['일시']).dt.year
-        grouped = df.groupby('년도')
-
-        for year, group in grouped:
-            df_original = pd.read_csv(f'output/naju/naju_{year}.csv')
-            group = pd.merge(df_original, group, on=['지점','지점명','년도'], how='outer')
-            group = group.drop(columns=['일시_x', '일시_y'])
-            group = group.rename(columns={'평균기온(°C)':'tavg', '최저기온(°C)':'tmin', '최고기온(°C)':'tmax'})
-            group = group[['지점', '지점명', 'Date', '년도', 'tmin', 'tavg', 'tmax',]]
-
-            group.to_csv(f'output/naju/naju_{year}.csv', index=False, encoding='utf-8-sig')
-
-
 def get_other_region_data():
-    file_list = ['aws_data.csv', 'aws_data_2.csv', 'aws_data_3.csv']
-    for file in file_list:
-        df = pd.read_csv(file, encoding='cp949')
-        station_dic = {'나주':'naju', '완주':'wanju', '두서':'ulju', '사천':'sacheon'}
+    output_path = 'output'
+    output_folder = ['naju', 'wanju', 'ulju', 'sacheon']
+    # output_folder = ['naju']
 
-        # 지역별 데이터프레임을 저장할 딕셔너리
-        df_dict = {}
 
-        # 각 지점명을 기준으로 데이터프레임 분리하여 딕셔너리에 저장
-        for i in df['지점명'].unique():
-            try:
-                df_dict[station_dic[i]] = df[df['지점명'] == i]
+    for station in output_folder:
+        input_list = os.path.join(output_path, station, 'input')
+        input_file = os.listdir(input_list)
 
-                df_dict[station_dic[i]]['년도'] = pd.to_datetime(df_dict[station_dic[i]]['일시']).dt.year
-                df_dict[station_dic[i]]['tavg'] = df_dict[station_dic[i]]['평균기온(°C)']
-                df_dict[station_dic[i]]['Date'] = df_dict[station_dic[i]]['일시']
+        for file in input_file:
+            file_path = os.path.join(input_list, file)
 
-                # 연도별로 데이터를 저장할 딕셔너리
-                yearly_data_dict = {}
+            df = pd.read_csv(file_path, encoding='euc-kr')
+            df['년도'] = df['일시'].astype(str).str.split('-').str[0]
+            grouped = df.groupby('년도')
 
-                # 연도별로 데이터프레임을 분리하여 딕셔너리에 저장
-                for year, group in df_dict[station_dic[i]].groupby('년도'):
-                    yearly_data_dict[year] = group
-
-                for year, data in yearly_data_dict.items():
-
-                    if not os.path.exists(f'output/{station_dic[i]}'):
-                        os.makedirs(f'output/{station_dic[i]}')
-                    data.to_csv(f'output/{station_dic[i]}/{station_dic[i]}_{year}.csv', index=False, encoding='utf-8-sig')
-
-            except:
-                pass
+            for year, group in grouped:
+                group = group.rename(columns={'평균기온(°C)': 'tavg', '최고기온(°C)': 'tmax', '최저기온(°C)': 'tmin',
+                                              '일시':'Date', '년도':'year', '지점명':'station'})
+                print(group)
+                group.to_csv(f'output/{station}/{station}_{year}.csv', index=False, encoding='utf-8-sig')
 
 def get_dvr_graph():
     output_path = 'output'
     output_list = os.listdir(output_path)
 
-    output_list = ['Icheon'] # 테스트를 위한 데이터 정리
+    # output_list = ['naju'] # 테스트를 위한 데이터 정리
     for station in output_list:
         print(station)
 
@@ -267,7 +232,9 @@ def get_dvr_graph():
         dvs_date = dvs_date.rename(columns={'Date':'dvs_date', 'Station':'station'})
 
         mdvr_date = pd.read_csv(f'output/{station}/mDVR/{station}_mDVR_date.csv')
+        print(mdvr_date)
         mdvr_date = mdvr_date.rename(columns={'Date':'mdvr_date'})
+
 
         cd_date = pd.read_csv(f'output/{station}/cd_{station}_date.csv')
         cd_date = cd_date.rename(columns={'예상 만개일':'cd_date'})
@@ -313,122 +280,115 @@ def get_dvr_graph():
         plt.ylabel('Full bloom dates', fontweight = 'bold')
         plt.grid(True, alpha=0.5, color='gray')
 
-        ax.set_ylim([mdates.date2num(datetime(1900, 4, 1)), mdates.date2num(datetime(1900, 5, 20))])
+        ax.set_ylim([mdates.date2num(datetime(1900, 3, 15)), mdates.date2num(datetime(1900, 5, 20))])
 
         plt.xticks(dvs_date['year'])
 
         # 그래프 제목 및 레이아웃 설정
         fig.tight_layout()
         plt.legend()
-        plt.show()
-        # plt.savefig(f'output/{station}/dvs_{station}_graph.png')
+        # plt.show()
+        plt.savefig(f'output/{station}/dvs_{station}_graph.png')
 
 
 def mDVR_hourly_temp():
     # 데이터 불러오기
     output_path = 'output'
     output_list = os.listdir(output_path)
-    output_list = ['naju'] # 테스트를 위한 데이터 정리
+    # output_list = ['naju'] # 테스트를 위한 데이터 정리
     for output_folder in output_list:
         file_path = os.listdir(os.path.join(output_path, output_folder))
+        # file_path = ['naju_2004.csv']
 
         df_mdvr_date = pd.DataFrame()
         df_mdvr_date['station'] = [output_folder] * 21
-
-
         df_mdvr_date['year'] = [i for i in range(2004, 2025)]
 
         for station_file in file_path:
             print(station_file)
 
             # 현재 데이터 없어서 처리 -> 데이터 생기면 삭제 (보성)
-            if not ('wanju' in station_file or 'ulju' in station_file or 'sacheon' in station_file):
+            # if not ('wanju' in station_file or 'ulju' in station_file or 'sacheon' in station_file):
 
-                if not ('cd' in station_file or 'graph' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
-                    try:
-                        year = station_file.split('_')[1]
-                        index = df_mdvr_date[df_mdvr_date['year'] == int(year)].index[0]
+            if not ('input' in station_file or 'cd' in station_file or 'graph' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
+                try:
+                    year = station_file.split('_')[1]
+                    index = df_mdvr_date[df_mdvr_date['year'] == int(year)].index[0]
 
-                    except:
-                        year = station_file.split('_')[1].split('.')[0]
-                        index = df_mdvr_date[df_mdvr_date['year'] == int(year)].index[0]
+                except:
+                    year = station_file.split('_')[1].split('.')[0]
+                    index = df_mdvr_date[df_mdvr_date['year'] == int(year)].index[0]
 
-                    file_path = os.path.join(output_path, output_folder, station_file)
-                    print(file_path)
-                    df = pd.read_csv(file_path)
-                    print(df)
-                    df_hourly_temp = pd.DataFrame()
-                    print(f'df_hourly_temp 생성 : \n{df_hourly_temp}')
+                file_path = os.path.join(output_path, output_folder, station_file)
+                df = pd.read_csv(file_path)
+                df_hourly_temp = pd.DataFrame()
 
-                    dvr1_sum = 0
-                    dvr2_sum = 0
-                    save_date = None
-                    mDVR_date = None
+                dvr1_sum = 0
+                dvr2_sum = 0
+                save_date = None
+                mDVR_date = None
 
-                    for idx, row in df.iterrows():
-                        if idx != 0 and idx != len(df)-1:
+                for idx, row in df.iterrows():
+                    if idx != 0 and idx != len(df)-1:
 
-                            hy = df.iloc[idx-1]['tmax']
-                            mt = df.iloc[idx+1]['tmin']
-                            h = row['tmax']
-                            m = row['tmin']
+                        hy = df.iloc[idx-1]['tmax']
+                        mt = df.iloc[idx+1]['tmin']
+                        h = row['tmax']
+                        m = row['tmin']
 
-                            for i in range(24):
-                                hour = i
+                        temp_list = []
+                        df_daily = pd.DataFrame()
+                        df_daily['Date'] = [row['Date']] * 24
+                        df_daily['hour'] = [i for i in range(24)]
+                        df_daily['station'] = [output_folder] * 24
+                        for i in range(24):
+                            hour = i
 
-                                if 0 <= hour <= 3:
-                                    temp = (hy - m) * math.sin((4 - hour) * 3.14 / 30) ** 2 + m
-                                elif 4 <= hour <= 13:
-                                    temp = (h - m) * math.sin((hour - 4) * 3.14 / 18) ** 2 + m
-                                elif 14 <= hour <= 23:
-                                    temp = (h - mt) * math.sin((28 - hour) * 3.14 / 30) ** 2 + mt
+                            if 0 <= hour <= 3:
+                                temp = (hy - m) * math.sin((4 - hour) * 3.14 / 30) ** 2 + m
+                            elif 4 <= hour <= 13:
+                                temp = (h - m) * math.sin((hour - 4) * 3.14 / 18) ** 2 + m
+                            elif 14 <= hour <= 23:
+                                temp = (h - mt) * math.sin((28 - hour) * 3.14 / 30) ** 2 + mt
 
-                                if 0 <= temp <= 6:
-                                    DVR_1 = 1.333 * 10**-3
-                                elif 6 < temp <= 9:
-                                    DVR_1 = 2.276 * 10**-3 - 1.571 * 10**-4 * temp
-                                elif 9 < temp <= 12:
-                                    DVR_1 = 3.448 * 10**-3 - 2.874 * 10**-4 * temp
+                            temp_list.append(temp)
 
-                                try:
-                                    dvr1_sum += DVR_1
-                                except:
-                                    pass
+                            if 0 <= temp <= 6:
+                                DVR_1 = 1.333 * 10**-3
+                            elif 6 < temp <= 9:
+                                DVR_1 = 2.276 * 10**-3 - 1.571 * 10**-4 * temp
+                            elif 9 < temp <= 12:
+                                DVR_1 = 3.448 * 10**-3 - 2.874 * 10**-4 * temp
 
-                                if dvr1_sum >= 2:
-                                    if not save_date:
-                                        # print(f'저온감응기 종료 : {row["Date"]}')
-                                        save_date = row['Date']
-                                    else:
-                                        if temp <= 20:
-                                            DVR_2 = math.exp(35.27 - 12094 * ((temp + 273) ** -1))
-                                        elif 20 <= temp:
-                                            DVR_2 = math.exp(5.82 - 3474 * ((temp + 273) ** -1))
+                            try:
+                                dvr1_sum += DVR_1
+                            except:
+                                pass
 
-                                        dvr2_sum += DVR_2
+                            if dvr1_sum >= 2:
+                                if not save_date:
+                                    save_date = row['Date']
+                                else:
+                                    if temp <= 20:
+                                        DVR_2 = math.exp(35.27 - 12094 * ((temp + 273) ** -1))
+                                    elif 20 <= temp:
+                                        DVR_2 = math.exp(5.82 - 3474 * ((temp + 273) ** -1))
 
-                                        if dvr2_sum >= 0.9593:
-                                            if not mDVR_date:
-                                                mDVR_date = row['Date']
-                                                df_mdvr_date.loc[index, 'Date'] = mDVR_date
-                                                # print(f'mDVR 예상 만개일 : {row["Date"]}')
+                                    dvr2_sum += DVR_2
 
+                                    if dvr2_sum >= 0.9593:
+                                        if not mDVR_date:
+                                            mDVR_date = row['Date']
+                                            df_mdvr_date.loc[index, 'Date'] = mDVR_date
 
+                        df_daily['temp'] = temp_list
+                        df_hourly_temp = pd.concat([df_hourly_temp, df_daily])
 
-                        elif idx == len(df)-1: # 마지막 행은 다음날 행이 없음 ( 구해야 함)
-                            pass
-                            # print('마지막 행입니다.')
+            if not os.path.exists(f'output/{output_folder}/mDVR'):
+                os.makedirs(f'output/{output_folder}/mDVR')
 
-
-                        else: # 첫번째 행일 경우 : 전날의 기상데이터 불러와야 함 (2004년 1월 1일은 전날 데이터가 없음)
-                            # print('첫번째 행입니다.')
-                            pass
-
-                    if not os.path.exists(f'output/{output_folder}/mDVR'):
-                        os.makedirs(f'output/{output_folder}/mDVR')
-
-                    # df_hourly_temp.to_csv(f'output/{output_folder}/mDVR/{output_folder}_{year}_hourly_temp.csv', index=False, encoding='utf-8-sig')
-    df_mdvr_date.to_csv(f'output/{output_folder}/mDVR/{output_folder}_mDVR_date.csv', index=False, encoding='utf-8-sig')
+                # df_hourly_temp.to_csv(f'output/{output_folder}/mDVR/{output_folder}_{year}_hourly_temp.csv', index=False, encoding='utf-8-sig')
+        df_mdvr_date.to_csv(f'output/{output_folder}/mDVR/{output_folder}_mDVR_date.csv', index=False, encoding='utf-8-sig')
 
                     # # 함수 작동 부분
     # df = pd.DataFrame()
@@ -486,83 +446,78 @@ def cd_model():
     # 데이터 불러오기
     output_path = 'output'
     output_list = os.listdir(output_path)
-    output_list = ['Icheon']  # 테스트를 위한 데이터 정리
     for output_folder in output_list:
         file_path = os.listdir(os.path.join(output_path, output_folder))
         df_cd_date = pd.DataFrame()
         df_cd_date['year'] = [i for i in range(2004, 2025)]
         df_cd_date['station'] = [output_folder] * 21
         for station_file in file_path:
-            # print(station_file)
 
-            # 현재 데이터 없어서 처리 -> 데이터 생기면 삭제
-            if not (
-                    'wanju' in station_file or 'ulju' in station_file or 'sacheon' in station_file or 'naju' in station_file ):
-                if not (
-                        'cd' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file or 'graph' in station_file):  # 기상데이터만 남기기
+            if not ('input' in station_file or
+                    'cd' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file or 'graph' in station_file):  # 기상데이터만 남기기
+                try:
                     year = station_file.split('_')[1]
-
-                    df = pd.read_csv(os.path.join(output_path, output_folder, station_file))
+                    index = df_cd_date[df_cd_date['year'] == int(year)].index[0]
+                except:
+                    year = station_file.split('_')[1].split('.')[0]
                     index = df_cd_date[df_cd_date['year'] == int(year)].index[0]
 
-                    # tavg 계산 추가
-                    df['tavg'] = (df['tmax'] + df['tmin']) / 2
-                    df['cd'] = 0  # 냉각량 초기화
-                    df['hr'] = 0  # 가온량 초기화
+                df = pd.read_csv(os.path.join(output_path, output_folder, station_file))
+                # tavg 계산 추가
+                df['tavg'] = (df['tmax'] + df['tmin']) / 2
+                df['cd'] = 0  # 냉각량 초기화
+                df['hr'] = 0  # 가온량 초기화
 
-                    cumulative_cd = 0
-                    cumulative_hr = 0
-                    dormancy_released = False
-                    flowering_date = None
+                cumulative_cd = 0
+                cumulative_hr = 0
+                dormancy_released = False
+                flowering_date = None
 
-                    for idx, row in df.iterrows():
-                        tmax = row['tmax']
-                        tmin = row['tmin']
-                        tavg = row['tavg']
+                for idx, row in df.iterrows():
+                    tmax = row['tmax']
+                    tmin = row['tmin']
+                    tavg = row['tavg']
 
-                        # 냉각량 계산
-                        cd_value = chill_days(tmax, tmin, tavg)
-                        df.at[idx, 'cd'] = cd_value
-                        cumulative_cd += cd_value
+                    # 냉각량 계산
+                    cd_value = chill_days(tmax, tmin, tavg)
+                    df.at[idx, 'cd'] = cd_value
+                    cumulative_cd += cd_value
 
-                        # 저온 요구량에 도달했을 때 내생휴면 해재
-                        if not dormancy_released and cumulative_cd <= cr:
-                            dormancy_released = True
-                            release_date = row['Date']
-                            df_cd_date.loc[index, '내생휴면 해제일'] = release_date
+                    # 저온 요구량에 도달했을 때 내생휴면 해재
+                    if not dormancy_released and cumulative_cd <= cr:
+                        dormancy_released = True
+                        release_date = row['Date']
+                        df_cd_date.loc[index, '내생휴면 해제일'] = release_date
 
-                        # 내생휴면 해재 후 가온량 계산
-                        if dormancy_released:
-                            hr_value = anti_chill_days(tmax, tmin, tavg)
-                            df.at[idx, 'hr'] = hr_value
-                            cumulative_hr += hr_value
+                    # 내생휴면 해재 후 가온량 계산
+                    if dormancy_released:
+                        hr_value = anti_chill_days(tmax, tmin, tavg)
+                        df.at[idx, 'hr'] = hr_value
+                        cumulative_hr += hr_value
 
-                            # 누적 가온량이 고온 요구량에 도달했을 때 만개일 예측
-                            if cumulative_hr >= Hr and flowering_date is None:
-                                flowering_date = row['Date']
-                                df_cd_date.loc[index, '예상 만개일'] = flowering_date
-    print(df_cd_date)
-    df_cd_date.to_csv(f'output/{output_folder}/cd_{output_folder}_date.csv', index=False, encoding='utf-8-sig')
+                        # 누적 가온량이 고온 요구량에 도달했을 때 만개일 예측
+                        if cumulative_hr >= Hr and flowering_date is None:
+                            flowering_date = row['Date']
+                            df_cd_date.loc[index, '예상 만개일'] = flowering_date
 
+        df_cd_date.to_csv(f'output/{output_folder}/cd_{output_folder}_date.csv', index=False, encoding='utf-8-sig')
 
 def main():
     if not os.path.exists('output'):
         os.makedirs('output')
-    #
+
     # # DVR모델을 위한 데이터 수집
     # get_data(2004, 2024)
     # get_other_region_data()
     # get_flowering_date()
     # DVR_model()
-    # get_dvr_graph()
+    get_dvr_graph()
 
     # mDVR모델
-    mDVR_hourly_temp()
+    # mDVR_hourly_temp()
 
     # cd모델
     # cd_model()
-
-    # get_other_minmax_data()
 
 
 
