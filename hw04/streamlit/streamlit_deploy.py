@@ -17,11 +17,11 @@ tab1, tab2= st.tabs(['Tab A' , 'Tab B'])
 tab1. write('Hello')
 tab2. write('i want to go home')
 
-
+# app-indicator
 with st.sidebar:
     choice = option_menu("app menu", ["페이지1", "project", "페이지3"],
                          icons=['house', 'kanban', 'envelope'],
-                         menu_icon="app-indicator", default_index=0,
+                         menu_icon="folder", default_index=0,
                          styles={
                              "container": {"padding": "4!important", "background-color": "#fafafa"},
                              "icon": {"color": "black", "font-size": "25px"},
