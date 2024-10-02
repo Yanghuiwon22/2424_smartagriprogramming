@@ -19,8 +19,8 @@ tab2. write('i want to go home')
 
 
 with st.sidebar:
-    choice = option_menu("Menu", ["페이지1", "페이지2", "페이지3"],
-                         icons=['house', 'kanban', 'bi bi-robot'],
+    choice = option_menu("app menu", ["페이지1", "project", "페이지3"],
+                         icons=['house', 'kanban', 'envelope'],
                          menu_icon="app-indicator", default_index=0,
                          styles={
                              "container": {"padding": "4!important", "background-color": "#fafafa"},
@@ -39,12 +39,3 @@ map_data = pd.DataFrame(
     columns=['lat', 'lon'])
 
 st.map(map_data)
-
-
-number = st.number_input('구구단 숫자 입력 : ', min_value=1, max_value=10)
-
-if number:
-    st.write(f'{number}단')
-    for i in range(1,10):
-        result = number * i
-        st.write(f'{number} x {i} = {result}')
