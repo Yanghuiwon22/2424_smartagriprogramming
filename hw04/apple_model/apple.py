@@ -181,23 +181,6 @@ def cd_model():
 
         cd_df.to_csv(f'output/{station}/{station}_cd.csv', index=False)
 
-def dm_gdh_model():
-
-    # DM 모델 구현
-
-
-    # GDH 모델 구현
-    Tb = 4
-    Tu =25
-    Tc = 36
-
-    if Tb < Th <= Tu:
-        GDH = (Tu - Tb)/2 * (1+math.cos(math.pi + math.pi*(Th - Tb)/(Tu - Tb)))
-    elif Tu < Th <= Tc:
-        GDH = (Tu-Tb) * (1+math.cos(math.pi/2 + math.pi/2*(Th-Tu)/(Tc-Tu)))
-    else:
-        GDH = 0
-
 def concat_result():
     station_list = os.listdir('output')
     for station in station_list:
@@ -234,9 +217,6 @@ def main():
     if not os.path.exists('output'):
         os.makedirs('output')
 
-    # 엑셀 형태의 데이터 -> csv파일의 형태로 변경하기 ( 처음에만 하면 됌 ) --> 논문 구현
-    # xls2csv()
-
     # api.taegon.kr 데이터 가져오기  --> 최초 1회
     get_data(2021, 2024)
 
@@ -248,9 +228,6 @@ def main():
 
     # 세번째 모델 돌리기 : CD모델
     # cd_model()
-
-    # 네번째 모델 돌리기 : DM + GDH 모델
-    # dm_gdh_model()
 
     # ( DVR1, DVR2, CD모델 결과 + 실제 만개일 ) 파일 합치기
     concat_result()
