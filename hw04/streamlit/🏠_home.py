@@ -3,15 +3,16 @@ from streamlit_option_menu import option_menu
 import numpy as np
 import pandas as pd
 
-st.title('streamlit example')
+# 윈도우 마침표'.' -> 이미지
 
-# st.header('this is header')
+st.set_page_config(layout="wide")
+
+st.title('개화예측 모델')
+
+st.header('this is header')
 # st.subheader('this is subheader')
 # st.checkbox('this is checkbox1')
-col1,col2 = st.columns([2,3])
-col1.title(' i am column1  title !! ')
-col2.title(' i am column2  title !! ')
-col2.checkbox('this is checkbox2 in col2 ')
+
 
 tab1, tab2= st.tabs(['Tab A' , 'Tab B'])
 tab1. write('Hello')
@@ -19,7 +20,7 @@ tab2. write('i want to go home')
 
 # app-indicator
 with st.sidebar:
-    choice = option_menu("app menu", ["페이지1", "project", "페이지3"],
+    choice = option_menu("모델 선택", ["배", "사과", "페이지3"],
                          icons=['house', 'kanban', 'envelope'],
                          menu_icon="folder", default_index=0,
                          styles={

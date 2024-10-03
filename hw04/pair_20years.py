@@ -12,7 +12,7 @@ from datetime import datetime
 import math
 
 def get_data(sy, ey):  # -> api를 통해서 데이터 받아오기
-    station_dic = {'Icheon':203, 'Cheonan':232, 'Sangju':137, 'Yeongcheon':281}
+    station_dic = {'Icheon':203, 'Cheonan':232, 'Sangju':137, 'Yeongcheon':281,'naju' :710, 'wanju':734, 'ulju':900, 'sacheon':917}
 
     for station, station_code in station_dic.items():
 
@@ -51,7 +51,7 @@ def DVR_model(): # --> DVR모델
 
         for file in file_list: #하나의 파일 ex.Icheon_2004
             print(file)
-            if not (f'png' in file or f'DVS_{output_folder}_model.csv' in file or 'data' in file or 'cd' in file or 'flowering_date' in file or 'mDVR' in file):
+            if not ('input' in file or f'png' in file or f'DVS_{output_folder}_model.csv' in file or 'data' in file or 'cd' in file or 'flowering_date' in file or 'mDVR' in file):
                 if file != f'DVS_{output_folder}_model.csv':
                     df = pd.read_csv(os.path.join(output_path, output_folder, file))
 
@@ -196,7 +196,7 @@ def get_other_region_data():
 
 
     for station in output_folder:
-        input_list = os.path.join(output_path, station, 'data')
+        input_list = os.path.join(output_path, station, 'input')
         input_file = os.listdir(input_list)
 
         for file in input_file:
@@ -290,7 +290,6 @@ def get_dvr_graph():
         # plt.show()
         plt.savefig(f'output/{station}/dvs_{station}_graph.png')
 
-
 def mDVR_hourly_temp():
     # 데이터 불러오기
     output_path = 'output'
@@ -310,7 +309,7 @@ def mDVR_hourly_temp():
             # 현재 데이터 없어서 처리 -> 데이터 생기면 삭제 (보성)
             # if not ('wanju' in station_file or 'ulju' in station_file or 'sacheon' in station_file):
 
-            if not ('data' in station_file or 'cd' in station_file or 'graph' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
+            if not ('data' in station_file or 'input' in station_file or 'cd' in station_file or 'graph' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file): # --> 여기까지 : 모든 파일에 대해 기상데이터만 남기기
                 try:
                     year = station_file.split('_')[1]
                     index = df_mdvr_date[df_mdvr_date['year'] == int(year)].index[0]
@@ -453,8 +452,9 @@ def cd_model():
         df_cd_date['station'] = [output_folder] * 21
         for station_file in file_path:
 
-            if not ('data' in station_file or
+            if not ('data' in station_file or 'input' in station_file or
                     'cd' in station_file or 'flowering_date' in station_file or 'DVS' in station_file or 'mDVR' in station_file or 'graph' in station_file):  # 기상데이터만 남기기
+                print(station_file)
                 try:
                     year = station_file.split('_')[1]
                     index = df_cd_date[df_cd_date['year'] == int(year)].index[0]
@@ -506,18 +506,18 @@ def main():
     if not os.path.exists('output'):
         os.makedirs('output')
 
-    # # DVR모델을 위한 데이터 수집
-    # get_data(2004, 2024)
-    # get_other_region_data()
-    # get_flowering_date()
-    # DVR_model()
-    get_dvr_graph()
+    # 모델을 위한 데이터 수집
+    # get_data(2004, 2024) # api.taegon.kr에서 4개의 지역 데이터 저장
+    get_other_region_data() # 나머지 4개의 데이터 정리 (원본 데이터 : station/input/~.csv)
+    get_flowering_date() # 실제 만개일 데이터 => 지역별 저장 (원본 데이터 : obs_date.txt)
 
-    # mDVR모델
-    # mDVR_hourly_temp()
+    # 모델 돌리기
+    DVR_model()
+    mDVR_hourly_temp() # mDVR모델
+    cd_model()
 
-    # cd모델
-    # cd_model()
+    # 시각화 코드
+    get_dvr_graph() # 3개의 모델을 돌리고 진행 : 데이터 시각화
 
 
 
