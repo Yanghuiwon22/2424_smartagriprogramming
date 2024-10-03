@@ -56,7 +56,8 @@ def draw_graph():
     for station in output_list:
         print(station)
         # hw04 / output / Cheonan / flowering_date_Cheonan.csv
-        obj_date = pd.read_csv(f'output/{station}/flowering_date_{station}.csv')
+        obj_date = pd.read_csv(f'C:\code\2424_smartagriprogramming\hw04\output\Cheonan\flowering_date_Cheonan.csv')
+        # obj_date = pd.read_csv(f'../../output/{station}/flowering_date_{station}.csv')
         obj_date = obj_date[['station', 'year', 'Date']]
         obj_date = obj_date.sort_values(by='year', ascending=True, ignore_index=True)
         obj_date = obj_date.rename(columns={'Date': 'obj_date'})
