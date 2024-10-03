@@ -32,8 +32,11 @@ with st.sidebar:
                          }
                          )
 
-# st.sidebar.title('this is sidebar')
-# st.sidebar.checkbox('체크박스에 표시될 문구')
+
+
+
+
+
 
 map_data = pd.DataFrame(
     np.random.randn(100, 2) / [50, 50] + [37.514575, 127.0495556],
