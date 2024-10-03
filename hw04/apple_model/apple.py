@@ -214,6 +214,20 @@ def concat_result():
         result_df = pd.merge(result_df, cd_df, on=['year', 'station'], how='outer')
         result_df = pd.merge(result_df, flowering_df, on=['year', 'station'], how='outer')
 
+        result_df['dvr1'] = result_df['dvr1'].astype(str).apply(lambda x: x[4:])
+        result_df['dvr2'] = result_df['dvr2'].astype(str).apply(lambda x: x[4:])
+        result_df['cd'] = result_df['cd'].astype(str).apply(lambda x: x[4:])
+        result_df['obj'] = result_df['obj'].astype(str).apply(lambda x: x[5:])
+
+        result_df['dvr1'] = result_df['dvr1'].apply(lambda x: f"{x[:2]}-{x[2:]}")
+        result_df['dvr2'] = result_df['dvr2'].apply(lambda x: f"{x[:2]}-{x[2:]}")
+        result_df['cd'] = result_df['cd'].apply(lambda x: f"{x[:2]}-{x[2:]}")
+
+        result_df['dvr1'] = pd.to_datetime(result_df['dvr1'], format='%m-%d')
+        result_df['dvr2'] = pd.to_datetime(result_df['dvr2'], format='%m-%d')
+        result_df['cd'] = pd.to_datetime(result_df['cd'], format='%m-%d')
+        result_df['obj'] = pd.to_datetime(result_df['obj'], format='%m-%d')
+
         result_df.to_csv(f'output/{station}/{station}_result.csv', index=False)
 
 def main():
@@ -239,7 +253,7 @@ def main():
     # dm_gdh_model()
 
     # ( DVR1, DVR2, CD모델 결과 + 실제 만개일 ) 파일 합치기
-    # concat_result()
+    concat_result()
 
 
 if __name__ == '__main__':
