@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+import math
 def xls2csv():
     data_dir = 'data'
     for dir in os.listdir(data_dir):
@@ -134,6 +135,24 @@ def cd_model():
         cd_df.to_csv(f'output/{station}/{station}_cd.csv', index=False)
 
 
+
+def dm_gdh_model():
+
+    # DM 모델 구현
+
+
+    # GDH 모델 구현
+    Tb = 4
+    Tu =25
+    Tc = 36
+
+    if Tb < Th <= Tu:
+        GDH = (Tu - Tb)/2 * (1+math.cos(math.pi + math.pi*(Th - Tb)/(Tu - Tb)))
+    elif Tu < Th <= Tc:
+        GDH = (Tu-Tb) * (1+math.cos(math.pi/2 + math.pi/2*(Th-Tu)/(Tc-Tu)))
+    else:
+        GDH = 0
+
 def main():
     if not os.path.exists('output'):
         os.makedirs('output')
@@ -148,8 +167,10 @@ def main():
     # dvr2()
 
     # 세번째 모델 돌리기 : CD모델
-    cd_model()
+    # cd_model()
 
+    # 네번째 모델 돌리기 : DM + GDH 모델
+    # dm_gdh_model()
 
 if __name__ == '__main__':
    main()
