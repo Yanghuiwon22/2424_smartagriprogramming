@@ -1,23 +1,17 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-import numpy as np
+import sys, os
 import pandas as pd
 from PIL import Image
+
+import plotly.graph_objects as go
+from datetime import datetime
+import numpy as np
 import glob
-import sys, os
 import pathlib
-
-#
-# # # hw04/pair_20years.py
-# # # 상위 폴더 경로를 추가
-# sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))))
-# # 절대 경로 추가
-# # sys.path.append('/absolute/path/to/project/utils')
-# # cur_dir = os.getcwd()
-# # print(os.path.dirname(os.path.abspath(os.path.dirname(cur_dir))))
-# from hw04.pair_20years import get_dvr_graph  # 상위 폴더의 파일을 import
-
-
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import math
 
 
 st.title('🍐 신고 배 개화예측 모델')
@@ -51,27 +45,48 @@ def draw_graph():
     output_path = '../../output'
     output_list = os.listdir(output_path)
     print(output_list)
+    st.write(f"Current working directory: {os.getcwd()}")
 
-    # output_list = ['naju'] # 테스트를 위한 데이터 정리
+    # C:\code\2424_smartagriprogramming 현재 directory
+# 파일 절대 경로
+    # C:\code\2424_smartagriprogramming\hw04\output\Cheonan\DVS_Cheonan_model.csv
+
+    # output_list = ['Cheonan'] # 테스트를 위한 데이터 정리
     for station in output_list:
         print(station)
         # hw04 / output / Cheonan / flowering_date_Cheonan.csv
-        # obj_date = pd.read_csv(f'C:\code\2424_smartagriprogramming\hw04\output\Cheonan\flowering_date_Cheonan.csv')
-        obj_date = pd.read_csv(f'../../output/{station}/flowering_date_{station}.csv')
+        # df = pd.read_csv('./hw04/streamlit/pages/Chungju_result.csv')
+        # 파일의 절대경로 읽어옴 -> 상대경로로 어려움,,, 모르겠음,,,
+        # ovj 데이터 읽어오기
+        obj_date = pd.read_csv(f'C:/code/2424_smartagriprogramming/hw04/output/{station}/flowering_date_{station}.csv')
         obj_date = obj_date[['station', 'year', 'Date']]
         obj_date = obj_date.sort_values(by='year', ascending=True, ignore_index=True)
         obj_date = obj_date.rename(columns={'Date': 'obj_date'})
         obj_date['station'] = station
-
-        dvs_date = pd.read_csv(f'output/{station}/DVS_{station}_model.csv')
+        # dvs 데이터 읽어오기
+        # dvs_date = pd.read_csv(f'output/{station}/DVS_{station}_model.csv')
+        dvs_date = pd.read_csv(f'C:/code/2424_smartagriprogramming/hw04/output/{station}/DVS_{station}_model.csv')
         dvs_date['year'] = dvs_date['Date'].str.split('-').str[0].astype(int)
         dvs_date = dvs_date[['Station', 'year', 'Date']]
         dvs_date = dvs_date.rename(columns={'Date': 'dvs_date', 'Station': 'station'})
-    print(obj_date)
-    print(dvs_date)
 
+        # mdvr 데이터 읽어오기
+        mdvr_date = pd.read_csv(f'C:/code/2424_smartagriprogramming/hw04/output/{station}/DVS_{station}_model.csv')
+        # mdvr_date = pd.read_csv(f'output/{station}/mDVR/{station}_mDVR_date.csv')
+        mdvr_date = mdvr_date.rename(columns={'Date': 'mdvr_date'})
 
+        # cd데이터 읽어오기
+        cd_date = pd.read_csv(f'C:/code/2424_smartagriprogramming/hw04/output/{station}/DVS_{station}_model.csv')
+        # cd_date = pd.read_csv(f'output/{station}/cd_{station}_date.csv')
+        cd_date = cd_date.rename(columns={'예상 만개일': 'cd_date'})
 
+        # 데이터 정리
+        df = pd.merge(obj_date, dvs_date, on=['station', 'year'], how='outer')
+        df = pd.merge(df, mdvr_date, on=['station', 'year'], how='outer')
+        df = pd.merge(df, cd_date, on=['station', 'year'], how='outer')
+
+        df = df.sort_values(by='year', ignore_index=True)
+        print(df)
 
 
 
@@ -89,11 +104,18 @@ def sidebar():
                                  "nav-link-selected": {"background-color": "#08c7b4"},
                              }
                              )
+    if choice == "전체 모델 비교":
+        station_dic = {'천안': 'Cheonan', '이천': 'Icheon', '나주': 'naju', '사천': 'sacheon','상주':'Sangju',
+                       '울주':'ulju', '완주':'wanju', '영천':'Yeongcheon'}
+        station_select = st.selectbox('지역을 선택하세요', options=['천안', '이천', '나주', '사천',
+                                                            '상주','울주','완주','영천'])
+        station = station_dic[station_select]
+
 
 
 def main():
 
-    # sidebar()
+    sidebar()
     # load_images()
     # show_images()
     draw_graph()
