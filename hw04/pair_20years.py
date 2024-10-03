@@ -408,13 +408,13 @@ def chill_days(tmax, tmin, tavg):
 
     if 0 <= tc <= tmin <= tmax:
         cd = 0
-    elif 0 <= tmin <= tc < tmax:
+    elif 0 <= tmin <= tc <= tmax:
         cd = -((tavg - tmin) - (tmax - tc) ** 2 / (2 * (tmax - tmin)))
     elif 0 <= tmin <= tmax <= tc:
         cd = -(tavg - tmin)
-    elif tmin < 0 <= tmax <= tc:
+    elif tmin <= 0 <= tmax <= tc:
         cd = -(tmax ** 2 / (2 * (tmax - tmin)))
-    elif tmin < 0 < tc < tmax:
+    elif tmin <= 0 <= tc <= tmax:
         cd = -(tmax ** 2 / (2 * (tmax - tmin))) - ((tmax - tc) ** 2 / (2 * (tmax - tmin)))
     else:
         cd = 0
@@ -425,13 +425,13 @@ def anti_chill_days(tmax, tmin, tavg):
 
     if 0 <= tc <= tmin <= tmax:
         hr = tavg - tc
-    elif 0 <= tmin <= tc < tmax:
+    elif 0 <= tmin <= tc <= tmax:
         hr = (tmax - tc) ** 2 / (2 * (tmax - tmin))
     elif 0 <= tmin <= tmax <= tc:
         hr = 0
-    elif tmin < 0 <= tmax <= tc:
+    elif tmin <= 0 <= tmax <= tc:
         hr = 0
-    elif tmin < 0 < tc < tmax:
+    elif tmin <= 0 <= tc <= tmax:
         hr = (tmax - tc) ** 2 / (2 * (tmax - tmin))
     else:
         hr = 0

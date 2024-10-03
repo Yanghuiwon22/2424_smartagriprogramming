@@ -120,25 +120,6 @@ def anti_chill_days():
 # 누적가온량 = 저온요구량(|cr| = 86.4) -> 강제휴면파타(발아)
 # 누적가온량 = hr -> 만개기
 
-
-##  Cesaraccio 수정 Table
-# 냉각량(내생휴면해재 이전)
-cd = ['냉각량']
-
-def chill_days():
-    if 0 <= tc <= tmin <= tmax:
-        cd = 0
-    elif 0 <= tmin <= tc <= tmax:
-        cd = -((tavg - tmin)-(tmax - tc)**2 / 2(tmax - tmin))
-    elif 0 <= tmin <= tmax <= tc:
-        cd = -(tavg - tmin)
-    elif tmin <= 0 <= tmax <= tc:
-        cd = -(tmax**2 /2(tmax - tmin))
-    elif tmin < 0 <= tc <= tmax:
-        cd = - (tmax**2 / 2(tmax - tmin)) - ((tmax - tc)**2 / 2(tmax - tmin))
-
-    return cd
-
 # 누적 냉각량 = cr -> 내생휴면해재, 가온량 계산 시작
 
 # 가온량 (내생휴면해재 이후)
