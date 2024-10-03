@@ -280,7 +280,7 @@ def get_dvr_graph():
         plt.ylabel('Full bloom dates', fontweight = 'bold')
         plt.grid(True, alpha=0.5, color='gray')
 
-        ax.set_ylim([mdates.date2num(datetime(1900, 3, 15)), mdates.date2num(datetime(1900, 5, 20))])
+        ax.set_ylim([mdates.date2num(datetime(1900, 4, 1)), mdates.date2num(datetime(1900, 5, 20))])
 
         plt.xticks(dvs_date['year'])
 
