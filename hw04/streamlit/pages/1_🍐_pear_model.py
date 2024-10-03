@@ -4,13 +4,26 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 import glob
+import sys, os
+import pathlib
+
+#
+# # # hw04/pair_20years.py
+# # # 상위 폴더 경로를 추가
+# sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))))
+# # 절대 경로 추가
+# # sys.path.append('/absolute/path/to/project/utils')
+# # cur_dir = os.getcwd()
+# # print(os.path.dirname(os.path.abspath(os.path.dirname(cur_dir))))
+# from hw04.pair_20years import get_dvr_graph  # 상위 폴더의 파일을 import
+
+
+
 
 st.title('🍐 신고 배 개화예측 모델')
 st.header('개화예측 모델 비교')
 
-# 이미지 저장
-# img = Image.open('data/image.jpg')
-# hw04/output/Icheon/dvs_Icheon_graph.png
+
 def load_images():
     folder_path = ['Cheonan','Icheon','Sangju','Yeongcheon','naju', 'wanju', 'ulju', 'sacheon']
     image_lists = []
@@ -34,6 +47,30 @@ def show_images():
         st.write(f"{folder} 개화모델 비교 ")
         st.image(img)
 
+def draw_graph():
+    output_path = '../../output'
+    output_list = os.listdir(output_path)
+    print(output_list)
+
+    # output_list = ['naju'] # 테스트를 위한 데이터 정리
+    for station in output_list:
+        print(station)
+
+        obj_date = pd.read_csv(f'output/{station}/flowering_date_{station}.csv')
+        obj_date = obj_date[['station', 'year', 'Date']]
+        obj_date = obj_date.sort_values(by='year', ascending=True, ignore_index=True)
+        obj_date = obj_date.rename(columns={'Date': 'obj_date'})
+        obj_date['station'] = station
+
+        dvs_date = pd.read_csv(f'output/{station}/DVS_{station}_model.csv')
+        dvs_date['year'] = dvs_date['Date'].str.split('-').str[0].astype(int)
+        dvs_date = dvs_date[['Station', 'year', 'Date']]
+        dvs_date = dvs_date.rename(columns={'Date': 'dvs_date', 'Station': 'station'})
+    print(obj_date)
+    print(dvs_date)
+
+
+
 
 
 
@@ -54,9 +91,11 @@ def sidebar():
 
 
 def main():
-    sidebar()
-    load_images()
-    show_images()
+
+    # sidebar()
+    # load_images()
+    # show_images()
+    draw_graph()
 #     page()
 
 if __name__ == '__main__' :

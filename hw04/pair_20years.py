@@ -219,7 +219,7 @@ def get_dvr_graph():
     # output_list = ['naju'] # 테스트를 위한 데이터 정리
     for station in output_list:
         print(station)
-
+        # hw04 / output / Cheonan / flowering_date_Cheonan.csv
         obj_date = pd.read_csv(f'output/{station}/flowering_date_{station}.csv')
         obj_date = obj_date[['station', 'year', 'Date']]
         obj_date = obj_date.sort_values(by='year', ascending=True, ignore_index=True)
