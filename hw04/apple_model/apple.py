@@ -86,8 +86,6 @@ def cd_model():
         csv_flies = os.listdir(f'output/{station}/weather_data')
         for csv_file in csv_flies:
             df = pd.read_csv(f'output/{station}/weather_data/{csv_file}')
-            print(df)
-
             for idx, row in df.iterrows():
                 Tx = row['tmax']
                 Tn = row['tmin']
@@ -95,33 +93,45 @@ def cd_model():
 
                 if 0 <= Tc <= Tn <= Tx:
                     cd = 0
-                    df.loc[idx, 'type'] = 'case 1'
+                    Ca = Tm -Tc
                     df.loc[idx, 'cd'] = cd
+                    df.loc[idx, 'Ca'] = Ca
 
                 elif 0 <= Tn <= Tc < Tx:
                     cd = -((Tm - Tn)-((Tx-Tc)/2))
-                    df.loc[idx, 'type'] = 'case 2'
+                    Ca = (Tx-Tc)/2
                     df.loc[idx, 'cd'] = cd
+                    df.loc[idx, 'Ca'] = Ca
+
 
                 elif 0 <= Tn <= Tx <= Tc:
                     cd = -(Tm -Tn)
-                    df.loc[idx, 'type'] = 'case 3'
+                    Ca = 0
                     df.loc[idx, 'cd'] = cd
+                    df.loc[idx, 'Ca'] = Ca
 
                 elif Tn < 0 < Tx <= Tc:
                     cd = -(Tx/(Tx-Tn))*(Tx/2)
-                    df.loc[idx, 'type'] = 'case 4'
+                    Ca = 0
                     df.loc[idx, 'cd'] = cd
+                    df.loc[idx, 'Ca'] = Ca
 
                 elif Tn < 0 < Tc < Tx:
                     cd = -((Tx/(Tx-Tn))*(Tx/2)*((Tx-Tc)/2))
-                    df.loc[idx, 'type'] = 'case 5'
+                    Ca = (Tx-Tc)/2
                     df.loc[idx, 'cd'] = cd
+                    df.loc[idx, 'Ca'] = Ca
 
-            print(df)
+            df['cd_sum'] = df['cd'].cumsum()
+            first_day_over_Cr = df[df['cd_sum'] <= -100.5].iloc[0]
 
+            df['Ca_sum'] = df['Ca'].cumsum()
+            first_day_over_Hr = df[df['Ca_sum'] >= 271.5].iloc[0]
 
+            df_dic = {'station': station, 'first_day_over_Cr': first_day_over_Cr['date'], 'cd' : first_day_over_Hr['date']}
+            cd_df = pd.concat([cd_df, pd.DataFrame([df_dic])])
 
+        cd_df.to_csv(f'output/{station}/{station}_cd.csv', index=False)
 
 
 def main():
@@ -132,10 +142,10 @@ def main():
     # xls2csv()
 
     # 첫번째 모델 돌리기 : DVR1 ==> 파일에 정리 완.
-    dvr1()
+    # dvr1()
 
     # 두번째 모델 돌리기 : DVR2 ==> 파일에 정리 완.
-    dvr2()
+    # dvr2()
 
     # 세번째 모델 돌리기 : CD모델
     cd_model()

@@ -67,7 +67,6 @@ def DVR_model(): # --> DVR모델
                             DVS += DVRi
 
                             if DVS >= 100:
-
                                 dic = {'Station':output_folder, 'Date': df.iloc[i]['Date'], 'DVS':DVS}
                                 df_save = pd.DataFrame([dic])
 
