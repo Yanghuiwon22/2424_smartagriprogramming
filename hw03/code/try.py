@@ -7,11 +7,11 @@ from matplotlib import pyplot as plt
 
 
 # 지역 입력
-# input('지역을 입력해 주세요 (ex: 전북특별자치도 전주시 덕진구 송천1동): ')
+# data('지역을 입력해 주세요 (ex: 전북특별자치도 전주시 덕진구 송천1동): ')
 
 # 요청인자
 service_key = 'wIdqPjRtIkrKsaya4kGkAD%2Bo8FsV1GsN4rIyX6ntn7GlYSZr%2FgP%2FtVa1ZDeRcP04jDjy93oziypc5RMFwFM4Mg%3D%3D'
-# base_date = input('날짜를 입력해 주세요 : ')
+# base_date = data('날짜를 입력해 주세요 : ')
 base_date = '20240919'
 base_times = ['0200', '0500', '0800', '1100', '1400', '1700', '2000', '2300']
 nx = 63
