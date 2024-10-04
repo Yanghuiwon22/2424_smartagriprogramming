@@ -1,105 +1,95 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
+import plotly.express as px
+import plotly.graph_objects as go
+
 import numpy as np
 import pandas as pd
 from PIL import Image
 import glob
-import sys, os
-import pathlib
 
-#
-# # # hw04/pair_20years.py
-# # # 상위 폴더 경로를 추가
-# sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))))
-# # 절대 경로 추가
-# # sys.path.append('/absolute/path/to/project/utils')
-# # cur_dir = os.getcwd()
-# # print(os.path.dirname(os.path.abspath(os.path.dirname(cur_dir))))
-# from hw04.pair_20years import get_dvr_graph  # 상위 폴더의 파일을 import
+st.title('🍎 배 개화 예측 모델')
 
-
-
-
-st.title('🍐 신고 배 개화예측 모델')
-st.header('개화예측 모델 비교')
-
-
-def load_images():
-    folder_path = ['Cheonan','Icheon','Sangju','Yeongcheon','naju', 'wanju', 'ulju', 'sacheon']
-    image_lists = []
-
-    for folder in folder_path:
-        try:
-            # 폴더에서 이미지를 불러옵니다.
-            img = Image.open(f'hw04/output/{folder}/dvs_{folder}_graph.png')
-            image_lists.append(img)  # 이미지 리스트에 저장
-        except FileNotFoundError:
-            st.error(f"{folder} 폴더에서 이미지를 찾을 수 없습니다.")
-
-    return image_lists
-
-def show_images():
-    # 이미지 불러오기
-    images = load_images()
-
-    # Streamlit 화면에 이미지를 하나씩 띄우기
-    for img, folder in zip(images, ['Cheonan', 'Icheon', 'Sangju', 'Yeongcheon', 'Naju', 'Wanju', 'Ulju', 'Sacheon']):
-        st.write(f"{folder} 개화모델 비교 ")
-        st.image(img)
-
-def draw_graph():
-    output_path = '../../output'
-    output_list = os.listdir(output_path)
-    print(output_list)
-
-    # output_list = ['naju'] # 테스트를 위한 데이터 정리
-    for station in output_list:
-        print(station)
-        # hw04 / output / Cheonan / flowering_date_Cheonan.csv
-        # obj_date = pd.read_csv(f'C:\code\2424_smartagriprogramming\hw04\output\Cheonan\flowering_date_Cheonan.csv')
-        obj_date = pd.read_csv(f'../../output/{station}/flowering_date_{station}.csv')
-        obj_date = obj_date[['station', 'year', 'Date']]
-        obj_date = obj_date.sort_values(by='year', ascending=True, ignore_index=True)
-        obj_date = obj_date.rename(columns={'Date': 'obj_date'})
-        obj_date['station'] = station
-
-        dvs_date = pd.read_csv(f'output/{station}/DVS_{station}_model.csv')
-        dvs_date['year'] = dvs_date['Date'].str.split('-').str[0].astype(int)
-        dvs_date = dvs_date[['Station', 'year', 'Date']]
-        dvs_date = dvs_date.rename(columns={'Date': 'dvs_date', 'Station': 'station'})
-    print(obj_date)
-    print(dvs_date)
-
-
-
-
-
-
-
-def sidebar():
-    with st.sidebar:
-        choice = option_menu("모델 선택", ["전체 모델 비교","DVR 모델", "mDVR 모델", "CD 모델"],
-                             icons=['bar-chart-line-fill','house', 'kanban', 'envelope'],
-                             menu_icon="folder", default_index=0,
-                             styles={
-                                 "container": {"padding": "4!important", "background-color": "#fafafa"},
-                                 "icon": {"color": "black", "font-size": "25px"},
-                                 "nav-link": {"font-size": "16px", "text-align": "left", "margin": "0px",
+with st.sidebar:
+    choice = option_menu("모델 선택", ["전체 모델 비교", "DVR 모델", "mDVR 모델", "CD 모델"],
+                         icons=['bar-chart-line-fill', 'house', 'kanban', 'envelope'],
+                         menu_icon="folder", default_index=0,
+                         styles={
+                             "container": {"padding": "4!important", "background-color": "#fafafa"},
+                             "icon": {"color": "black", "font-size": "25px"},
+                             "nav-link": {"font-size": "16px", "text-align": "left", "margin": "0px",
                                           "--hover-color": "#fafafa"},
-                                 "nav-link-selected": {"background-color": "#08c7b4"},
-                             }
-                             )
+                             "nav-link-selected": {"background-color": "#08c7b4"},
+                         }
+                         )
 
 
-def main():
 
-    # sidebar()
-    # load_images()
-    # show_images()
-    draw_graph()
-#     page()
+if choice == "전체 모델 비교":
+    station_dic = {'천안': 'Cheonan', '이천': 'Icheon', '나주': 'naju', '상주':'Sangju', '사천': 'sacheon', '울주':'ulju', '완주':'wanju', '영천':'Yeongcheon'}
+    station_select = st.selectbox('지역을 선택하세요', options=['천안','이천','나주','사천','울주','완주','영천','상주'])
+    station = station_dic[station_select]
 
-if __name__ == '__main__' :
-    main()
+    df = pd.read_csv(f'./hw04/pair_model/output/{station}/{station}_result.csv')
 
+    fig = go.Figure()
+    fig.update_layout(
+        title={
+            'text': f"{station_select} 지역 배 개화일",
+            'x': 0.5,
+            'xanchor': 'center'
+        },
+        xaxis_title='year',
+        yaxis_title='full bloom date',
+        yaxis_tickformat='%m-%d',
+        xaxis=dict(
+            tickmode='linear',  # 일정한 간격 설정
+            dtick=1  # 1년 단위로 간격 설정
+        )
 
+    )
+
+    fig.add_trace(go.Scatter(
+        x=df["year"],
+        y=df["dvs"],
+        mode='lines',
+        name='dvs',
+        hovertemplate='DVR1<br>%{x}-%{y}<extra></extra>'
+    ))
+    fig.add_trace(go.Scatter(
+        x=df["year"],
+        y=df["mdvr"],
+        mode='lines',
+        name='mdvr',
+        hovertemplate='DVR2<br>%{x}-%{y}<extra></extra>'
+    ))
+    fig.add_trace(go.Scatter(
+        x=df["year"],
+        y=df["cd"],
+        mode='lines',
+        name='CD',
+        hovertemplate='CD<br>%{x}-%{y}<extra></extra>'
+    ))
+    fig.add_trace(go.Scatter(
+        x=df["year"],
+        y=df["obj"],
+        mode='lines',
+        name='obj',
+        hovertemplate='obj<br>%{x}-%{y}<extra></extra>'
+    ))
+
+    st.plotly_chart(fig)
+
+elif choice == "DVR 모델":
+    st.write("🍎 DVR 모델을 선택하셨습니다.")
+    st.write("DVR 모델은 사과 개화 예측에 사용되는 모델입니다.")
+    # 모델 관련 세부 정보 추가 가능
+
+elif choice == "mDVR 모델":
+    st.write("🍎 mDVR 모델을 선택하셨습니다.")
+    st.write("mDVR 모델은 사과 개화 예측에 사용되는 확장된 모델입니다.")
+    # 모델 관련 세부 정보 추가 가능
+
+elif choice == "CD 모델":
+    st.write("🍎 CD 모델을 선택하셨습니다.")
+    st.write("CD 모델은 다른 특성을 활용한 개화 예측 모델입니다.")
