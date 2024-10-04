@@ -692,14 +692,14 @@ def main():
         os.makedirs('pair_model/output')
 
     # 모델을 위한 데이터 수집
-    # get_data(2004, 2024) # api.taegon.kr에서 4개의 지역 데이터 저장
-    # get_other_region_data() # 나머지 4개의 데이터 정리 (원본 데이터 : station/input/~.csv)
-    # get_flowering_date() # 실제 만개일 데이터 => 지역별 저장 (원본 데이터 : obs_date.txt)
+    get_data(2004, 2024) # api.taegon.kr에서 4개의 지역 데이터 저장
+    get_other_region_data() # 나머지 4개의 데이터 정리 (원본 데이터 : station/input/~.csv)
+    get_flowering_date() # 실제 만개일 데이터 => 지역별 저장 (원본 데이터 : obs_date.txt)
     #
     # # 모델 돌리기
-    # DVR_model()
-    # mDVR_hourly_temp() # mDVR모델
-    # cd_model()
+    DVR_model()
+    mDVR_hourly_temp() # mDVR모델
+    cd_model()
     #
     # # 시각화 코드
     # get_dvr_graph() # 3개의 모델을 돌리고 진행 : 데이터 시각화

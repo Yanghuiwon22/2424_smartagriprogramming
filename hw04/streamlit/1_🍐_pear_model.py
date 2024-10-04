@@ -17,11 +17,11 @@ from datetime import datetime
 import numpy as np
 import glob
 
-st.title('🍎 배 개화 예측 모델')
+st.title('🍐 배 개화 예측 모델')
 
 with st.sidebar:
-    choice = option_menu("모델 선택", ["전체 모델 비교", "DVR 모델", "mDVR 모델", "CD 모델"],
-                         icons=['bar-chart-line-fill', 'house', 'kanban', 'envelope'],
+    choice = option_menu("", ["전체 모델 비교", "DVR 모델", "mDVR 모델", "CD 모델"],
+                         icons=[ 'house', 'kanban', 'envelope'],
                          menu_icon="folder", default_index=0,
                          styles={
                              "container": {"padding": "4!important", "background-color": "#fafafa"},
@@ -90,15 +90,15 @@ if choice == "전체 모델 비교":
     st.plotly_chart(fig)
 
 elif choice == "DVR 모델":
-    st.write("🍎 DVR 모델을 선택하셨습니다.")
+    st.write("🍐 DVR 모델을 선택하셨습니다.")
     st.write("DVR 모델은 사과 개화 예측에 사용되는 모델입니다.")
     # 모델 관련 세부 정보 추가 가능
 
 elif choice == "mDVR 모델":
-    st.write("🍎 mDVR 모델을 선택하셨습니다.")
+    st.write("🍐 mDVR 모델을 선택하셨습니다.")
     st.write("mDVR 모델은 사과 개화 예측에 사용되는 확장된 모델입니다.")
     # 모델 관련 세부 정보 추가 가능
 
 elif choice == "CD 모델":
-    st.write("🍎 CD 모델을 선택하셨습니다.")
+    st.write("🍐 CD 모델을 선택하셨습니다.")
     st.write("CD 모델은 다른 특성을 활용한 개화 예측 모델입니다.")

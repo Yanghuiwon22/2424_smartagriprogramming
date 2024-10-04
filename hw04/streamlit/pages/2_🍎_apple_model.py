@@ -15,8 +15,8 @@ with st.sidebar:
 
 
 
-    choice = option_menu("모델 선택", ["전체 모델 비교", "DVR 모델", "mDVR 모델", "CD 모델"],
-                         icons=['bar-chart-line-fill', 'house', 'kanban', 'envelope'],
+    choice = option_menu("", ["전체 모델 비교", "DVR 모델", "mDVR 모델", "CD 모델"],
+                         icons=[ 'house', 'kanban', 'envelope'],
                          menu_icon="folder", default_index=0,
                          styles={
                              "container": {"padding": "4!important", "background-color": "#fafafa"},
