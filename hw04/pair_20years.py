@@ -218,7 +218,7 @@ def get_dvr_graph():
     # output_list = ['naju'] # 테스트를 위한 데이터 정리
     for station in output_list:
         print(station)
-        # hw04 / output / Cheonan / flowering_date_Cheonan.csv
+
         obj_date = pd.read_csv(f'output/{station}/flowering_date_{station}.csv')
         obj_date = obj_date[['station', 'year', 'Date']]
         obj_date = obj_date.sort_values(by='year', ascending=True, ignore_index=True)
@@ -243,7 +243,7 @@ def get_dvr_graph():
         df = pd.merge(df, cd_date, on=['station','year'], how='outer')
 
         df = df.sort_values(by='year', ignore_index=True)
-        print(df)
+
         df['obj_date'] = df['obj_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
         df['dvs_date'] = df['dvs_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
         df['mdvr_date'] = df['mdvr_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)

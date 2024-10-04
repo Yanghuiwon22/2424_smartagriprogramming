@@ -48,8 +48,8 @@ def show_images():
 def draw_graph():
     output_path = 'C:/code/2424_smartagriprogramming/hw04/output'
     output_list = os.listdir(output_path)
-    print(output_list)
-    st.write(f"Current working directory: {os.getcwd()}")
+    # print(output_list)
+    # st.write(f"Current working directory: {os.getcwd()}")
 
     # C:\code\2424_smartagriprogramming 현재 directory
 # 파일 절대 경로
@@ -75,26 +75,24 @@ def draw_graph():
         dvs_date = dvs_date.rename(columns={'Date': 'dvs_date', 'Station': 'station'})
 
         # mdvr 데이터 읽어오기
-        mdvr_date = pd.read_csv(f'C:/code/2424_smartagriprogramming/hw04/output/{station}/DVS_{station}_model.csv')
+        mdvr_date = pd.read_csv(f'C:/code/2424_smartagriprogramming/hw04/output/{station}/mDVR/{station}_mDVR_date.csv')
         # mdvr_date = pd.read_csv(f'output/{station}/mDVR/{station}_mDVR_date.csv')
         mdvr_date = mdvr_date.rename(columns={'Date': 'mdvr_date'})
 
         # cd데이터 읽어오기
-        cd_date = pd.read_csv(f'C:/code/2424_smartagriprogramming/hw04/output/{station}/DVS_{station}_model.csv')
+        cd_date = pd.read_csv(f'C:/code/2424_smartagriprogramming/hw04/output/{station}/cd_{station}_date.csv')
         # cd_date = pd.read_csv(f'output/{station}/cd_{station}_date.csv')
         cd_date = cd_date.rename(columns={'예상 만개일': 'cd_date'})
 
         # 데이터 정리
-        print(obj_date.columns)
-        print(dvs_date.columns)
-        print(obj_date)
-        print(dvs_date)
+        obj_date['station'] = obj_date['station'].str.strip()
+        dvs_date['station'] = dvs_date['station'].str.strip()
         df = pd.merge(obj_date, dvs_date, on=['station','year'], how='outer')
         df = pd.merge(df, mdvr_date, on=['station','year'], how='outer')
-        df = pd.merge(df, cd_date, on=['station','year'], how='outer')
+        df = pd.merge(df, cd_date, on=['year','station'], how='outer')
 
         df = df.sort_values(by='year', ignore_index=True)
-        print(df)
+
         df['obj_date'] = df['obj_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
         df['dvs_date'] = df['dvs_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
         df['mdvr_date'] = df['mdvr_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
@@ -127,6 +125,26 @@ def sidebar():
         station_select = st.selectbox('지역을 선택하세요', options=['천안', '이천', '나주', '사천',
                                                             '상주','울주','완주','영천'])
         station = station_dic[station_select]
+
+        st.write(f"🍐 {station_select} 지역의 신고 배 개화 예측 모델 비교")
+
+    elif choice == "DVR 모델":
+        st.write("🍐 DVR 모델을 선택하셨습니다.")
+        st.write("DVR 모델은 배 개화 예측에 사용되는 모델입니다.")
+        # 모델 관련 세부 정보 추가 가능
+
+    elif choice == "mDVR 모델":
+        st.write("🍐 mDVR 모델을 선택하셨습니다.")
+        st.write("mDVR 모델은 배 개화 예측에 사용되는 확장된 모델입니다.")
+        # 모델 관련 세부 정보 추가 가능
+
+    elif choice == "CD 모델":
+        st.write("🍐 CD 모델을 선택하셨습니다.")
+        st.write("CD 모델은 다른 특성을 활용한 개화 예측 모델입니다.")
+
+
+
+
 
 def main():
 
