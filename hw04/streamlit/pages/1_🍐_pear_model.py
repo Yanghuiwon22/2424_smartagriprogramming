@@ -3,17 +3,21 @@ from streamlit_option_menu import option_menu
 import sys, os
 import pandas as pd
 from PIL import Image
+import matplotlib.pyplot as plt
 
+import csv
+import requests
 import plotly.graph_objects as go
 from datetime import datetime
 import numpy as np
 import glob
 import pathlib
-import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import math
 
 
+# 아이콘 사이트
+# https://icons.getbootstrap.com/?q=chart
 st.title('🍐 신고 배 개화예측 모델')
 st.header('개화예측 모델 비교')
 
@@ -42,7 +46,7 @@ def show_images():
         st.image(img)
 
 def draw_graph():
-    output_path = '../../output'
+    output_path = 'C:/code/2424_smartagriprogramming/hw04/output'
     output_list = os.listdir(output_path)
     print(output_list)
     st.write(f"Current working directory: {os.getcwd()}")
@@ -81,14 +85,27 @@ def draw_graph():
         cd_date = cd_date.rename(columns={'예상 만개일': 'cd_date'})
 
         # 데이터 정리
-        df = pd.merge(obj_date, dvs_date, on=['station', 'year'], how='outer')
-        df = pd.merge(df, mdvr_date, on=['station', 'year'], how='outer')
-        df = pd.merge(df, cd_date, on=['station', 'year'], how='outer')
+        print(obj_date.columns)
+        print(dvs_date.columns)
+        print(obj_date)
+        print(dvs_date)
+        df = pd.merge(obj_date, dvs_date, on=['station','year'], how='outer')
+        df = pd.merge(df, mdvr_date, on=['station','year'], how='outer')
+        df = pd.merge(df, cd_date, on=['station','year'], how='outer')
 
         df = df.sort_values(by='year', ignore_index=True)
         print(df)
+        df['obj_date'] = df['obj_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
+        df['dvs_date'] = df['dvs_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
+        df['mdvr_date'] = df['mdvr_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
+        df['cd_date'] = df['cd_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
 
+        df['obj_date'] = pd.to_datetime(df['obj_date'], format='%m-%d')
+        df['dvs_date'] = pd.to_datetime(df['dvs_date'], format='%m-%d')
+        df['mdvr_date'] = pd.to_datetime(df['mdvr_date'], format='%m-%d')
+        df['cd_date'] = pd.to_datetime(df['cd_date'], format='%m-%d')
 
+        fig, ax = plt.subplots(figsize=(10, 6))
 
 
 def sidebar():
@@ -110,8 +127,6 @@ def sidebar():
         station_select = st.selectbox('지역을 선택하세요', options=['천안', '이천', '나주', '사천',
                                                             '상주','울주','완주','영천'])
         station = station_dic[station_select]
-
-
 
 def main():
 
