@@ -4,6 +4,8 @@ import sys, os
 import pandas as pd
 from PIL import Image
 import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 import csv
 import requests
@@ -19,7 +21,7 @@ import math
 # 아이콘 사이트
 # https://icons.getbootstrap.com/?q=chart
 st.title('🍐 신고 배 개화예측 모델')
-st.header('개화예측 모델 비교')
+# st.header('개화예측 모델 비교')
 
 
 def load_images():
@@ -97,13 +99,47 @@ def draw_graph():
         df['dvs_date'] = df['dvs_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
         df['mdvr_date'] = df['mdvr_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
         df['cd_date'] = df['cd_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
-
+        # print(df['obj_date'].dtypes)
+        # print(df)
+        # print(df.dtypes)
         df['obj_date'] = pd.to_datetime(df['obj_date'], format='%m-%d')
         df['dvs_date'] = pd.to_datetime(df['dvs_date'], format='%m-%d')
         df['mdvr_date'] = pd.to_datetime(df['mdvr_date'], format='%m-%d')
         df['cd_date'] = pd.to_datetime(df['cd_date'], format='%m-%d')
 
+        # print(df['obj_date'])
+
+        # 그래프 그리기
         fig, ax = plt.subplots(figsize=(10, 6))
+
+        ax.yaxis.set_major_locator(mdates.DayLocator(interval=3))
+        ax.yaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
+
+        # 첫 번째 y축: DVS_date
+        plt.plot(df['year'], df['dvs_date'], label='dvs', color='b', marker='o')
+        ax.set_xlabel('Year', fontweight='bold')
+
+        # 두 번째 y축: obj_date
+        plt.plot(df['year'], df['obj_date'], label='obj', color='r', marker='x')
+
+        plt.plot(df['year'], df['mdvr_date'], label='mDVR', color='g', marker='^')
+        plt.plot(df['year'], df['cd_date'], label='cd', color='brown', marker='<')
+
+        # 그래프 제목과 축 레이블 설정
+        plt.suptitle(f'{station}', fontsize=20, position=(0.5, 0.87))
+        plt.ylabel('Full bloom dates', fontweight='bold')
+        plt.grid(True, alpha=0.5, color='gray')
+
+        ax.set_ylim([mdates.date2num(datetime(1900, 4, 1)), mdates.date2num(datetime(1900, 5, 20))])
+
+        plt.xticks(dvs_date['year'])
+
+        # 그래프 제목 및 레이아웃 설정
+        fig.tight_layout()
+        plt.legend()
+        # plt.show()
+        # plt.savefig(f'output/{station}/dvs_{station}_graph.png')
+        st.pyplot(fig)
 
 
 def sidebar():
