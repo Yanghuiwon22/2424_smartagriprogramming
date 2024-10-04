@@ -3,7 +3,7 @@
 hw03/__pycache__
 hw03/static/weather_data.csv
 
-hw04/output
+hw04/pair_model/output
 hw04/apple_model/output/Hwaseong/weather_data
 hw04/apple_model/output/Hwaseong/Hwaseong_dvr1.csv
 hw04/apple_model/output/Hwaseong/Hwaseong_cd.csv

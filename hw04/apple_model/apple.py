@@ -213,12 +213,60 @@ def concat_result():
 
         result_df.to_csv(f'output/{station}/{station}_result.csv', index=False)
 
+def min_avg_max_month():
+    station_list = os.listdir('output')
+
+    for station in station_list:
+        df_min_avg_max_month = pd.DataFrame()
+
+        year_list = [2020, 2021]
+
+        for year in year_list:
+            df_dic = {}
+            df = pd.read_csv(os.path.join('output', station, 'weather_data', f'{station}_{year}.csv'))
+            df_3 = df[df['month'] == 3] # 3월, 4월 데이터만 추출
+            df_4 = df[df['month'] == 4]
+
+            # print(df_3['tmin'])
+            tmin_3 = df_3['tmin'].sum() / len(df_3)
+            tmin_4 = df_4['tmin'].sum() / len(df_4)
+
+            tavg_3 = df_3['tavg'].sum() / len(df_3)
+            tavg_4 = df_4['tavg'].sum() / len(df_4)
+
+            tmax_3 = df_3['tmax'].sum() / len(df_3)
+            tmax_4 = df_4['tmax'].sum() / len(df_4)
+
+            df_dic['year'] = year
+            df_dic['month'] = 'April'
+            df_dic['tmin'] = tmin_3
+            df_dic['tavg'] = tavg_3
+            df_dic['tmax'] = tmax_3
+
+            df_min_avg_max_month = pd.concat([df_min_avg_max_month, pd.DataFrame([df_dic])])
+
+            df_dic['year'] = year
+            df_dic['month'] = 'March'
+            df_dic['tmin'] = tmin_4
+            df_dic['tavg'] = tavg_4
+            df_dic['tmax'] = tmax_4
+
+            df_min_avg_max_month = pd.concat([df_min_avg_max_month, pd.DataFrame([df_dic])])
+
+        df_min_avg_max_month.to_csv(f'output/{station}/{station}_tmin_tavg_tmax_month.csv')
+
+    # print(df_min_avg_max_month)
+
+
+
+
+
 def main():
     if not os.path.exists('output'):
         os.makedirs('output')
 
     # api.taegon.kr 데이터 가져오기  --> 최초 1회
-    get_data(2021, 2024)
+    # get_data(2021, 2024)
 
     # 첫번째 모델 돌리기 : DVR1 ==> 파일에 정리 완.
     # dvr1()
@@ -230,8 +278,9 @@ def main():
     # cd_model()
 
     # ( DVR1, DVR2, CD모델 결과 + 실제 만개일 ) 파일 합치기
-    concat_result()
+    # concat_result()
 
+    min_avg_max_month()
 
 if __name__ == '__main__':
    main()
