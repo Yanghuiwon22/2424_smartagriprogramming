@@ -7,7 +7,7 @@ import pandas as pd
 
 st.set_page_config(layout="wide")
 
-st.title('개화예측 모델')
+st.title('개화예측모델 ')
 
 st.header('this is header')
 # st.subheader('this is subheader')

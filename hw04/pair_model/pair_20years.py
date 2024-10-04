@@ -246,12 +246,11 @@ def get_dvr_graph():
         df = pd.merge(df, cd_date, on=['station','year'], how='outer')
 
         df = df.sort_values(by='year', ignore_index=True)
-        print(df)
+
         df['obj_date'] = df['obj_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
         df['dvs_date'] = df['dvs_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
         df['mdvr_date'] = df['mdvr_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
         df['cd_date'] = df['cd_date'].apply(lambda x: x.split('-')[1] + '-' + x.split('-')[2] if pd.notna(x) else x)
-
 
         df['obj_date'] = pd.to_datetime(df['obj_date'], format='%m-%d')
         df['dvs_date'] = pd.to_datetime(df['dvs_date'], format='%m-%d')
