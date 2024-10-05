@@ -1,19 +1,12 @@
 import streamlit as st
+import pandas as pd
 from streamlit_option_menu import option_menu
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
-import numpy as np
-import pandas as pd
-from PIL import Image
-import glob
-
-st.title('🍎 후지 사과 개화 예측 모델')
-
 with st.sidebar:
-
-    choice = option_menu("모델 선택", ["전체 모델 비교", "DVR 모델", "mDVR 모델", "CD 모델"],
-                         icons=['bar-chart-line-fill', 'house', 'kanban', 'envelope'],
+    choice = option_menu("모델 선택", ["배", "사과"],
+                         icons=['house', 'kanban', 'envelope'],
                          menu_icon="folder", default_index=0,
                          styles={
                              "container": {"padding": "4!important", "background-color": "#fafafa"},
@@ -24,7 +17,69 @@ with st.sidebar:
                          }
                          )
 
-if choice == "전체 모델 비교":
+if choice == '배':
+
+    st.title('🍐 배 개화 예측 모델')
+
+
+
+    station_dic = {'천안': 'Cheonan', '이천': 'Icheon', '나주': 'naju', '상주': 'Sangju', '사천': 'sacheon', '울주': 'ulju',
+                   '완주': 'wanju', '영천': 'Yeongcheon'}
+    station_select = st.selectbox('지역을 선택하세요', options=['천안', '이천', '나주', '사천', '울주', '완주', '영천', '상주'])
+    station = station_dic[station_select]
+
+    df = pd.read_csv(f'./hw04/pair_model/output/{station}/{station}_result.csv')
+
+    fig = go.Figure()
+    fig.update_layout(
+        title={
+            'text': f"{station_select} 지역 배 개화일",
+            'x': 0.5,
+            'xanchor': 'center'
+        },
+        xaxis_title='year',
+        yaxis_title='full bloom date',
+        yaxis_tickformat='%m-%d',
+        xaxis=dict(
+            tickmode='linear',  # 일정한 간격 설정
+            dtick=1  # 1년 단위로 간격 설정
+        )
+
+    )
+
+    fig.add_trace(go.Scatter(
+        x=df["year"],
+        y=df["dvs"],
+        mode='lines',
+        name='dvs',
+        hovertemplate='DVR1<br>%{x}-%{y}<extra></extra>'
+    ))
+    fig.add_trace(go.Scatter(
+        x=df["year"],
+        y=df["mdvr"],
+        mode='lines',
+        name='mdvr',
+        hovertemplate='DVR2<br>%{x}-%{y}<extra></extra>'
+    ))
+    fig.add_trace(go.Scatter(
+        x=df["year"],
+        y=df["cd"],
+        mode='lines',
+        name='CD',
+        hovertemplate='CD<br>%{x}-%{y}<extra></extra>'
+    ))
+    fig.add_trace(go.Scatter(
+        x=df["year"],
+        y=df["obj"],
+        mode='lines',
+        name='obj',
+        hovertemplate='obj<br>%{x}-%{y}<extra></extra>'
+    ))
+
+    st.plotly_chart(fig)
+
+if choice == '사과':
+    st.title('🍎 후지 사과 개화 예측 모델')
     station_dic = {'충주': 'Chungju', '군위': 'Gunwi', '화성': 'Hwaseong', '포천': 'Pocheon'}
 
     # 3,4월 tmin, tavg, tmax 막대그래프 그리기
@@ -51,17 +106,17 @@ if choice == "전체 모델 비교":
                     y=month_temp[month_temp['year'] == year][y_column],
                     name=f'{station}',
                     hovertemplate=f'{y_text[y_column]}<br>%{{y}}<extra></extra>',
-                    marker = dict(color=color_dic[station]),
+                    marker=dict(color=color_dic[station]),
                     showlegend=(idx == 0)
-                ), row=1, col=idx+1)
+                ), row=1, col=idx + 1)
 
         fig.update_layout(
             title={
-                'text' : f'{y_text[y_column]} 비교',
+                'text': f'{y_text[y_column]} 비교',
                 'x': 0.5,
                 'xanchor': 'center'
             },
-            yaxis_title = y_label[y_column],
+            yaxis_title=y_label[y_column],
             barmode='group',  # 그룹화된 막대그래프
         )
 
@@ -94,7 +149,7 @@ if choice == "전체 모델 비교":
         width=800,  # 그래프 너비
         height=800,  # 그래프 높이
 
-        yaxis = dict(
+        yaxis=dict(
             tickmode='linear',  # 일정한 간격 설정
             dtick=86400000 * 3,
             type='date',
@@ -150,78 +205,58 @@ if choice == "전체 모델 비교":
         ))
     st.plotly_chart(fig3)
 
-# ==========================================================================================================================================
+    # ==========================================================================================================================================
 
     # 지역별 모델 결과 출력
-    station_select = st.selectbox('지역을 선택하세요', options=['충주','군위','화성','포천'])
+    station_select = st.selectbox('지역을 선택하세요', options=['충주', '군위', '화성', '포천'])
     station = station_dic[station_select]
 
     model_result = pd.read_csv(f'./hw04/apple_model/output/{station}/{station}_result.csv')
 
+    fig2 = go.Figure()
+    fig2.update_layout(
+        title={
+            'text': f"{station_select} 지역 후지 사과 개화일",
+            'x': 0.5,
+            'xanchor': 'center'
+        },
+        xaxis_title='Year',
+        yaxis_title='Full Bloom Date',
+        yaxis_tickformat='%m-%d',
+        xaxis=dict(
+            tickmode='linear',  # 일정한 간격 설정
+            dtick=1  # 1년 단위로 간격 설정
+        )
+    )
 
+    fig2.add_trace(go.Scatter(
+        x=model_result["year"],
+        y=model_result["dvr1"],
+        mode='lines',
+        name='DVR1',
+        hovertemplate='DVR1<br>%{x}-%{y}<extra></extra>'
+    ))
+    fig2.add_trace(go.Scatter(
+        x=model_result["year"],
+        y=model_result["dvr2"],
+        mode='lines',
+        name='DVR2',
+        hovertemplate='DVR2<br>%{x}-%{y}<extra></extra>'
+    ))
+    fig2.add_trace(go.Scatter(
+        x=model_result["year"],
+        y=model_result["cd"],
+        mode='lines',
+        name='CD',
+        hovertemplate='CD<br>%{x}-%{y}<extra></extra>'
+    ))
+    fig2.add_trace(go.Scatter(
+        x=model_result["year"],
+        y=model_result["obj"],
+        mode='lines',
+        name='obj',
+        hovertemplate='obj<br>%{x}-%{y}<extra></extra>'
+    ))
 
-    # fig2 = go.Figure()
-    # fig2.update_layout(
-    #     title={
-    #         'text': f"{station_select} 지역 후지 사과 개화일",
-    #         'x': 0.5,
-    #         'xanchor': 'center'
-    #     },
-    #     xaxis_title='Year',
-    #     yaxis_title='Full Bloom Date',
-    #     yaxis_tickformat='%m-%d',
-    #     xaxis=dict(
-    #         tickmode='linear',  # 일정한 간격 설정
-    #         dtick=1  # 1년 단위로 간격 설정
-    #     )
-    # )
-    #
-    # fig2.add_trace(go.Scatter(
-    #     x=model_result["year"],
-    #     y=model_result["dvr1"],
-    #     mode='lines',
-    #     name='DVR1',
-    #     hovertemplate='DVR1<br>%{x}-%{y}<extra></extra>'
-    # ))
-    # fig2.add_trace(go.Scatter(
-    #     x=model_result["year"],
-    #     y=model_result["dvr2"],
-    #     mode='lines',
-    #     name='DVR2',
-    #     hovertemplate='DVR2<br>%{x}-%{y}<extra></extra>'
-    # ))
-    # fig2.add_trace(go.Scatter(
-    #     x=model_result["year"],
-    #     y=model_result["cd"],
-    #     mode='lines',
-    #     name='CD',
-    #     hovertemplate='CD<br>%{x}-%{y}<extra></extra>'
-    # ))
-    # fig2.add_trace(go.Scatter(
-    #     x=model_result["year"],
-    #     y=model_result["obj"],
-    #     mode='lines',
-    #     name='obj',
-    #     hovertemplate='obj<br>%{x}-%{y}<extra></extra>'
-    # ))
-    #
-    # # Streamlit에서 개화일 그래프 출력
-    # st.plotly_chart(fig2)
-
-    # =========== 모델 결과 그래프 =============
-
-#
-#
-# elif choice == "DVR 모델":
-#     st.write("🍎 DVR 모델을 선택하셨습니다.")
-#     st.write("DVR 모델은 사과 개화 예측에 사용되는 모델입니다.")
-#     # 모델 관련 세부 정보 추가 가능
-#
-# elif choice == "mDVR 모델":
-#     st.write("🍎 mDVR 모델을 선택하셨습니다.")
-#     st.write("mDVR 모델은 사과 개화 예측에 사용되는 확장된 모델입니다.")
-#     # 모델 관련 세부 정보 추가 가능
-#
-# elif choice == "CD 모델":
-#     st.write("🍎 CD 모델을 선택하셨습니다.")
-#     st.write("CD 모델은 다른 특성을 활용한 개화 예측 모델입니다.")
+    # Streamlit에서 개화일 그래프 출력
+    st.plotly_chart(fig2)
