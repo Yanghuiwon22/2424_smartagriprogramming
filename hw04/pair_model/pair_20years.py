@@ -17,6 +17,7 @@ def get_data(sy, ey):  # -> api를 통해서 데이터 받아오기
     for station, station_code in station_dic.items():
 
         print(station, station_code)
+        print(os.getcwd())
         for i in range(ey+1-sy):
             url = f'https://api.taegon.kr/stations/{station_code}/'
 
@@ -34,7 +35,7 @@ def get_data(sy, ey):  # -> api를 통해서 데이터 받아오기
                 if not os.path.exists(f'pair_model/output/{station}'):
                     os.makedirs(f'pair_model/output/{station}')
 
-                df.to_csv(f'output/{station}/{station}_{sy+i}')
+                df.to_csv(f'pair_model/output/{station}/{station}_{sy+i}')
                 print(f'{sy+i}년도 데이터 저장 완료.')
             else:
                 print(response.status_code)
@@ -692,14 +693,14 @@ def main():
         os.makedirs('pair_model/output')
 
     # 모델을 위한 데이터 수집
-    get_data(2004, 2024) # api.taegon.kr에서 4개의 지역 데이터 저장
+    # get_data(2004, 2024) # api.taegon.kr에서 4개의 지역 데이터 저장
     get_other_region_data() # 나머지 4개의 데이터 정리 (원본 데이터 : station/input/~.csv)
     get_flowering_date() # 실제 만개일 데이터 => 지역별 저장 (원본 데이터 : obs_date.txt)
     #
     # # 모델 돌리기
-    DVR_model()
-    mDVR_hourly_temp() # mDVR모델
-    cd_model()
+    # DVR_model()
+    # mDVR_hourly_temp() # mDVR모델
+    # cd_model()
     #
     # # 시각화 코드
     # get_dvr_graph() # 3개의 모델을 돌리고 진행 : 데이터 시각화
