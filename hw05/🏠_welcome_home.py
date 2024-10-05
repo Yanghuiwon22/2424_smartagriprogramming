@@ -3,52 +3,42 @@ from streamlit_option_menu import option_menu
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from datetime import datetime
 import seaborn as sns
 
 st.set_page_config(layout="wide")
 
-st.title('🏠어서오세요 홈입니다.')
+st.title('🏠홈 ')
 
 # 파일 읽어오기
-flower_2020 = pd.read_csv('hw05/2020_flower.csv', encoding='EUC-KR')
-flower_2021 = pd.read_csv('hw05/2021_flower.csv', encoding='EUC-KR')
 
-# flower_2020 = flower_2020['시도별', '농가수(호)', '면적(ha)','판매량(천본_분_주)','판매액(천원)']
-flower_2020_selected = flower_2020[['시도별', '농가수(호)', '면적(ha)', '판매량(천본_분_주)', '판매액(천원)']]
-
-plt.figure(figsize=(10, 6))
-# sns.barplot(x='시도별', y='판매량(천본_분_주)', data=flower_2020_selected)
-#
-# def plot_data(year, data):
-#     plt.figure(figsize=(10, 6))
-#     sns.barplot(x='시도별', y='판매량(천본_분_주)', data=data)
-#     plt.title(f'{year}년 시도별 판매량')
-#     plt.xlabel('시도별')
-#     plt.ylabel('판매량(천본/분/주)')
-#     plt.xticks(rotation=45)
-#     st.pyplot(plt)
-#
-# # 2020년 데이터 시각화
-# st.subheader('2020년 시도별 판매량')
-# plot_data(2020, flower_2020_selected)
-# # 2021년 데이터 시각화
-# st.subheader('2021년 시도별 판매량')
-# plot_data(2021, flower_2021_selected)
-
-st.pyplot(plt)
-# city = flower_2020.loc[['서울특별시', '인천', '대전', '대구', '광주', '부산', '울산']]
-#
-# st.write(flower_2020.head(20))
-# st.write(flower_2020.columns)
-# st.write(flower_2020['면적(ha)'])
-#
-# x = flower_2020['시도별']
-# y = flower_2020['면적(ha)']
+crop_money = pd.read_csv('hw05/crop_money.csv',encoding='EUC-KR')
 
 
-# fig , ax = plt.subplots(figsize=(10, 6))
-#
-# plt.plot(x, y, label='dvs', color='b', marker='o')
+crop_money.columns = crop_money.columns.str.replace(r'\(.*?\)', '', regex=True)
+crop_money.columns = crop_money.columns.str.strip()
+crop_money['연도'] = crop_money['연도'].str.replace('년', '')
+crop_money['연도'] = pd.to_datetime(crop_money['연도']).dt.year
+crop_money['연도'] = crop_money['연도'].astype(str)
+
+st.write(crop_money)
+st.write(crop_money.columns)
+
+
+matplotlib.rc('font', family='Malgun Gothic')
+# 지급건수 그래프 그리기
+fig, ax = plt.subplots(figsize=(10, 5))
+ax.bar(crop_money['연도'], crop_money['지급건수'], color='skyblue')
+
+# 그래프 레이블
+ax.set_xlabel('연도')
+ax.set_ylabel('지급건수')
+ax.set_title('연도별 지급건수')
+
+# 그래프를 Streamlit에 표시
+st.pyplot(fig)
+
 # st.pyplot(fig)
 # st.plotly_chart(fig)
 
@@ -61,7 +51,7 @@ def col1():
         st.write(flower_2020.head(20))
 def col2():
     with col2:
-        st.header('2021화훼 농가 ')
+        st.header()
         st.write(flower_2021.head(20))
 
 # st.subheader('this is subheader')

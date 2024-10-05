@@ -90,7 +90,9 @@ def dvr1():
         dvr1_df['year'] = dvr1_df['dvr1'].astype(str).apply(lambda x: x[:4])
         dvr1_df = dvr1_df[['station', 'year', 'dvr1']].sort_values('year')
 
-        # print(dvr1_df)
+        print(dvr1_df)
+        if not os.path.exists(f'output/{station}/{station}'):
+            os.makedirs(f'output/{station}/{station}')
 
         dvr1_df.to_csv(f'output/{station}/{station}_dvr1.csv', index=False)
 
@@ -271,7 +273,7 @@ def main():
     # get_data(2021, 2024)
 
     # 첫번째 모델 돌리기 : DVR1 ==> 파일에 정리 완.
-    # dvr1()
+    dvr1()
 
     # 두번째 모델 돌리기 : DVR2 ==> 파일에 정리 완.
     # dvr2()
