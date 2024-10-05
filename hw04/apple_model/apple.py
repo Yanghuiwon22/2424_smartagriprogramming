@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import math
+from sklearn.metrics import r2_score, mean_squared_error
 
 import requests
 def xls2csv():
@@ -69,7 +70,7 @@ def dvr1():
             df = pd.read_csv(f'output/{station}/weather_data/{csv_file}')
 
             df['tavg_above_5'] = df['tavg'] > 5  # tavg 값이 5도 이상인 경우 True
-            df['3_day_streak'] = df['tavg_above_5'].rolling(window=3).sum() == 3  # 3일 연속 True
+            df['3_day_streak'] = df['tavg_above_5'].rolling(window=3).sum() == 3  # 3일 연속 True2ㅂ47
 
             first_valid_index = df[df['3_day_streak']].index.min() - 2
             # print(first_valid_index)
@@ -259,9 +260,10 @@ def min_avg_max_month():
 
     # print(df_min_avg_max_month)
 
+def evaluate_model(y_true, y_pred):
 
-
-
+    rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+    return rmse
 
 def main():
     if not os.path.exists('output'):
@@ -282,7 +284,22 @@ def main():
     # ( DVR1, DVR2, CD모델 결과 + 실제 만개일 ) 파일 합치기
     # concat_result()
 
-    min_avg_max_month()
+    # 3, 4월의 최소, 평균, 최고 온도 그래프 그리기
+    # min_avg_max_month()
+
+    # 모델 평가하기 (R^2, RMSE)
+    save_evaluate_mode = pd.DataFrame()
+    for station in ['Chungju', 'Gunwi', 'Hwaseong', 'Pocheon']:
+        result_df = pd.read_csv(f'output/{station}/{station}_result.csv')
+        result_df = result_df[result_df['year'] == 2021]
+
+        print(result_df)
+        y_true = pd.to_datetime(result_df['obj'])
+        y_pred = pd.to_datetime(result_df['dvr1'])
+
+        rmse = evaluate_model(y_true, y_pred)
+
+    print(rmse)
 
 if __name__ == '__main__':
    main()
