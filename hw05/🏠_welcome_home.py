@@ -1,3 +1,4 @@
+import matplotlib
 import streamlit as st
 from streamlit_option_menu import option_menu
 import numpy as np
@@ -9,7 +10,7 @@ import seaborn as sns
 
 st.set_page_config(layout="wide")
 
-st.title('🏠홈 ')
+st.title('🏠')
 
 # 파일 읽어오기
 
@@ -23,8 +24,6 @@ crop_money['연도'] = pd.to_datetime(crop_money['연도']).dt.year
 crop_money['연도'] = crop_money['연도'].astype(str)
 
 st.write(crop_money)
-st.write(crop_money.columns)
-
 
 matplotlib.rc('font', family='Malgun Gothic')
 # 지급건수 그래프 그리기
@@ -63,15 +62,15 @@ def tab():
     tab2. write('i want to go home')
     tab3.write(st.text_input('이름을 입력하세요!'))
 
-# if st.button("Click me"): st.write("Button clicked!"),st.balloons()
+if st.button("Click me"): st.write("Button clicked!"),st.balloons()
 
 def home():
-    st.title('🏠어서오세요 홈입니다.')
+    st.title('🏠홈이다.')
 
 # app-indicator
 def sidebar():
     with st.sidebar:
-        choice = option_menu("메인메뉴", ["Home", "Task", "Pictures"],
+        choice = option_menu("streamlit 연습", ["Home", "Task", "about"],
                              icons=['house', 'list-task', 'image'],
                              menu_icon="folder", default_index=0,
                              styles={ 'menu_title': {'icon':'envelope','color': '#9ed916'},
@@ -83,20 +82,30 @@ def sidebar():
                                  ,
                           }
                           )
-        if choice == 'Home':
-            col1()
-            st.write('welcome back home')
+    if choice == 'Home':
+        st.write('welcome back home')
 
     # map_data = pd.DataFrame(
 #     np.random.randn(100, 2) / [50, 50] + [37.514575, 127.0495556],
 #     columns=['lat', 'lon'])
 # st.map(map_data)
 
+data = pd.DataFrame({
+    'Day': ['2024-03-20', '2024-03-21', '2024-03-22'],
+    'Rose': [1, 0, 0],
+    'Tulip': [0, 1, 0],
+    'Sunflower': [0, 0, 1]
+})
+
+sns.heatmap(data.set_index('Day'), annot=True, cmap="YlGnBu")
+plt.title("Bloom Heatmap")
+plt.show()
+
 def main():
     # tab()
     sidebar()
     # home()
-    plot_data
+
 
 
 if __name__ == '__main__' :

@@ -599,7 +599,7 @@ def cd_model():
                     df.at[idx, 'cd'] = cd_value
                     cumulative_cd += cd_value
 
-                    # 저온 요구량에 도달했을 때 내생휴면 해재
+                    # 저온 요구도에 도달했을 때 내생휴면 해재
                     if not dormancy_released and (cumulative_cd <= cr or pd.to_datetime(row['Date'], format='%Y-%m-%d') >= pd.to_datetime(f'{year}-02-15', format='%Y-%m-%d')):
                         dormancy_released = True
                         release_date = row['Date']
@@ -611,7 +611,7 @@ def cd_model():
                         df.at[idx, 'hr'] = hr_value
                         cumulative_hr += hr_value
 
-                        # 누적 가온량이 고온 요구량에 도달했을 때 만개일 예측
+                        # 누적 가온량이 고온 요구도에 도달했을 때 만개일 예측
                         if cumulative_hr >= Hr and flowering_date is None:
                             flowering_date = row['Date']
                             df_cd_date.loc[index, '예상 만개일'] = flowering_date
