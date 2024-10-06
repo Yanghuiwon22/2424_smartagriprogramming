@@ -1,26 +1,24 @@
-import matplotlib
 import streamlit as st
-from streamlit_option_menu import option_menu
-import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
-import matplotlib.dates as mdates
 from datetime import datetime
-import seaborn as sns
+
 
 st.title("💲농작물 비용 및 수익 분석 계산기")
 
+# 현재 시간 가져오기
+now = datetime.now()
+current_year = now.year
+current_month = now.month
 
-# 연도와 월
-st.header("기간 입력")
-selected_year = st.selectbox("연도 선택", range(2020, 2031))  # 2020년부터 2030년까지 선택 가능
-selected_month = st.selectbox("월 선택", range(1, 13))  # 1월부터 12월까지 선택 가능
-
+# 연도와 월 자동 선택 (현재 연도와 월을 기본값으로 설정)
+st.header("📅기간 입력")
+selected_year = st.selectbox("연도 선택", range(2000, 2025), index=range(2000, 2025).index(current_year))
+selected_month = st.selectbox("월 선택", range(1, 13), index=current_month - 1)
 st.write(f"선택된 기간: {selected_year}년 {selected_month}월")
 
 # 입력
-st.header("비용 입력")
+st.header("💸비용 입력")
 seed_cost = st.text_input("종자 비용 (₩)", "", placeholder=" 종자 비용을 입력해 주세요")
 fertilizer_cost = st.text_input("비료 비용 (₩)", "", placeholder=" 비료 비용을 입력해 주세요")
 pesticide_cost = st.text_input("농약 비용 (₩)", "", placeholder=" 농약 비용을 입력해 주세요")
@@ -42,7 +40,7 @@ total_cost = seed_cost + fertilizer_cost + pesticide_cost + labor_cost + other_c
 st.write(f"총 비용: ₩{total_cost}")
 
 # 입력
-st.header("수익 입력")
+st.header("💰수익 입력")
 selling_price_per_kg = st.text_input("판매 가격 (₩/kg)", "", placeholder=" 판매 가격을 입력해 주세요")
 production_quantity = st.text_input("생산량 (kg)", "", placeholder=" 생산량을 입력해 주세요")
 
@@ -60,6 +58,7 @@ profit = total_revenue - total_cost
 st.write(f"{selected_year}년 {selected_month}월의 총 수익: ₩{total_revenue}")
 st.write(f"{selected_year}년 {selected_month}월의 순이익: ₩{profit}")
 
+st.header("📊차트")
 # 버튼
 col1, col2 = st.columns(2)
 
