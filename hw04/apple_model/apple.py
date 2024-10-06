@@ -273,7 +273,7 @@ def main():
     # get_data(2021, 2024)
 
     # 첫번째 모델 돌리기 : DVR1 ==> 파일에 정리 완.
-    dvr1()
+    # dvr1()
 
     # 두번째 모델 돌리기 : DVR2 ==> 파일에 정리 완.
     # dvr2()
@@ -282,24 +282,24 @@ def main():
     # cd_model()
 
     # ( DVR1, DVR2, CD모델 결과 + 실제 만개일 ) 파일 합치기
-    # concat_result()
+    concat_result()
 
     # 3, 4월의 최소, 평균, 최고 온도 그래프 그리기
     # min_avg_max_month()
 
     # 모델 평가하기 (R^2, RMSE)
-    save_evaluate_mode = pd.DataFrame()
-    for station in ['Chungju', 'Gunwi', 'Hwaseong', 'Pocheon']:
-        result_df = pd.read_csv(f'output/{station}/{station}_result.csv')
-        result_df = result_df[result_df['year'] == 2021]
-
-        print(result_df)
-        y_true = pd.to_datetime(result_df['obj'])
-        y_pred = pd.to_datetime(result_df['dvr1'])
-
-        rmse = evaluate_model(y_true, y_pred)
-
-    print(rmse)
+    # save_evaluate_mode = pd.DataFrame()
+    # for station in ['Chungju', 'Gunwi', 'Hwaseong', 'Pocheon']:
+    #     result_df = pd.read_csv(f'output/{station}/{station}_result.csv')
+    #     result_df = result_df[result_df['year'] == 2021]
+    #
+    #     print(result_df)
+    #     y_true = pd.to_datetime(result_df['obj'])
+    #     y_pred = pd.to_datetime(result_df['dvr1'])
+    #
+    #     rmse = evaluate_model(y_true, y_pred)
+    #
+    # print(rmse)
 
 if __name__ == '__main__':
    main()
