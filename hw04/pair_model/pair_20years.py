@@ -647,6 +647,7 @@ def t_get_data():
 def concat_result():
     station_list = os.listdir('pair_model/output')
     for station in station_list:
+        # print(staiton)
         DVS_df = pd.read_csv(f'pair_model/output/{station}/DVS_{station}_model.csv')
         mdvr_df = pd.read_csv(f'pair_model/output/{station}/mdvr_{station}_date.csv')
         cd_df = pd.read_csv(f'pair_model/output/{station}/cd_{station}_date.csv')
@@ -694,8 +695,8 @@ def main():
 
     # 모델을 위한 데이터 수집
     # get_data(2004, 2024) # api.taegon.kr에서 4개의 지역 데이터 저장
-    get_other_region_data() # 나머지 4개의 데이터 정리 (원본 데이터 : station/input/~.csv)
-    get_flowering_date() # 실제 만개일 데이터 => 지역별 저장 (원본 데이터 : obs_date.txt)
+    # get_other_region_data() # 나머지 4개의 데이터 정리 (원본 데이터 : station/input/~.csv)
+    # get_flowering_date() # 실제 만개일 데이터 => 지역별 저장 (원본 데이터 : obs_date.txt)
     #
     # # 모델 돌리기
     # DVR_model()
