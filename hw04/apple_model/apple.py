@@ -2,7 +2,6 @@ import os
 import pandas as pd
 import numpy as np
 import math
-from sklearn.metrics import r2_score, mean_squared_error
 
 import requests
 def xls2csv():
@@ -70,7 +69,7 @@ def dvr1():
             df = pd.read_csv(f'output/{station}/weather_data/{csv_file}')
 
             df['tavg_above_5'] = df['tavg'] > 5  # tavg 값이 5도 이상인 경우 True
-            df['3_day_streak'] = df['tavg_above_5'].rolling(window=3).sum() == 3  # 3일 연속 True2ㅂ47
+            df['3_day_streak'] = df['tavg_above_5'].rolling(window=3).sum() == 3  # 3일 연속 True
 
             first_valid_index = df[df['3_day_streak']].index.min() - 2
             # print(first_valid_index)
@@ -90,9 +89,7 @@ def dvr1():
         dvr1_df['year'] = dvr1_df['dvr1'].astype(str).apply(lambda x: x[:4])
         dvr1_df = dvr1_df[['station', 'year', 'dvr1']].sort_values('year')
 
-        print(dvr1_df)
-        if not os.path.exists(f'output/{station}/{station}'):
-            os.makedirs(f'output/{station}/{station}')
+        # print(dvr1_df)
 
         dvr1_df.to_csv(f'output/{station}/{station}_dvr1.csv', index=False)
 
@@ -216,61 +213,12 @@ def concat_result():
 
         result_df.to_csv(f'output/{station}/{station}_result.csv', index=False)
 
-def min_avg_max_month():
-    station_list = os.listdir('output')
-
-    for station in station_list:
-        df_min_avg_max_month = pd.DataFrame()
-
-        year_list = [2020, 2021]
-
-        for year in year_list:
-            df_dic = {}
-            df = pd.read_csv(os.path.join('output', station, 'weather_data', f'{station}_{year}.csv'))
-            df_3 = df[df['month'] == 3] # 3월, 4월 데이터만 추출
-            df_4 = df[df['month'] == 4]
-
-            # print(df_3['tmin'])
-            tmin_3 = df_3['tmin'].sum() / len(df_3)
-            tmin_4 = df_4['tmin'].sum() / len(df_4)
-
-            tavg_3 = df_3['tavg'].sum() / len(df_3)
-            tavg_4 = df_4['tavg'].sum() / len(df_4)
-
-            tmax_3 = df_3['tmax'].sum() / len(df_3)
-            tmax_4 = df_4['tmax'].sum() / len(df_4)
-
-            df_dic['year'] = year
-            df_dic['month'] = 'April'
-            df_dic['tmin'] = tmin_3
-            df_dic['tavg'] = tavg_3
-            df_dic['tmax'] = tmax_3
-
-            df_min_avg_max_month = pd.concat([df_min_avg_max_month, pd.DataFrame([df_dic])])
-
-            df_dic['year'] = year
-            df_dic['month'] = 'March'
-            df_dic['tmin'] = tmin_4
-            df_dic['tavg'] = tavg_4
-            df_dic['tmax'] = tmax_4
-
-            df_min_avg_max_month = pd.concat([df_min_avg_max_month, pd.DataFrame([df_dic])])
-
-        df_min_avg_max_month.to_csv(f'output/{station}/{station}_tmin_tavg_tmax_month.csv')
-
-    # print(df_min_avg_max_month)
-
-def evaluate_model(y_true, y_pred):
-
-    rmse = np.sqrt(mean_squared_error(y_true, y_pred))
-    return rmse
-
 def main():
     if not os.path.exists('output'):
         os.makedirs('output')
 
     # api.taegon.kr 데이터 가져오기  --> 최초 1회
-    # get_data(2021, 2024)
+    get_data(2021, 2024)
 
     # 첫번째 모델 돌리기 : DVR1 ==> 파일에 정리 완.
     # dvr1()
@@ -284,22 +232,6 @@ def main():
     # ( DVR1, DVR2, CD모델 결과 + 실제 만개일 ) 파일 합치기
     concat_result()
 
-    # 3, 4월의 최소, 평균, 최고 온도 그래프 그리기
-    # min_avg_max_month()
-
-    # 모델 평가하기 (R^2, RMSE)
-    # save_evaluate_mode = pd.DataFrame()
-    # for station in ['Chungju', 'Gunwi', 'Hwaseong', 'Pocheon']:
-    #     result_df = pd.read_csv(f'output/{station}/{station}_result.csv')
-    #     result_df = result_df[result_df['year'] == 2021]
-    #
-    #     print(result_df)
-    #     y_true = pd.to_datetime(result_df['obj'])
-    #     y_pred = pd.to_datetime(result_df['dvr1'])
-    #
-    #     rmse = evaluate_model(y_true, y_pred)
-    #
-    # print(rmse)
 
 if __name__ == '__main__':
    main()
