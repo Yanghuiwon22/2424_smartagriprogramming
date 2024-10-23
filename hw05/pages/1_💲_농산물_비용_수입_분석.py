@@ -67,6 +67,7 @@ with col1:
     if st.button('비용 vs 수익 bar 차트 보기'):
         if total_revenue > 0:
             st.subheader(f"{selected_year}년 {selected_month}월 비용 vs 수익 ")
+            plt.rc('font', family='NanumGothic')
             fig, ax = plt.subplots()
             ax.bar(["비용", "수익"], [total_cost, total_revenue], color=['red', 'green'])
             ax.set_title("비용 vs 수익")
