@@ -48,7 +48,8 @@ def fetch_data(i):
         print(f"Error fetching data for field {i}: {e}")
         return None
 
-# 각 필드 데이터를 가져오는 함수
+
+# 데이터를 가져와서 데이터프레임으로 변환하는 함수
 def jbnu_aws_data():
     result = []
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -58,22 +59,18 @@ def jbnu_aws_data():
             if data:
                 result.extend(data)
 
-    return result
-
-
-# 데이터프레임 변환
-def data_to_dataframe():
-    data = jbnu_aws_data()
-    if data:
-        df = pd.DataFrame(data)
-
+    if result:
+        df = pd.DataFrame(result)
         df = df.groupby('Date', as_index=False).first()
-        # 칼럼 순서 재정렬
+        # 칼럼 순서 정렬
         df = df[['Date'] + [field_names[i] for i in range(1, 8)]]
         print(df)
+        return df
     else:
         print("No data available.")
+        return pd.DataFrame()
+
 
 
 if __name__ == "__main__":
-    data_to_dataframe()
+    df = jbnu_aws_data()
