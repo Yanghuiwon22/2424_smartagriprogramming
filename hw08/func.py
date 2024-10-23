@@ -48,7 +48,6 @@ def fetch_data(i):
         print(f"Error fetching data for field {i}: {e}")
         return None
 
-
 # 데이터를 가져와서 데이터프레임으로 변환하는 함수
 def jbnu_aws_data():
     result = []
@@ -69,7 +68,6 @@ def jbnu_aws_data():
     else:
         print("No data available.")
         return pd.DataFrame()
-
 
 
 if __name__ == "__main__":
