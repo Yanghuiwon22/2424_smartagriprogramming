@@ -19,7 +19,7 @@ data = jbnu_aws_data()  # 데이터를 가져오고 변환
 # 데이터가 존재하는지 확인
 if not data.empty:  # 데이터프레임이 비어 있지 않다면
     # 가장 최근 데이터
-    latest_data = data.iloc[0]  # 첫 번째 행을 선택
+    latest_data = data.iloc[-1]  # 첫 번째 행을 선택
 
     updated_time = latest_data['Date']
     st.write(f'Updated Time: {updated_time}')
