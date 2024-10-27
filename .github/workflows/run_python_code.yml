@@ -30,14 +30,14 @@ jobs:
         run: python hw08/func.py # 이곳에 실제 파이썬 파일명을 적어주세요.
         
 
-      - name: Commit and push changes
-        if: steps.changed-files.outputs.files_changed == 'true'
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "Update articles.json"
-          git push https://${{ secrets.GH_TOKEN }}@github.com/yeonjin1357/action_test.git HEAD:main
+      # - name: Commit and push changes
+      #   if: steps.changed-files.outputs.files_changed == 'true'
+      #   run: |
+      #     git config user.name "GitHub Actions"
+      #     git config user.email "actions@github.com"
+      #     git add .
+      #     git commit -m "Update articles.json"
+      #     git push https://${{ secrets.GH_TOKEN }}@github.com/yeonjin1357/action_test.git HEAD:main
 
       # - name: Deploy to Cafe24 Web Hosting via FTP
       #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
