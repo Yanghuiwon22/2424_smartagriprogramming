@@ -3,6 +3,8 @@ import concurrent.futures
 import pandas as pd
 from datetime import datetime, timedelta, timezone
 
+import os
+
 # 필드 이름
 field_names = {
     1: '온도',
@@ -67,7 +69,12 @@ def jbnu_aws_data():
 
         # # CSV 파일로 저장 (덮어쓰기 모드)
         # # hw08 디렉토리가 없다고 나옴,,? -> 다시 해보기..ㅠㅜ
-        # df.to_csv('/hw08/output_data.csv', index=False, encoding='utf-8-sig')
+
+        # directory = 'hw08'
+        # if not os.path.exists(directory):
+        #     os.makedirs(directory)
+
+        df.to_csv('output_data.csv', index=False, encoding='utf-8-sig')
         #
         # print("Data saved to hw08/output_data.csv")
         return df

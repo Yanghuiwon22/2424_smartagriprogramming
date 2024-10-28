@@ -2,6 +2,7 @@ import streamlit as st
 import time
 from datetime import datetime, timedelta
 from func import jbnu_aws_data
+import altair as alt
 
 
 st.title('전북대 기상대를 활용한 모니터링 시스템')
@@ -24,13 +25,30 @@ if not data.empty:  # 데이터프레임이 비어 있지 않다면
     updated_time = latest_data['Date']
     st.write(f'Updated Time: {updated_time}')
 
-    st.write(f"Temperature: {latest_data['온도']}°C")
-    st.write(f"Humidity: {latest_data['습도']}%")
-    st.write(f"Lux: {latest_data['일사량']}")
-    st.write(f"Wind direction: {latest_data['풍향']}")
-    st.write(f"Wind speed: {latest_data['풍속']} m/s")
-    st.write(f"Rain: {latest_data['강우']} mm")
-    st.write(f"Battery: {latest_data['베터리 전압']}")
+    # 실시간 데이터 출력
+    # st.write(f"Temperature: {latest_data['온도']}°C")
+    # st.write(f"Humidity: {latest_data['습도']}%")
+    # st.write(f"Lux: {latest_data['일사량']}")
+    # st.write(f"Wind direction: {latest_data['풍향']}")
+    # st.write(f"Wind speed: {latest_data['풍속']} m/s")
+    # st.write(f"Rain: {latest_data['강우']} mm")
+    # st.write(f"Battery: {latest_data['베터리 전압']}")
+
+    st.write(data)
+
+    # 24시간 데이터 시각화
+    chart = alt.Chart(data).mark_line().encode(
+        x='Date',
+        y=alt.Y('온도:Q',
+                scale=alt.Scale(domain=[10, 45]),
+                axis=alt.Axis(tickMinStep=5)
+                )  # y축 최소값 0, 최대값 50 설정
+    )
+
+
+    st.altair_chart(chart, use_container_width=True)
+
+
 else:
     st.write("No data available.")
 
