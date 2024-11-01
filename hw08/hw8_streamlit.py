@@ -1,8 +1,10 @@
 import streamlit as st
 import time
 from datetime import datetime, timedelta
-from func import jbnu_aws_data
+from func import get_aws
 import altair as alt
+
+st.set_page_config(layout="wide")
 
 # # Display the current time
 # current_time = datetime.now().strftime("%H:%M:%S")
@@ -52,45 +54,45 @@ st.markdown(
 )
 # =================================================== streamlit content 구성 ============================================
 
-data = jbnu_aws_data()  # 데이터를 가져오고 변환
+data = get_aws(datetime.now().date())  # 데이터를 가져오고 변환
 
 # 데이터가 존재하는지 확인
 if not data.empty:  # 데이터프레임이 비어 있지 않다면
     # 가장 최근 데이터
     latest_data = data.iloc[-1]  # 첫 번째 행을 선택
 
-    updated_time = latest_data['Date']
+    updated_time = latest_data['datetime']
     # 실시간 데이터 출력
 
-    if float(latest_data['온도']) > 30.0:
+    if float(latest_data['temp']) > 30.0:
         temperature_color = RED
-    elif float(latest_data['온도']) <= 10.0:
+    elif float(latest_data['temp']) <= 10.0:
         temperature_color = BLUE
     else:
         temperature_color = DEFAULT_COLOR
 
-    if float(latest_data['습도']) > 80.0:
+    if float(latest_data['hum']) > 80.0:
         humidity_color = RED
-    elif float(latest_data['습도']) <= 20.0:
+    elif float(latest_data['hum']) <= 20.0:
         humidity_color = BLUE
     else:
         humidity_color = DEFAULT_COLOR
 
-    if float(latest_data['일사량']) > 700.0:
+    if float(latest_data['rad']) > 700.0:
         lux_color = RED
-    elif float(latest_data['일사량']) <= 300.0:
+    elif float(latest_data['rad']) <= 300.0:
         lux_color = BLUE
     else:
         lux_color = DEFAULT_COLOR
 
-    if float(latest_data['풍속']) > 1.5:
+    if float(latest_data['ws']) > 1.5:
         wind_speed_color = RED
-    elif float(latest_data['풍속']) <= 0.3:
+    elif float(latest_data['ws']) <= 0.3:
         wind_speed_color = BLUE
     else:
         wind_speed_color = DEFAULT_COLOR
 
-    if float(latest_data['강우']) > 0.0:
+    if float(latest_data['rain']) > 0.0:
         rain_color = BLUE
     else:
         rain_color = DEFAULT_COLOR
@@ -100,7 +102,7 @@ if not data.empty:  # 데이터프레임이 비어 있지 않다면
     # st.write(f"Humidity: {latest_data['습도']}%")
     # st.write(f"Lux: {latest_data['일사량']}")
     # st.write(f"Wind direction: {latest_data['풍향']}")
-    # st.write(f"Wind speed: {latest_data['풍속']} m/s")
+    # st.write(f"Wind speed: {latest_data['ws']} m/s")
     # st.write(f"Rain: {latest_data['강우']} mm")
     # st.write(f"Battery: {latest_data['베터리 전압']}")
 # ============================================== steamlit layout 구성 ==================================================
@@ -109,13 +111,13 @@ st.markdown("<h1 style='text-align: center; color: black;'>🖥️전북대 기�
 
 # st.markdown("<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h1>", unsafe_allow_html=True) # 제목 + 가운데 정렬
 # 네모난 상자 출력
-monitoring_elements = {'🌡️온도🌡️': {'data': f"{latest_data['온도']}°C", 'color': temperature_color},
-                       '💧습도💧' : {'data': f"{latest_data['습도']}%", 'color': humidity_color},
-                       '🌞일사량🌞' : {'data': f"{latest_data['일사량']}", 'color': lux_color},
-                       '🧭풍향🧭' : {'data': f"{latest_data['풍향']}", 'color': DEFAULT_COLOR},
-                       '💨풍속💨' : {'data': f"{latest_data['풍속']}m/s", 'color': wind_speed_color},
-                       '🌧️강우🌧️' : {'data': f"{latest_data['강우']}mm", 'color': rain_color},
-                       '🔋배터리전압🔋' : {'data': f"{latest_data['베터리 전압']}", 'color': DEFAULT_COLOR}}
+monitoring_elements = {'🌡️온도🌡️': {'data': f"{latest_data['temp']}°C", 'color': temperature_color},
+                       '💧습도💧' : {'data': f"{latest_data['hum']}%", 'color': humidity_color},
+                       '🌞일사량🌞' : {'data': f"{latest_data['rad']}", 'color': lux_color},
+                       '🧭풍향🧭' : {'data': f"{latest_data['wd']}", 'color': DEFAULT_COLOR},
+                       '💨풍속💨' : {'data': f"{latest_data['ws']}m/s", 'color': wind_speed_color},
+                       '🌧️강우🌧️' : {'data': f"{latest_data['rain']}mm", 'color': rain_color},
+                       '🔋배터리전압🔋' : {'data': f"{latest_data['bv']}", 'color': DEFAULT_COLOR}}
 
 st.markdown(
 '<div class="box" style="width:100%; display: flex; flex-direction: column; border: dashed">'+
@@ -140,7 +142,7 @@ st.markdown(
 #     # 실시간 데이터 출력
 #     # st.write(f"Temperature: {latest_data['온도']}°C")
 #     # st.write(f"Humidity: {latest_data['습도']}%")
-#     # st.write(f"Lux: {latest_data['일사량']}")
+#     # st.write(f"Lux: {latest_data['향']}")
 #     # st.write(f"Wind direction: {latest_data['풍향']}")
 #     # st.write(f"Wind speed: {latest_data['풍속']} m/s")
 #     # st.write(f"Rain: {latest_data['강우']} mm")
