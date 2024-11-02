@@ -120,7 +120,6 @@ def save_aws(start_date, end_date):
     date_list = get_date_list(start_date, end_date)
 
     for date in date_list:
-        print(date)
         os.makedirs(os.path.join(save_dir, f'{date.year}'), exist_ok=True)  # 경로가 없으면 만들기, 있으면 넘어감.
 
         filename = os.path.join(save_dir, f'{date.year}_{date.month}.csv')
