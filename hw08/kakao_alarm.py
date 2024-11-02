@@ -52,6 +52,7 @@ def main(weather_data):
 
     for friend in friends_list:
         friend_id = friend.get("uuid")
+        print(friend_id)
         df_now = df_email[df_email['uuid'] == friend_id]
 
         if df_now['조건'].values == 'default':
@@ -80,4 +81,4 @@ def main(weather_data):
                 print("메시지 전송 실패:", response.json())
 
 if __name__ == '__main__':
-    main()
+    main('sd')
