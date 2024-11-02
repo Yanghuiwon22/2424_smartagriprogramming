@@ -22,7 +22,7 @@ def display():
     print(st.session_state.message_number)
 
     if not os.path.exists(os.path.join(FILE_PATH, 'message_number.csv')):
-        df_number = pd.DataFrame(columns=['date', 'time', 'number', 'status'])
+        df_number = pd.DataFrame(columns=['date', 'time', 'number', 'status', '조건'])
 
     else:
         df_number = pd.read_csv(os.path.join(FILE_PATH, 'message_number.csv'))
@@ -37,7 +37,8 @@ def display():
                 'date': datetime.now().date(),
                 'time': datetime.now().time().strftime("%H:%M:%S"),
                 'number': message_number,
-                'status': '제출됨'
+                'status': '제출됨',
+                '조건': 'default'
             }
 
             st.write('처음 등록하는 휴대번호입니다.')
