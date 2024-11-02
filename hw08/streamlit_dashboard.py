@@ -31,7 +31,7 @@ st.markdown(
     
     .box {
         width: 13%;
-        height: 150px;
+        height: 100px;
         border: 5px solid black;
         margin: 10px auto;
         border-radius: 20px;
