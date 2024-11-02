@@ -78,7 +78,6 @@ def jbnu_aws_data():
 
 # aws 실시간 데이터 가져오기
 
-
 desired_timezone = pytz.timezone('Asia/Seoul')
 
 def get_date_list(start_date_str, end_date_str):
