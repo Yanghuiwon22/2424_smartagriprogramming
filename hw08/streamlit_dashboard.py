@@ -29,15 +29,13 @@ st.markdown(
     .boxes {
         display: flex;
     }
-    
-    
+
     .box {
         width: 13%;
         height: 100px;
         border: 5px solid black;
         margin: 10px auto;
         border-radius: 20px;
-        
     }
     
     .box-title {
@@ -46,7 +44,6 @@ st.markdown(
         # font-size: 30px;
         padding-top : 10px;
         color : black
-
     }
     
     .box-content {

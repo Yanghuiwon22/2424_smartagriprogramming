@@ -2,6 +2,55 @@ import streamlit as st
 from settings import *
 from datetime import date, timedelta
 import pandas as pd
+import matplotlib.pyplot as plt
+
+def plot_graph(data, metric):
+    # Matplotlib의 한글 폰트 설정
+    plt.rc('font', family='Malgun Gothic')
+    plt.rcParams['axes.unicode_minus'] = False
+
+    if not data.empty:
+
+        data['datetime'] = pd.to_datetime(data['datetime'], errors='coerce')
+        st.line_chart(data.set_index('datetime')[metric], use_container_width=True)
+
+        # 주석 추가
+        start_time = data['datetime'].min()
+        end_time = data['datetime'].max()
+        annotation_text = f"<{start_time.strftime('%Y-%m-%d %H:%M')} ~ {end_time.strftime('%Y-%m-%d %H:%M')} 그래프>"
+        st.markdown(f"<div style='text-align: center; font-size: 12px;'>{annotation_text}</div>",
+                    unsafe_allow_html=True)
+
+    else:
+        st.write("데이터가 없습니다.")
+
+
+def plot_bar_graph(data, metric):
+    # Matplotlib의 한글 폰트 설정
+    plt.rc('font', family='Malgun Gothic')  # Windows의 경우
+    plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 표시
+
+    if not data.empty:
+        # datetime 열을 datetime 형식으로 변환
+        data['datetime'] = pd.to_datetime(data['datetime'], errors='coerce')  # 변환 시 오류 발생 시 NaT로 설정
+
+
+        # Streamlit을 사용하여 막대
+        st.bar_chart(data.set_index('datetime')[metric])
+
+        # 처음과 마지막 데이터 포인트 추출
+        start_time = data['datetime'].min()
+        end_time = data['datetime'].max()
+
+
+        # 주석 추가
+        annotation_text = f"<{start_time.strftime('%Y-%m-%d %H:%M')} ~ {end_time.strftime('%Y-%m-%d %H:%M')} 그래프>"
+        st.markdown(f"<div style='text-align: center; font-size: 12px;'>{annotation_text}</div>",
+                    unsafe_allow_html=True)
+
+    else:
+        st.write("데이터가 없습니다.")
+
 
 def display():
     st.markdown("<h1 style='text-align: center; color: black;'>🖥️전북대 기상대 기상 조회하기🖥️</h1>",
@@ -52,3 +101,29 @@ def display():
     filtered_df = df_total[(df_total['date'] >= start_date) & (df_total['date'] <= end_date)]
 
     st.dataframe(filtered_df)
+
+# 네모난 상자 출력
+    monitoring_elements = {'🌡️온도🌡️': { 'metric': 'temp'},
+                           '💧습도💧' : {'metric': 'hum'},
+                           '🌞일사량🌞' : {'metric': 'rad'},
+                           '🧭풍향🧭' : {'metric': 'wd'},
+                           '💨풍속💨' : { 'metric': 'ws'},
+                           '🌧️강우🌧️' : {'metric': 'rain'},
+                           '🔋배터리전압🔋' : {'metric': 'bv'},}
+
+# 탭 생성 (풍향 탭을 제외)
+    filtered_elements = {key: value for key, value in monitoring_elements.items() if key != '🧭풍향🧭'}
+    tabs = st.tabs(filtered_elements.keys())
+
+    # 각 탭에 맞는 그래프 추가
+    for tab, (key, value) in zip(tabs, filtered_elements.items()):
+        with tab:
+            metric_name = value['metric']  # 데이터프레임의 열 이름
+
+            st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)  # 그래프 제목
+
+            # 강우 탭에는 막대 그래프로, 그 외는 선 그래프로 그리기
+            if metric_name == 'rain':
+                plot_bar_graph(filtered_df, metric_name)  # 막대 그래프 함수 호출
+            else:
+                plot_graph(filtered_df, metric_name)  # 선 그래프 함수 호출
