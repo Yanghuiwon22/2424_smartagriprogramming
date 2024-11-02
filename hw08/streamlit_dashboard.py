@@ -41,7 +41,7 @@ st.markdown(
     .box-title {
         text-align: center;
         padding: 3px;
-        font-size: 30px;
+        # font-size: 30px;
         padding-top : 10px;
         color : black
 
@@ -49,7 +49,7 @@ st.markdown(
     
     .box-content {
         text-align: center;
-        font-size: 50px;
+        font-size: 30px;
         font-weight: bold;
         color : black
     }
@@ -145,7 +145,7 @@ def display():
 
     # 상자 출력
     st.markdown(
-        '<div class="box" style="width:100%; display: flex; flex-direction: column; border: dashed;">' +
+        '<div class="box" style="width:100%; height:100%; display: flex; flex-direction: column; border: dashed;">' +
         "<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h3>" +
         '<div class="boxes">' + ''.join(
             [f'<div class="box" style="background-color: {value["color"]};" ' +
