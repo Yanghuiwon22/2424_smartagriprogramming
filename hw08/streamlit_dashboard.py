@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from func import get_aws
 import altair as alt
 import matplotlib.pyplot as plt
-
+import pandas as pd
 
 import streamlit_kakao_alarm
 import streamlit_text_alarm
@@ -18,7 +18,6 @@ st.set_page_config(layout="wide")
 RED = "#F05650"
 BLUE = '#617DF8'
 DEFAULT_COLOR = 'white'
-
 
 # ============================================== steamlit css 구성 ==================================================
 st.markdown(
@@ -35,7 +34,7 @@ st.markdown(
         border: 5px solid black;
         margin: 10px auto;
         border-radius: 20px;
-        cursor: pointer;  /* 클릭 가능하게 설정 */
+        
     }
     
     .box-title {
@@ -60,35 +59,56 @@ st.markdown(
 )
 # =================================================== streamlit content 구성 ============================================
 
-# 그래프를 그리는 함수
 def plot_graph(data, metric):
+    # Matplotlib의 한글 폰트 설정
+    plt.rc('font', family='Malgun Gothic')
+    plt.rcParams['axes.unicode_minus'] = False
+
+    if not data.empty:
+
+        data['datetime'] = pd.to_datetime(data['datetime'], errors='coerce')
+        st.line_chart(data.set_index('datetime')[metric], use_container_width=True)
+
+        # 주석 추가
+        start_time = data['datetime'].min()
+        end_time = data['datetime'].max()
+        annotation_text = f"<{start_time.strftime('%Y-%m-%d %H:%M')} ~ {end_time.strftime('%Y-%m-%d %H:%M')} 그래프>"
+        st.markdown(f"<div style='text-align: center; font-size: 12px;'>{annotation_text}</div>",
+                    unsafe_allow_html=True)
+
+    else:
+        st.write("데이터가 없습니다.")
+
+
+def plot_bar_graph(data, metric):
     # Matplotlib의 한글 폰트 설정
     plt.rc('font', family='Malgun Gothic')  # Windows의 경우
     plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 표시
 
-    # 그래프 그리기
     if not data.empty:
-        plt.figure(figsize=(10, 5))
-        plt.plot(data['datetime'], data[metric], marker='o', linewidth=1)  # 선의 두께를 1로 설정
-        plt.title(f'{metric} 그래프')
-        plt.xlabel('시간')
-        plt.ylabel(metric)
+        # datetime 열을 datetime 형식으로 변환
+        data['datetime'] = pd.to_datetime(data['datetime'], errors='coerce')  # 변환 시 오류 발생 시 NaT로 설정
 
-        plt.xticks(rotation=45, ha='right')
-        plt.tight_layout()
 
-        st.pyplot(plt)  # Streamlit에서 Matplotlib 그래프 표시
+        # Streamlit을 사용하여 막대
+        st.bar_chart(data.set_index('datetime')[metric])
+
+        # 처음과 마지막 데이터 포인트 추출
+        start_time = data['datetime'].min()
+        end_time = data['datetime'].max()
+
+
+        # 주석 추가
+        annotation_text = f"<{start_time.strftime('%Y-%m-%d %H:%M')} ~ {end_time.strftime('%Y-%m-%d %H:%M')} 그래프>"
+        st.markdown(f"<div style='text-align: center; font-size: 12px;'>{annotation_text}</div>",
+                    unsafe_allow_html=True)
+
     else:
         st.write("데이터가 없습니다.")
 
 def display():
-    # 테스트용
-
-    # ===============
-
 
     data = get_aws(datetime.now().date())  # 데이터를 가져오고 변환
-
 
     # 데이터가 존재하는지 확인
     if not data.empty:  # 데이터프레임이 비어 있지 않다면
@@ -131,14 +151,6 @@ def display():
         else:
             rain_color = DEFAULT_COLOR
 
-
-        # st.write(f"Temperature: {latest_data['온도']}°C")
-        # st.write(f"Humidity: {latest_data['습도']}%")
-        # st.write(f"Lux: {latest_data['일사량']}")
-        # st.write(f"Wind direction: {latest_data['풍향']}")
-        # st.write(f"Wind speed: {latest_data['ws']} m/s")
-        # st.write(f"Rain: {latest_data['강우']} mm")
-        # st.write(f"Battery: {latest_data['베터리 전압']}")
     # ============================================== steamlit layout 구성 ==================================================
     st.markdown("<h1 style='text-align: center; color: black;'>🖥️전북대 기상대 활용한 모니터링 시스템🖥️</h1>", unsafe_allow_html=True) # 제목 + 가운데 정렬
 
@@ -155,19 +167,27 @@ def display():
         '<div class="box" style="width:100%; height:100%; display: flex; flex-direction: column; border: dashed;">' +
         "<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h3>" +
         '<div class="boxes">' + ''.join(
-        [f'<div class="box" style="background-color: {value["color"]}"><div class="box-title">{key}</div><div class="box-content">{value["data"]}</div></div>' for key, value in monitoring_elements.items()]
+        [f'<div class="box" style="background-color: {value["color"]}"><div class="box-title">{key}'
+         f'</div><div class="box-content">{value["data"]}</div></div>' for key, value in monitoring_elements.items()]
     ) + '</div>' + '</div>', unsafe_allow_html=True)
 
 
-    # 탭 생성
-    tabs = st.tabs(monitoring_elements.keys())
+    # 탭 생성 (풍향 탭을 제외)
+    filtered_elements = {key: value for key, value in monitoring_elements.items() if key != '🧭풍향🧭'}
+    tabs = st.tabs(filtered_elements.keys())
 
-    # 각 탭에 그래프 추가
-    for tab, (key, value) in zip(tabs, monitoring_elements.items()):
+    # 각 탭에 맞는 그래프 추가
+    for tab, (key, value) in zip(tabs, filtered_elements.items()):
         with tab:
             metric_name = value['metric']  # 데이터프레임의 열 이름
+
             st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)  # 그래프 제목
-            plot_graph(data, metric_name)  # 그래프 그리기
+
+            # 강우 탭에는 막대 그래프로, 그 외는 선 그래프로 그리기
+            if metric_name == 'rain':
+                plot_bar_graph(data, metric_name)  # 막대 그래프 함수 호출
+            else:
+                plot_graph(data, metric_name)  # 선 그래프 함수 호출
 
 
 # 사이드바

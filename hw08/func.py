@@ -141,6 +141,7 @@ def main():
     start_date_str = datetime.now().date() - timedelta(days=1)
     end_date_str = datetime.now().date()
 
+
     save_aws(start_date_str, end_date_str)
 
 if __name__ == '__main__':
