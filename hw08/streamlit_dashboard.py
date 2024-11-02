@@ -9,6 +9,8 @@ import pandas as pd
 import streamlit_kakao_alarm
 import streamlit_text_alarm
 import kakao_alarm
+import vonage_service
+import streamlit_weather
 
 st.set_page_config(layout="wide")
 
@@ -181,9 +183,9 @@ def display():
     if rain_color != DEFAULT_COLOR:
         alarm_weather['rain'] = latest_data['rain']
 
-    st.write(alarm_weather)
     if alarm_weather:
         kakao_alarm.main(alarm_weather)
+        vonage_service.send_sms(alarm_weather)
 
     # 탭 생성 (풍향 탭을 제외)
     filtered_elements = {key: value for key, value in monitoring_elements.items() if key != '🧭풍향🧭'}
@@ -206,12 +208,15 @@ def display():
 # 사이드바
 option = st.sidebar.radio(
     "옵션을 선택하세요:",
-    options=['DASHBOARD', "카카오톡 알람", "문자 알람"],
-    index=0  # 기본값을 첫 번째 옵션(옵션 1)으로 설정
+    options=['DASHBOARD', "기상 조회","카카오톡 알람", "문자 알람"],
+    index=1  # 기본값을 첫 번째 옵션(옵션 1)으로 설정
 )
 
 if option == 'DASHBOARD':
     display()
+
+if option == '기상 조회':
+    streamlit_weather.display()
 
 if option == '카카오톡 알람':
     streamlit_kakao_alarm.display()

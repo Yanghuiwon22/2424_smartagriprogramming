@@ -13,7 +13,7 @@ def get_code():
         "grant_type" : "authorization_code",
         "client_id" : "c7f4c9c3247cf4f1765679d63d620b2f",
         "redirect_url" : "http://localhost:5000",
-        "code" : "rw8BbSAunjvIVqZnlYxttFZwIZDmc1_83zHVmOs5zj5a45Ixv_t3vQAAAAQKKiVQAAABkuuJVcgicpf3YNJZ6g",
+        "code" : "nKqTLLZt2QDZ-mkUFiLcr3xRHwLuJRci4esrgFK1GT3DbSPso4zLzAAAAAQKKcleAAABkuvpl5ke0jm_MNo9Pw",
         "client_secret" : "sNy5KFLhiDPLtk0WWIg7b35zj0MZKNcQ"
     }
     # https://kauth.kakao.com/oauth/authorize?client_id=c7f4c9c3247cf4f1765679d63d620b2f&redirect_uri=https://localhost:5000&response_type=code&scope=talk_message,friends
@@ -23,12 +23,14 @@ def get_code():
 
 def main(weather_data):
     # get_code()
+
+    print('____')
     # 카카오톡 메시지 API
     url = "https://kauth.kakao.com/oauth/token"
     data = {
         "grant_type": "refresh_token",
         "client_id": "c7f4c9c3247cf4f1765679d63d620b2f",
-        "refresh_token": "J4NMcElSF6bZOXv1eENwDY9NGX1M4gbIAAAAAgopyWAAAAGS641kaLbGP5Eb7W-4",
+        "refresh_token": "dvWLUJyAao7x_rC9VtFfAldtRbuCPjryAAAAAgoqJVIAAAGS6-nsfrbGP5Eb7W-4",
         "client_secret" : "sNy5KFLhiDPLtk0WWIg7b35zj0MZKNcQ"
     }
     response = requests.post(url, data=data)
@@ -73,12 +75,13 @@ def main(weather_data):
                     """
                 })
             }
-            response = requests.post(url, headers=header, data=data)
-
-            if response.status_code == 200:
-                print("메시지가 성공적으로 전송되었습니다.")
-            else:
-                print("메시지 전송 실패:", response.json())
+            print(weather_data)
+            # response = requests.post(url, headers=header, data=data)
+            #
+            # if response.status_code == 200:
+            #     print("메시지가 성공적으로 전송되었습니다.")
+            # else:
+            #     print("메시지 전송 실패:", response.json())
 
 if __name__ == '__main__':
     main('sd')
