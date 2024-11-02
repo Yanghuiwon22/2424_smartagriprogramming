@@ -186,7 +186,6 @@ def display():
     if rain_color != DEFAULT_COLOR:
         alarm_weather['rain'] = latest_data['rain']
 
-    st.write(alarm_weather)
     if alarm_weather:
         kakao_alarm.main(alarm_weather)
         vonage_service.send_sms(alarm_weather)
