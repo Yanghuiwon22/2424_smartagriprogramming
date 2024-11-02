@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from func import get_aws
 import altair as alt
 import matplotlib.pyplot as plt
-import pandas as pd
+
 
 import streamlit_kakao_alarm
 import streamlit_text_alarm
@@ -60,14 +60,26 @@ st.markdown(
 )
 # =================================================== streamlit content 구성 ============================================
 
-# 그래프 생성 함수
+# 그래프를 그리는 함수
 def plot_graph(data, metric):
-    plt.figure(figsize=(10, 5))
-    plt.plot(data['datetime'], data[metric], marker='o')
-    plt.title(f"{metric} 시간에 따른 변화")
-    plt.xlabel("시간")
-    plt.ylabel(metric)
-    st.pyplot(plt)
+    # Matplotlib의 한글 폰트 설정
+    plt.rc('font', family='Malgun Gothic')  # Windows의 경우
+    plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 표시
+
+    # 그래프 그리기
+    if not data.empty:
+        plt.figure(figsize=(10, 5))
+        plt.plot(data['datetime'], data[metric], marker='o', linewidth=1)  # 선의 두께를 1로 설정
+        plt.title(f'{metric} 그래프')
+        plt.xlabel('시간')
+        plt.ylabel(metric)
+
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+
+        st.pyplot(plt)  # Streamlit에서 Matplotlib 그래프 표시
+    else:
+        st.write("데이터가 없습니다.")
 
 def display():
     # 테스트용
@@ -76,10 +88,6 @@ def display():
 
 
     data = get_aws(datetime.now().date())  # 데이터를 가져오고 변환
-
-    # 상자 클릭 시 상태 저장을 위한 session_state 초기화
-    if 'selected_metric' not in st.session_state:
-        st.session_state.selected_metric = None
 
 
     # 데이터가 존재하는지 확인
@@ -135,49 +143,31 @@ def display():
     st.markdown("<h1 style='text-align: center; color: black;'>🖥️전북대 기상대 활용한 모니터링 시스템🖥️</h1>", unsafe_allow_html=True) # 제목 + 가운데 정렬
 
     # 네모난 상자 출력
-    monitoring_elements = {'🌡️온도🌡️': {'data': f"{latest_data['temp']}°C", 'color': temperature_color},
-                           '💧습도💧' : {'data': f"{latest_data['hum']}%", 'color': humidity_color},
-                           '🌞일사량🌞' : {'data': f"{latest_data['rad']}", 'color': lux_color},
-                           '🧭풍향🧭' : {'data': f"{latest_data['wd']}", 'color': DEFAULT_COLOR},
-                           '💨풍속💨' : {'data': f"{latest_data['ws']}m/s", 'color': wind_speed_color},
-                           '🌧️강우🌧️' : {'data': f"{latest_data['rain']}mm", 'color': rain_color},
-                           '🔋배터리전압🔋' : {'data': f"{latest_data['bv']}", 'color': DEFAULT_COLOR}}
+    monitoring_elements = {'🌡️온도🌡️': {'data': f"{latest_data['temp']}°C", 'color': temperature_color, 'metric': 'temp'},
+                           '💧습도💧' : {'data': f"{latest_data['hum']}%", 'color': humidity_color, 'metric': 'hum'},
+                           '🌞일사량🌞' : {'data': f"{latest_data['rad']}", 'color': lux_color, 'metric': 'rad'},
+                           '🧭풍향🧭' : {'data': f"{latest_data['wd']}", 'color': DEFAULT_COLOR, 'metric': 'wd'},
+                           '💨풍속💨' : {'data': f"{latest_data['ws']}m/s", 'color': wind_speed_color, 'metric': 'ws'},
+                           '🌧️강우🌧️' : {'data': f"{latest_data['rain']}mm", 'color': rain_color, 'metric': 'rain'},
+                           '🔋배터리전압🔋' : {'data': f"{latest_data['bv']}", 'color': DEFAULT_COLOR, 'metric': 'bv'},}
 
-    # 상자 출력
     st.markdown(
-        '<div class="box" style="width:100%; display: flex; flex-direction: column; border: dashed;">' +
-        "<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h3>" +
+    '<div class="box" style="width:100%; display: flex; flex-direction: column; border: dashed">'+
+    "<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h3>" +
         '<div class="boxes">' + ''.join(
-            [f'<div class="box" style="background-color: {value["color"]};" ' +
-             f'onclick="window.parent.postMessage({{\'metric\': \'{key}\'}});">' +  # 메트릭을 메시지로 보냄
-             f'<div class="box-title">{key}</div><div class="box-content">{value["data"]}</div>' +
-             '</div>' for key, value in monitoring_elements.items()]
-        ) + '</div>' + '</div>', unsafe_allow_html=True)
+        [f'<div class="box" style="background-color: {value["color"]}"><div class="box-title">{key}</div><div class="box-content">{value["data"]}</div></div>' for key, value in monitoring_elements.items()]
+    ) + '</div>' + '</div>', unsafe_allow_html=True)
 
-    # 선택된 메트릭에 따라 그래프 표시
-    metric = st.session_state.get('selected_metric')
-    if metric:
-        st.markdown(f"<h3>{metric} 그래프</h3>", unsafe_allow_html=True)
-        plot_graph(data, metric)  # 여기서 plot_graph(data, metric) 함수 호출
 
-    # st.markdown(
-    # '<div class="box" style="width:100%; display: flex; flex-direction: column; border: dashed">'+
-    # "<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h3>" +
-    #     '<div class="boxes">' + ''.join(
-    #     [f'<div class="box" style="background-color: {value["color"]}"><div class="box-title">{key}</div><div class="box-content">{value["data"]}</div></div>' for key, value in monitoring_elements.items()]
-    # ) + '</div>' + '</div>', unsafe_allow_html=True)
-    #
-    # # 클릭한 메트릭을 세션 상태에 저장
-    # for key in monitoring_elements.keys():
-    #     if st.button(f"{key} 선택"):
-    #         st.session_state.selected_metric = key
-    #
-    # # 선택된 메트릭에 따라 그래프 표시
-    # if st.session_state.selected_metric:
-    #     metric = st.session_state.selected_metric
-    #     st.markdown(f"<h3>{metric} 그래프</h3>", unsafe_allow_html=True)
-    #     plot_graph(data, metric)  # 여기서 plot_graph(data, metric) 함수는 구현되어야 함
-    #
+    # 탭 생성
+    tabs = st.tabs(monitoring_elements.keys())
+
+    # 각 탭에 그래프 추가
+    for tab, (key, value) in zip(tabs, monitoring_elements.items()):
+        with tab:
+            metric_name = value['metric']  # 데이터프레임의 열 이름
+            st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)  # 그래프 제목
+            plot_graph(data, metric_name)  # 그래프 그리기
 
 
 # 사이드바
