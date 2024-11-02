@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 
 import streamlit_kakao_alarm
 import streamlit_text_alarm
+import kakao_alarm
 
 st.set_page_config(layout="wide")
 
@@ -158,6 +159,20 @@ def display():
         [f'<div class="box" style="background-color: {value["color"]}"><div class="box-title">{key}</div><div class="box-content">{value["data"]}</div></div>' for key, value in monitoring_elements.items()]
     ) + '</div>' + '</div>', unsafe_allow_html=True)
 
+    alarm_weather = {}
+    if temperature_color != DEFAULT_COLOR:
+        alarm_weather['temp'] = latest_data['temp']
+    if humidity_color != DEFAULT_COLOR:
+        alarm_weather['hum'] = latest_data['hum']
+    if lux_color != DEFAULT_COLOR:
+        alarm_weather['rad'] = latest_data['rad']
+    if wind_speed_color != DEFAULT_COLOR:
+        alarm_weather['ws'] = latest_data['ws']
+    if rain_color != DEFAULT_COLOR:
+        alarm_weather['rain'] = latest_data['rain']
+
+    if alarm_weather:
+        kakao_alarm.main(alarm_weather)
 
     # 탭 생성
     tabs = st.tabs(monitoring_elements.keys())
@@ -168,6 +183,7 @@ def display():
             metric_name = value['metric']  # 데이터프레임의 열 이름
             st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)  # 그래프 제목
             plot_graph(data, metric_name)  # 그래프 그리기
+
 
 
 # 사이드바

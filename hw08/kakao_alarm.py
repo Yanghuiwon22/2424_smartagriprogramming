@@ -52,6 +52,7 @@ def main(weather_data):
 
     for friend in friends_list:
         friend_id = friend.get("uuid")
+        print(friend_id)
         df_now = df_email[df_email['uuid'] == friend_id]
 
         if df_now['조건'].values == 'default':
