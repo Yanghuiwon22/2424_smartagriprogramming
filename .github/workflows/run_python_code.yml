@@ -39,7 +39,9 @@ jobs:
           git push
         env:
           # GitHub Token을 사용하여 푸시 권한을 부여
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git push https://${{ secrets.GH_TOKEN }}@github.com/Yanghuiwon22/2424_smartagriprogramming.git HEAD:main
+
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Commit and push changes
       #   if: steps.changed-files.outputs.files_changed == 'true'
