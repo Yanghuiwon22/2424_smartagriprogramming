@@ -28,7 +28,19 @@ jobs:
 
       - name: Run Python script
         run: python hw08/func.py # 이곳에 실제 파이썬 파일명을 적어주세요.
-        
+      
+      - name: Commit and Push changes
+        # if: steps.changed-files.outputs.files_changed == 'true'
+        run: |
+          git config --global user.name "Yanghuiwon22"
+          git config --global user.email "hannah4212@naver.com"
+          git add .
+          git commit -m "Save AWS data update"
+          git push https://${{ secrets.JBNU_AWS_MONITORING }}@github.com/Yanghuiwon22/2424_smartagriprogramming.git HEAD:main
+
+       # env:
+          # GitHub Token을 사용하여 푸시 권한을 부여
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Commit and push changes
       #   if: steps.changed-files.outputs.files_changed == 'true'
