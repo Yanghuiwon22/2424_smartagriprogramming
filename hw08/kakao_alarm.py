@@ -81,4 +81,4 @@ def main(weather_data):
                 print("메시지 전송 실패:", response.json())
 
 if __name__ == '__main__':
-    main()
+    main('sd')

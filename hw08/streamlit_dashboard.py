@@ -171,18 +171,19 @@ def display():
     if rain_color != DEFAULT_COLOR:
         alarm_weather['rain'] = latest_data['rain']
 
+    st.write(alarm_weather)
     if alarm_weather:
         kakao_alarm.main(alarm_weather)
 
     # 탭 생성
-    tabs = st.tabs(monitoring_elements.keys())
-
-    # 각 탭에 그래프 추가
-    for tab, (key, value) in zip(tabs, monitoring_elements.items()):
-        with tab:
-            metric_name = value['metric']  # 데이터프레임의 열 이름
-            st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)  # 그래프 제목
-            plot_graph(data, metric_name)  # 그래프 그리기
+    # tabs = st.tabs(monitoring_elements.keys())
+    #
+    # # 각 탭에 그래프 추가
+    # for tab, (key, value) in zip(tabs, monitoring_elements.items()):
+    #     with tab:
+    #         metric_name = value['metric']  # 데이터프레임의 열 이름
+    #         st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)  # 그래프 제목
+    #         plot_graph(data, metric_name)  # 그래프 그리기
 
 
 
