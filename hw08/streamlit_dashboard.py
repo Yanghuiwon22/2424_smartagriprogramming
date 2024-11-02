@@ -3,6 +3,8 @@ import time
 from datetime import datetime, timedelta
 from func import get_aws
 import altair as alt
+import matplotlib.pyplot as plt
+import pandas as pd
 
 import streamlit_kakao_alarm
 import streamlit_text_alarm
@@ -33,6 +35,7 @@ st.markdown(
         border: 5px solid black;
         margin: 10px auto;
         border-radius: 20px;
+        cursor: pointer;  /* 클릭 가능하게 설정 */
     }
     
     .box-title {
@@ -57,6 +60,14 @@ st.markdown(
 )
 # =================================================== streamlit content 구성 ============================================
 
+# 그래프 생성 함수
+def plot_graph(data, metric):
+    plt.figure(figsize=(10, 5))
+    plt.plot(data['datetime'], data[metric], marker='o')
+    plt.title(f"{metric} 시간에 따른 변화")
+    plt.xlabel("시간")
+    plt.ylabel(metric)
+    st.pyplot(plt)
 
 def display():
     # 테스트용
@@ -64,9 +75,12 @@ def display():
     # ===============
 
 
-
-
     data = get_aws(datetime.now().date())  # 데이터를 가져오고 변환
+
+    # 상자 클릭 시 상태 저장을 위한 session_state 초기화
+    if 'selected_metric' not in st.session_state:
+        st.session_state.selected_metric = None
+
 
     # 데이터가 존재하는지 확인
     if not data.empty:  # 데이터프레임이 비어 있지 않다면
@@ -129,12 +143,42 @@ def display():
                            '🌧️강우🌧️' : {'data': f"{latest_data['rain']}mm", 'color': rain_color},
                            '🔋배터리전압🔋' : {'data': f"{latest_data['bv']}", 'color': DEFAULT_COLOR}}
 
+    # 상자 출력
     st.markdown(
-    '<div class="box" style="width:100%; display: flex; flex-direction: column; border: dashed">'+
-    "<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h3>" +
+        '<div class="box" style="width:100%; display: flex; flex-direction: column; border: dashed;">' +
+        "<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h3>" +
         '<div class="boxes">' + ''.join(
-        [f'<div class="box" style="background-color: {value["color"]}"><div class="box-title">{key}</div><div class="box-content">{value["data"]}</div></div>' for key, value in monitoring_elements.items()]
-    ) + '</div>' + '</div>', unsafe_allow_html=True)
+            [f'<div class="box" style="background-color: {value["color"]};" ' +
+             f'onclick="window.parent.postMessage({{\'metric\': \'{key}\'}});">' +  # 메트릭을 메시지로 보냄
+             f'<div class="box-title">{key}</div><div class="box-content">{value["data"]}</div>' +
+             '</div>' for key, value in monitoring_elements.items()]
+        ) + '</div>' + '</div>', unsafe_allow_html=True)
+
+    # 선택된 메트릭에 따라 그래프 표시
+    metric = st.session_state.get('selected_metric')
+    if metric:
+        st.markdown(f"<h3>{metric} 그래프</h3>", unsafe_allow_html=True)
+        plot_graph(data, metric)  # 여기서 plot_graph(data, metric) 함수 호출
+
+    # st.markdown(
+    # '<div class="box" style="width:100%; display: flex; flex-direction: column; border: dashed">'+
+    # "<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h3>" +
+    #     '<div class="boxes">' + ''.join(
+    #     [f'<div class="box" style="background-color: {value["color"]}"><div class="box-title">{key}</div><div class="box-content">{value["data"]}</div></div>' for key, value in monitoring_elements.items()]
+    # ) + '</div>' + '</div>', unsafe_allow_html=True)
+    #
+    # # 클릭한 메트릭을 세션 상태에 저장
+    # for key in monitoring_elements.keys():
+    #     if st.button(f"{key} 선택"):
+    #         st.session_state.selected_metric = key
+    #
+    # # 선택된 메트릭에 따라 그래프 표시
+    # if st.session_state.selected_metric:
+    #     metric = st.session_state.selected_metric
+    #     st.markdown(f"<h3>{metric} 그래프</h3>", unsafe_allow_html=True)
+    #     plot_graph(data, metric)  # 여기서 plot_graph(data, metric) 함수는 구현되어야 함
+    #
+
 
 # 사이드바
 option = st.sidebar.radio(
