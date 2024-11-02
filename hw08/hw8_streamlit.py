@@ -50,6 +50,7 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
 # =================================================== streamlit content 구성 ============================================
 
 data = jbnu_aws_data()  # 데이터를 가져오고 변환
@@ -95,7 +96,6 @@ if not data.empty:  # 데이터프레임이 비어 있지 않다면
     else:
         rain_color = DEFAULT_COLOR
 
-
     # st.write(f"Temperature: {latest_data['온도']}°C")
     # st.write(f"Humidity: {latest_data['습도']}%")
     # st.write(f"Lux: {latest_data['일사량']}")
@@ -123,6 +123,13 @@ st.markdown(
     '<div class="boxes">' + ''.join(
     [f'<div class="box" style="background-color: {value["color"]}"><div class="box-title">{key}</div><div class="box-content">{value["data"]}</div></div>' for key, value in monitoring_elements.items()]
 ) + '</div>' + '</div>', unsafe_allow_html=True)
+
+
+
+
+
+
+
 
 # Add a hint about the rerun
 # st.write("This app will rerun in 5 seconds...")
