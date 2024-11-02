@@ -69,13 +69,6 @@ def plot_graph(data, metric):
         data['datetime'] = pd.to_datetime(data['datetime'], errors='coerce')
         st.line_chart(data.set_index('datetime')[metric], use_container_width=True)
 
-        # 주석 추가
-        start_time = data['datetime'].min()
-        end_time = data['datetime'].max()
-        annotation_text = f"<{start_time.strftime('%Y-%m-%d %H:%M')} ~ {end_time.strftime('%Y-%m-%d %H:%M')} 그래프>"
-        st.markdown(f"<div style='text-align: center; font-size: 12px;'>{annotation_text}</div>",
-                    unsafe_allow_html=True)
-
     else:
         st.write("데이터가 없습니다.")
 
@@ -92,16 +85,6 @@ def plot_bar_graph(data, metric):
 
         # Streamlit을 사용하여 막대
         st.bar_chart(data.set_index('datetime')[metric])
-
-        # 처음과 마지막 데이터 포인트 추출
-        start_time = data['datetime'].min()
-        end_time = data['datetime'].max()
-
-
-        # 주석 추가
-        annotation_text = f"<{start_time.strftime('%Y-%m-%d %H:%M')} ~ {end_time.strftime('%Y-%m-%d %H:%M')} 그래프>"
-        st.markdown(f"<div style='text-align: center; font-size: 12px;'>{annotation_text}</div>",
-                    unsafe_allow_html=True)
 
     else:
         st.write("데이터가 없습니다.")
@@ -155,12 +138,12 @@ def display():
     st.markdown("<h1 style='text-align: center; color: black;'>🖥️전북대 기상대 활용한 모니터링 시스템🖥️</h1>", unsafe_allow_html=True) # 제목 + 가운데 정렬
 
     # 네모난 상자 출력
-    monitoring_elements = {'🌡️온도🌡️': {'data': f"{latest_data['temp']}°C", 'color': temperature_color, 'metric': 'temp'},
+    monitoring_elements = {'🌡온도🌡': {'data': f"{latest_data['temp']}°C", 'color': temperature_color, 'metric': 'temp'},
                            '💧습도💧' : {'data': f"{latest_data['hum']}%", 'color': humidity_color, 'metric': 'hum'},
                            '🌞일사량🌞' : {'data': f"{latest_data['rad']}", 'color': lux_color, 'metric': 'rad'},
                            '🧭풍향🧭' : {'data': f"{latest_data['wd']}", 'color': DEFAULT_COLOR, 'metric': 'wd'},
                            '💨풍속💨' : {'data': f"{latest_data['ws']}m/s", 'color': wind_speed_color, 'metric': 'ws'},
-                           '🌧️강우🌧️' : {'data': f"{latest_data['rain']}mm", 'color': rain_color, 'metric': 'rain'},
+                           '🌧강우🌧' : {'data': f"{latest_data['rain']}mm", 'color': rain_color, 'metric': 'rain'},
                            '🔋배터리전압🔋' : {'data': f"{latest_data['bv']}", 'color': DEFAULT_COLOR, 'metric': 'bv'},}
 
     st.markdown(
@@ -187,6 +170,7 @@ def display():
         kakao_alarm.main(alarm_weather)
         vonage_service.send_sms(alarm_weather)
 
+    # 그래프 생성
     # 탭 생성 (풍향 탭을 제외)
     filtered_elements = {key: value for key, value in monitoring_elements.items() if key != '🧭풍향🧭'}
     tabs = st.tabs(filtered_elements.keys())
@@ -194,8 +178,10 @@ def display():
     # 각 탭에 그래프 추가
     for tab, (key, value) in zip(tabs, filtered_elements.items()):
         with tab:
-            metric_name = value['metric']
-            st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)
+            metric_name = value['metric']  # 데이터프레임의 열 이름
+
+            st.markdown(f"<h5 style='text-align: center; color: black;'>오늘의 시간대별 {key[1:-1]} 변화 그래프</h5>",
+                        unsafe_allow_html=True)  # 제목 + 가운데 정렬
 
             # 강우 탭에는 막대 그래프로, 그 외는 선 그래프로 그리기
             if metric_name == 'rain':
@@ -208,7 +194,7 @@ def display():
 option = st.sidebar.radio(
     "옵션을 선택하세요:",
     options=['DASHBOARD', "기상 조회","카카오톡 알람", "문자 알람"],
-    index=1  # 기본값을 첫 번째 옵션(옵션 1)으로 설정
+    index=0  # 기본값을 첫 번째 옵션(옵션 1)으로 설정
 )
 
 if option == 'DASHBOARD':
