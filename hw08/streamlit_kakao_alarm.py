@@ -48,7 +48,7 @@ def display():
     #
     #
     if not os.path.exists(os.path.join(FILE_PATH, 'kakao_email.csv')):
-        df_email = pd.DataFrame(columns=['date','time', 'email', 'status'])
+        df_email = pd.DataFrame(columns=['date','time', 'email', 'status', 'uuid', '조건'])
 
     else:
         df_email = pd.read_csv(os.path.join(FILE_PATH, 'kakao_email.csv'))
@@ -65,7 +65,9 @@ def display():
                 'date': datetime.now().date(),
                 'time': datetime.now().time().strftime("%H:%M:%S"),
                 'email': kakao_email,
-                'status': '제출됨'
+                'status': '제출됨',
+                'uuid': '',
+                '조건': 'default'
             }
 
             st.write('처음 등록하는 이메일입니다.')

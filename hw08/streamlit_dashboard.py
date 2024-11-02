@@ -31,7 +31,7 @@ st.markdown(
     
     .box {
         width: 13%;
-        height: 150px;
+        height: 100px;
         border: 5px solid black;
         margin: 10px auto;
         border-radius: 20px;
@@ -41,7 +41,7 @@ st.markdown(
     .box-title {
         text-align: center;
         padding: 3px;
-        font-size: 30px;
+        # font-size: 30px;
         padding-top : 10px;
         color : black
 
@@ -49,7 +49,7 @@ st.markdown(
     
     .box-content {
         text-align: center;
-        font-size: 50px;
+        font-size: 30px;
         font-weight: bold;
         color : black
     }
@@ -152,8 +152,8 @@ def display():
                            '🔋배터리전압🔋' : {'data': f"{latest_data['bv']}", 'color': DEFAULT_COLOR, 'metric': 'bv'},}
 
     st.markdown(
-    '<div class="box" style="width:100%; display: flex; flex-direction: column; border: dashed">'+
-    "<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h3>" +
+        '<div class="box" style="width:100%; height:100%; display: flex; flex-direction: column; border: dashed;">' +
+        "<h3 style='text-align: center; color: black;'>실시간 기상 데이터</h3>" +
         '<div class="boxes">' + ''.join(
         [f'<div class="box" style="background-color: {value["color"]}"><div class="box-title">{key}</div><div class="box-content">{value["data"]}</div></div>' for key, value in monitoring_elements.items()]
     ) + '</div>' + '</div>', unsafe_allow_html=True)

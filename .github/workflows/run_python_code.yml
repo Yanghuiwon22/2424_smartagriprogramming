@@ -32,11 +32,11 @@ jobs:
       - name: Commit and Push changes
         # if: steps.changed-files.outputs.files_changed == 'true'
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config --global user.name "Yanghuiwon22"
+          git config --global user.email "hannah4212@naver.com"
           git add .
           git commit -m "Save AWS data update"
-          git push https://${{ secrets.GH_TOKEN }}@github.com/Yanghuiwon22/2424_smartagriprogramming.git HEAD:main
+          git push https://${{ secrets.JBNU_AWS_MONITORING }}@github.com/Yanghuiwon22/2424_smartagriprogramming.git HEAD:main
 
        # env:
           # GitHub Token을 사용하여 푸시 권한을 부여
