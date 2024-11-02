@@ -191,18 +191,17 @@ def display():
     filtered_elements = {key: value for key, value in monitoring_elements.items() if key != '🧭풍향🧭'}
     tabs = st.tabs(filtered_elements.keys())
 
-    # 각 탭에 맞는 그래프 추가
+    # 각 탭에 그래프 추가
     for tab, (key, value) in zip(tabs, filtered_elements.items()):
         with tab:
-            metric_name = value['metric']  # 데이터프레임의 열 이름
-
-            st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)  # 그래프 제목
+            metric_name = value['metric']
+            st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)
 
             # 강우 탭에는 막대 그래프로, 그 외는 선 그래프로 그리기
             if metric_name == 'rain':
-                plot_bar_graph(data, metric_name)  # 막대 그래프 함수 호출
+                plot_bar_graph(data, metric_name)
             else:
-                plot_graph(data, metric_name)  # 선 그래프 함수 호출
+                plot_graph(data, metric_name)
 
 
 # 사이드바

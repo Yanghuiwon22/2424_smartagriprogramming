@@ -24,26 +24,19 @@ def plot_graph(data, metric):
     else:
         st.write("데이터가 없습니다.")
 
-
 def plot_bar_graph(data, metric):
     # Matplotlib의 한글 폰트 설정
-    plt.rc('font', family='Malgun Gothic')  # Windows의 경우
-    plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 표시
+    plt.rc('font', family='Malgun Gothic')
+    plt.rcParams['axes.unicode_minus'] = False
 
     if not data.empty:
-        # datetime 열을 datetime 형식으로 변환
-        data['datetime'] = pd.to_datetime(data['datetime'], errors='coerce')  # 변환 시 오류 발생 시 NaT로 설정
 
-
-        # Streamlit을 사용하여 막대
+        data['datetime'] = pd.to_datetime(data['datetime'], errors='coerce')
         st.bar_chart(data.set_index('datetime')[metric])
 
-        # 처음과 마지막 데이터 포인트 추출
+        # 주석 추가
         start_time = data['datetime'].min()
         end_time = data['datetime'].max()
-
-
-        # 주석 추가
         annotation_text = f"<{start_time.strftime('%Y-%m-%d %H:%M')} ~ {end_time.strftime('%Y-%m-%d %H:%M')} 그래프>"
         st.markdown(f"<div style='text-align: center; font-size: 12px;'>{annotation_text}</div>",
                     unsafe_allow_html=True)
@@ -87,14 +80,11 @@ def display():
     date_list = sorted(date_set)
     # print("두 날짜 사이의 {year}_{month} 형식 리스트:", date_list)
 
-
-
     df_total = pd.DataFrame()
     for target_date in date_list:
         url = f"https://raw.githubusercontent.com/Yanghuiwon22/2424_smartagriprogramming/refs/heads/main/hw08/output/AWS/{target_date}.csv"
         # print(url)
         df = pd.read_csv(url)
-
         df_total = pd.concat([df_total, df])
 
     df_total['date'] = pd.to_datetime(df_total['datetime']).dt.date
@@ -115,15 +105,14 @@ def display():
     filtered_elements = {key: value for key, value in monitoring_elements.items() if key != '🧭풍향🧭'}
     tabs = st.tabs(filtered_elements.keys())
 
-    # 각 탭에 맞는 그래프 추가
+    # 각 탭에 그래프 추가
     for tab, (key, value) in zip(tabs, filtered_elements.items()):
         with tab:
-            metric_name = value['metric']  # 데이터프레임의 열 이름
-
-            st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)  # 그래프 제목
+            metric_name = value['metric']
+            st.markdown(f"<h3>{key} 그래프</h3>", unsafe_allow_html=True)
 
             # 강우 탭에는 막대 그래프로, 그 외는 선 그래프로 그리기
             if metric_name == 'rain':
-                plot_bar_graph(filtered_df, metric_name)  # 막대 그래프 함수 호출
+                plot_bar_graph(filtered_df, metric_name)
             else:
-                plot_graph(filtered_df, metric_name)  # 선 그래프 함수 호출
+                plot_graph(filtered_df, metric_name)
