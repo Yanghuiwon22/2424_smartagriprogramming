@@ -13,8 +13,11 @@ def display():
 
     with col1:
         start_date = st.date_input("시작 날짜를 선택하세요:", key='start_date', value=date.today(), min_value=min_date, max_value=date.today())
+        # start_date = pd.to_datetime(start_date)
     with col2:
         end_date = st.date_input("종료 날짜를 선택하세요:", key='end_date', value=date.today(), min_value=min_date, max_value=date.today())
+        # end_date = pd.to_datetime(end_date)
+
 
     if end_date < start_date:
         st.warning("경고: 종료 날짜가 시작 날짜보다 이전입니다. 올바른 날짜를 선택해주세요.")
@@ -23,22 +26,29 @@ def display():
                     unsafe_allow_html=True)
 
     # github로부터 df 가져오기
-    date_list = []
+    date_set = set()  # 중복 방지를 위해 set 사용
     current_date = start_date
+
     while current_date <= end_date:
-        date_list.append(current_date)
+        # {year}_{month} 형식으로 추가
+        date_set.add(current_date.strftime("%Y_%m"))
         current_date += timedelta(days=1)
 
-    print(date_list)
+    # 결과를 리스트로 변환 후 정렬
+    date_list = sorted(date_set)
+    # print("두 날짜 사이의 {year}_{month} 형식 리스트:", date_list)
+
+
+
     df_total = pd.DataFrame()
     for target_date in date_list:
-        url = f"https://raw.githubusercontent.com/Yanghuiwon22/2424_smartagriprogramming/refs/heads/main/hw08/output/AWS/{target_date.year}_{target_date.month}.csv"
-        print(url)
+        url = f"https://raw.githubusercontent.com/Yanghuiwon22/2424_smartagriprogramming/refs/heads/main/hw08/output/AWS/{target_date}.csv"
+        # print(url)
         df = pd.read_csv(url)
 
         df_total = pd.concat([df_total, df])
-    print(df_total)
 
+    df_total['date'] = pd.to_datetime(df_total['datetime']).dt.date
+    filtered_df = df_total[(df_total['date'] >= start_date) & (df_total['date'] <= end_date)]
 
-
-    # CSV 파일 읽어오기
+    st.dataframe(filtered_df)
