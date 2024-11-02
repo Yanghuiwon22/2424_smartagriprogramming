@@ -2,7 +2,7 @@ name: Run Python Code
 
 on:
   schedule:
-    - cron: '*/10* * * *' # 1분마다 시간 실행
+    - cron: '*/1 * * * *' # 1분마다 시간 실행
   workflow_dispatch:
 
 jobs:

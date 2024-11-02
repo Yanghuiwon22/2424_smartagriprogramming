@@ -115,6 +115,8 @@ def get_aws(date):
     df = df.drop(columns=drop_cols)
     return df
 
+
+
 def save_aws(start_date, end_date):
     save_dir = 'output/AWS'
     date_list = get_date_list(start_date, end_date)

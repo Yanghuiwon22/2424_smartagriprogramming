@@ -60,8 +60,7 @@ st.markdown(
 
 def display():
     # 테스트용
-    email = st.text_input('이메일')
-    print(email)
+
     # ===============
 
 
