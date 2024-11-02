@@ -118,7 +118,7 @@ def get_aws(date):
 
 
 def save_aws(start_date, end_date):
-    save_dir = 'output/AWS'
+    save_dir = 'hw08/output/AWS'
     date_list = get_date_list(start_date, end_date)
 
     for date in date_list:
