@@ -36,7 +36,8 @@
             </div>
             <div class="card" onclick="scrollToSection('temp-humidity-section')">
                 <h3>온습도 모니터링</h3>
-                <p>온도와 습도를 실시간으로 확인하세요.</p>
+                <p>온도: <span id="sensor-temp">-</span> °C</p>
+                <p>습도: <span id="sensor-humidity">-</span> %</p>
             </div>
             <div class="card" onclick="scrollToSection('water-level-section')">
                 <h3>물의 양 모니터링</h3>
@@ -78,8 +79,21 @@
 
     <!-- JavaScript -->
     <script>
-        // 페이지 로드 시 센서 데이터를 가져와 표시
-        document.addEventListener('DOMContentLoaded', function() {
+    // 페이지 로드 시 실행
+    document.addEventListener('DOMContentLoaded', function() {
+        // 첫 데이터 로드
+        fetch('/api/sensor_data')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('sensor-image').src = data.image_url;
+                document.getElementById('sensor-temp').textContent = data.temperature;
+                document.getElementById('sensor-humidity').textContent = data.humidity;
+                document.getElementById('sensor-water').textContent = data.water_level;
+                document.getElementById('sensor-irrigation').textContent = data.irrigation_status;
+            });
+
+        // 5초마다 업데이트
+        setInterval(() => {
             fetch('/api/sensor_data')
                 .then(response => response.json())
                 .then(data => {
@@ -89,8 +103,8 @@
                     document.getElementById('sensor-water').textContent = data.water_level;
                     document.getElementById('sensor-irrigation').textContent = data.irrigation_status;
                 });
-        });
-
+        }, 3000); //
+    });
         function scrollToSection(sectionId) {
             const section = document.getElementById(sectionId);
             section.scrollIntoView({ behavior: 'smooth' });
