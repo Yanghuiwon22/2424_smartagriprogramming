@@ -11,10 +11,15 @@ body {
 .top-nav {
     position: fixed;
     top: 0;
-    width: 100%;
+    left: 220px; /* 사이드바 너비만큼 이동 */
+    width: calc(100% - 220px); /* 네비게이션 바의 너비 = 전체 화면 - 사이드바 너비 */
     background: linear-gradient(90deg, #6a11cb, #2575fc);
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+    border-radius: 10px;
+
+
 }
 
 .top-nav ul {
@@ -23,6 +28,7 @@ body {
     list-style: none;
     margin: 0;
     padding: 10px 0;
+
 }
 
 .top-nav li {
@@ -43,13 +49,20 @@ body {
 }
 
 /* Header */
+
+
 header {
-    margin-top: 60px; /* Adjusted for fixed navigation */
+    position: relative;
+    margin-top: 80px; /* 네비게이션 바 높이 */
+    margin-left: 220px; /* 사이드바 너비만큼 이동 */
+    width: calc(100% - 220px); /* 헤더 너비 = 전체 화면 - 사이드바 너비 */
     background: linear-gradient(90deg, #6a11cb, #2575fc);
     color: white;
     text-align: center;
     padding: 40px 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+
 }
 
 header h1 {
@@ -61,7 +74,52 @@ header p {
     font-size: 1.2rem;
 }
 
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px; /* 사이드바 너비 */
+    height: 100vh; /* 전체 화면 높이 */
+    background-color: #6a11cb; /* 템플릿에 맞춘 사이드바 색상 */
+    padding: 10px;
+    color: white; /* 텍스트 색상 */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* 스크롤 활성화 */
+    z-index: 1000;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    margin: 0;
+    padding: 10px 0;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    display: block;
+    padding: 10px;
+    transition: background-color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* 배경 밝기 효과 */
+}
+
 /* Cards Section */
+main {
+    margin-left: 200px; /* 사이드바 너비만큼 이동 */
+    padding: 20px;
+}
 .cards {
     display: flex;
     justify-content: center;
@@ -76,26 +134,39 @@ header p {
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 400px;
     max-width: 300px;
+    height: 200px;
     text-align: center;
     padding: 20px;
+    flex-direction: column;
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
+    justify-content: center;  /* 추가 - 세로 방향 중앙 정렬 */
+    /*justify-content: space-between;  !* 왼쪽, 오른쪽 정렬 *!*/
+    align-items: center;      /* 추가 - 가로 방향 중앙 정렬 */
+
 }
 
-/*.card h3 {*/
-/*    margin: 15px 0 10px;*/
-/*    font-size: 1.5rem;*/
-/*    color: #6a11cb;*/
-/*}*/
+
+.card h3 {
+    margin: 15px 0 10px;
+    font-size: 1.2rem;  /* 크기 조절 */
+    color: #6a11cb;
+    position: absolute;  /* 상위 요소 내에서 절대 위치 설정 */
+    top: 10px;
+    right: 10px;
+    transform: translate(-50%, -50%);  /* 중앙에 위치시키기 */
+}
 
 .card p {
-    font-size: 1.5rem;    /* 데이터 값의 크기 */
+    font-size: 3.0rem;    /* 데이터 값의 크기 */
     margin: 5px 0;         /* 여백 */
-    color: #333;           /* 텍스트 색상 */
+    color: #4A54B1;           /* 텍스트 색상 */
     text-align: center;    /* 데이터값 중앙 정렬 */
 
 }
+
 
 .card:hover {
     transform: translateY(-10px);

@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -26,26 +27,48 @@
         <p>이미지, 온습도, 물의 양, 관수 모니터링 시스템</p>
     </header>
 
+    <div class="sidebar">
+    <ul>
+        <li><a href="#section1">Home</a></li>
+        <li><a href="#section2">Section 2</a></li>
+        <li><a href="#section3">Section 3</a></li>
+    </ul>
+    </div>
+
+
     <!-- Main Section -->
     <main>
         <!-- Cards for Navigation -->
         <section class="cards">
-            <div class="card" onclick="scrollToSection('image-section')">
-                <h3>이미지 모니터링</h3>
-                <p>작물 이미지를 실시간으로 확인하세요.</p>
+
+            <div class="card" onclick="scrollToSection('temp-section')">
+                <h3>온도</h3>
+                <div class="icon-container">
+                    <p><span class="material-icons" style="font-size: 4.5rem; color: #6a11cb;
+                    vertical-align: middle;">device_thermostat</span>
+                    <span id="sensor-temp">-</span>°C</p>
+                </div>
             </div>
-            <div class="card" onclick="scrollToSection('temp-humidity-section')">
-{#                <h3>온습도 모니터링</h3>#}
-                <p>온도: <span id="sensor-temp">-</span> °C</p>
-                <p>습도: <span id="sensor-humidity">-</span> %</p>
+
+            <div class="card" onclick="scrollToSection('humidity-section')">
+{#                <h3>습도 모니터링</h3>#}
+                <p>습도</p>
+                <p><span id="sensor-humidity">-</span> %</p>
             </div>
+
             <div class="card" onclick="scrollToSection('water-level-section')">
-                <h3>물의 양 모니터링</h3>
-                <p>물통의 현재 물의 양을 확인하세요.</p>
+{#                <h3>물의 양 모니터링</h3>#}
+                <p>물의 양</p>
+                <p><span id="sensor-water">-</span> %</p>
             </div>
-            <div class="card" onclick="scrollToSection('irrigation-section')">
-                <h3>관수 모니터링</h3>
-                <p>관수 상태를 실시간으로 확인하세요.</p>
+{#            <div class="card" onclick="scrollToSection('irrigation-section')">#}
+{#                <h3>관수 모니터링</h3>#}
+{#                <p>관수 상태: <span id="sensor-irrigation">-</span></p>#}
+{##}
+{#            </div>#}
+            <div class="card" onclick="scrollToSection('image-section')">
+{#                <h3>이미지 모니터링</h3>#}
+                <img id="sensor-image" src="" alt="작물 이미지" style="max-width: 100%; border-radius: 10px;">
             </div>
         </section>
 
