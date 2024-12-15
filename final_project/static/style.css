@@ -72,6 +72,7 @@ header p {
 }
 
 .card {
+
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -82,10 +83,18 @@ header p {
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.card h3 {
-    margin: 15px 0 10px;
-    font-size: 1.5rem;
-    color: #6a11cb;
+/*.card h3 {*/
+/*    margin: 15px 0 10px;*/
+/*    font-size: 1.5rem;*/
+/*    color: #6a11cb;*/
+/*}*/
+
+.card p {
+    font-size: 1.5rem;    /* 데이터 값의 크기 */
+    margin: 5px 0;         /* 여백 */
+    color: #333;           /* 텍스트 색상 */
+    text-align: center;    /* 데이터값 중앙 정렬 */
+
 }
 
 .card:hover {
