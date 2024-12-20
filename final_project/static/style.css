@@ -11,8 +11,9 @@ body {
 .top-nav {
     position: fixed;
     top: 0;
-    left: 220px; /* 사이드바 너비만큼 이동 */
-    width: calc(100% - 220px); /* 네비게이션 바의 너비 = 전체 화면 - 사이드바 너비 */
+    /*left: 220px; !* 사이드바 너비만큼 이동 *!*/
+    /*!*width: calc(100% - 220); !* 네비게이션 바의 너비 = 전체 화면 - 사이드바 너비 *!*!px*/
+    width: 100%; /* 화면 가득 채우기 */
     background: linear-gradient(90deg, #6a11cb, #2575fc);
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -40,6 +41,7 @@ body {
     color: white;
     font-weight: bold;
     padding: 10px 20px;
+    font-size: 1.3rem; /* 텍스트 크기 조정 */
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -54,8 +56,8 @@ body {
 header {
     position: relative;
     margin-top: 80px; /* 네비게이션 바 높이 */
-    margin-left: 220px; /* 사이드바 너비만큼 이동 */
-    width: calc(100% - 220px); /* 헤더 너비 = 전체 화면 - 사이드바 너비 */
+    /*margin-left: 220px; !* 사이드바 너비만큼 이동 *!*/
+    /*width: calc(100% - 220px); !* 헤더 너비 = 전체 화면 - 사이드바 너비 *!*/
     background: linear-gradient(90deg, #6a11cb, #2575fc);
     color: white;
     text-align: center;
@@ -74,50 +76,50 @@ header p {
     font-size: 1.2rem;
 }
 
-/* Sidebar */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 200px; /* 사이드바 너비 */
-    height: 100vh; /* 전체 화면 높이 */
-    background-color: #6a11cb; /* 템플릿에 맞춘 사이드바 색상 */
-    padding: 10px;
-    color: white; /* 텍스트 색상 */
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    overflow-y: auto; /* 스크롤 활성화 */
-    z-index: 1000;
-    border-radius: 10px;
-    margin-right: 20px;
-}
+/*!* Sidebar *!*/
+/*.sidebar {*/
+/*    position: fixed;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    width: 200px; !* 사이드바 너비 *!*/
+/*    height: 100vh; !* 전체 화면 높이 *!*/
+/*    background-color: #6a11cb; !* 템플릿에 맞춘 사이드바 색상 *!*/
+/*    padding: 10px;*/
+/*    color: white; !* 텍스트 색상 *!*/
+/*    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);*/
+/*    overflow-y: auto; !* 스크롤 활성화 *!*/
+/*    z-index: 1000;*/
+/*    border-radius: 10px;*/
+/*    margin-right: 20px;*/
+/*}*/
 
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+/*.sidebar ul {*/
+/*    list-style: none;*/
+/*    padding: 0;*/
+/*    margin: 0;*/
+/*}*/
 
-.sidebar li {
-    margin: 0;
-    padding: 10px 0;
-}
+/*.sidebar li {*/
+/*    margin: 0;*/
+/*    padding: 10px 0;*/
+/*}*/
 
-.sidebar a {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    display: block;
-    padding: 10px;
-    transition: background-color 0.3s;
-}
+/*.sidebar a {*/
+/*    text-decoration: none;*/
+/*    color: white;*/
+/*    font-weight: bold;*/
+/*    display: block;*/
+/*    padding: 10px;*/
+/*    transition: background-color 0.3s;*/
+/*}*/
 
-.sidebar a:hover {
-    background-color: rgba(255, 255, 255, 0.2); /* 배경 밝기 효과 */
-}
+/*.sidebar a:hover {*/
+/*    background-color: rgba(255, 255, 255, 0.2); !* 배경 밝기 효과 *!*/
+/*}*/
 
 /* Cards Section */
 main {
-    margin-left: 200px; /* 사이드바 너비만큼 이동 */
+    /*margin-left: 200px; !* 사이드바 너비만큼 이동 *!*/
     padding: 20px;
 }
 .cards {
