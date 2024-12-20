@@ -38,7 +38,7 @@
         <div class="card" onclick="scrollToSection('temp-section')">
             <h3>온도</h3>
             <div class="icon-container">
-                <p><span class="material-icons" style="font-size: 4.5rem; color: #6a11cb;
+                <p><span class="material-icons" style="font-size: 4.0rem; color: #6a11cb;
                     vertical-align: middle;">device_thermostat</span>
                     <span id="sensor-temp">-</span>°C</p>
             </div>
@@ -47,7 +47,7 @@
         <div class="card" onclick="scrollToSection('humidity-section')">
             <h3>습도 </h3>
             <div class="icon-container">
-                <p><span class="material-symbols-outlined" style="font-size: 4.5rem; color: #5332db;
+                <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #5332db;
                     vertical-align: middle;">humidity_percentage</span>
                     <span id="sensor-humidity">-</span> %</p>
             </div>
@@ -68,8 +68,16 @@
     </section>
 
     <!-- Sections -->
+{#    임의 온도 그래프 그려보기#}
     <section id="temp-section" class="content-section">
         <h2>온도 그래프</h2>
+        <canvas id="temp-chart"></canvas>
+    </section>
+{#   여기까지 임의 온도 그래프 #}
+
+    <section id="temp-section" class="content-section">
+        <h2>온도 그래프</h2>
+{#        <canvas id="temp-chart" width="600" height="400"></canvas>#}
         <p>온도: <span id="sensor-temp">-</span> °C</p>
 
     </section>
@@ -97,6 +105,45 @@
 </footer>
 
 <!-- JavaScript --><!-- JavaScript --><script>
+{#    임의 온도 그래프 그려보기#}
+{#function fetchDataAndRenderChart(url, canvasId) {#}
+{#        fetch('/temp-data')#}
+{#            .then(response => response.json()) // JSON 응답 파싱#}
+{#            .then(data => {#}
+{#                const ctx = document.getElementById(canvasId).getContext('2d');#}
+{#                new Chart(ctx, {#}
+{#                    type: 'line',#}
+{#                    data: {#}
+{#                        labels: data.labels,#}
+{#                        datasets: [{#}
+{#                            label: 'Temperature (°C)',#}
+{#                            data: data.data,#}
+{#                            borderColor: 'rgba(75, 192, 192, 1)',#}
+{#                            backgroundColor: 'rgba(75, 192, 192, 0.2)',#}
+{#                        }]#}
+{#                    },#}
+{#                    options: {#}
+{#                        responsive: true,#}
+{#                        maintainAspectRatio: false,#}
+{#                        scales: {#}
+{#                            x: {#}
+{#                                beginAtZero: true#}
+{#                            },#}
+{#                            y: {#}
+{#                                beginAtZero: true#}
+{#                            }#}
+{#                        }#}
+{#                    }#}
+{#                });#}
+{#            })#}
+{#            .catch(error => {#}
+{#                console.error('에러 발생:', error);#}
+{#            });#}
+{#    }#}
+{##}
+{#    document.addEventListener('DOMContentLoaded', function () {#}
+{#        fetchDataAndRenderChart('/temp-data', 'temp-chart');#}
+    {#    여기까지 임의 온도 그래프 그리기#}
     function updateTempHumData() {
         fetch('/temp-hum-data') // Flask API 호출
             .then(response => response.json()) // JSON 응답 파싱
@@ -162,6 +209,7 @@
                 console.error('에러 발생:', error);
             });
     }
+
 
     document.addEventListener('DOMContentLoaded', function () {
         // 페이지 로드 시 초기 데이터 업데이트

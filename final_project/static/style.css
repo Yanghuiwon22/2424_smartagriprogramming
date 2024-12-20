@@ -56,8 +56,6 @@ body {
 header {
     position: relative;
     margin-top: 60px; /* 네비게이션 바 높이 */
-    /*margin-left: 220px; !* 사이드바 너비만큼 이동 *!*/
-    /*width: calc(100% - 220px); !* 헤더 너비 = 전체 화면 - 사이드바 너비 *!*/
     background: linear-gradient(90deg, #6a11cb, #2575fc);
     color: white;
     text-align: center;
@@ -79,7 +77,6 @@ header p {
 
 /* Cards Section */
 main {
-    /*margin-left: 200px; !* 사이드바 너비만큼 이동 *!*/
     padding: 20px;
 }
 .cards {
@@ -101,6 +98,7 @@ main {
     height: 200px;
     text-align: center;
     padding: 20px;
+    display: flex;
     flex-direction: column;
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
@@ -113,19 +111,22 @@ main {
 
 .card h3 {
     margin: 15px 0 10px;
-    font-size: 1.2rem;  /* 크기 조절 */
+    font-size: 1.2rem;
     color: #6a11cb;
-    position: absolute;  /* 상위 요소 내에서 절대 위치 설정 */
+    position: absolute;
     top: 10px;
     right: 10px;
-    transform: translate(-50%, -50%);  /* 중앙에 위치시키기 */
+    transform: translate(-50%, -50%);
 }
 
 .card p {
-    font-size: 3.0rem;    /* 데이터 값의 크기 */
+    font-size: 2.0rem;    /* 데이터 값의 크기 */
     margin: 5px 0;         /* 여백 */
     color: #4A54B1;           /* 텍스트 색상 */
-    text-align: center;    /* 데이터값 중앙 정렬 */
+    display: flex;
+    justify-content: center; /* 텍스트 수평 중앙 정렬 */
+    align-items: center;   /* 텍스트 수직 중앙 정렬 */
+    /*text-align: center;    !* 데이터값 중앙 정렬 *!*/
 
 }
 

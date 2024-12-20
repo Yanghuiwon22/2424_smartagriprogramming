@@ -2,30 +2,10 @@ from flask import Flask, render_template, jsonify
 # from input_data import generate_fake_data, get_latest_sensor_data
 import requests
 
-import matplotlib.pyplot as plt
-import io
-import base64
-import numpy as np
+import random
+import json
 
 app = Flask(__name__)
-
-
-# 가짜 데이터 생성
-def create_fake_data():
-    # 임의의 월별 평균 온도 데이터 생성
-    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-    temperatures = np.random.normal(loc=20, scale=5, size=12)  # 평균 20도, 표준 편차 5도
-    temperatures = np.clip(temperatures, 0, 40)  # 범위 제한
-
-    return months, temperatures
-@app.route('/data', methods=['GET'])
-def get_data():
-    months, temperatures = create_fake_data()
-    return jsonify({
-        'labels': months,
-        'data': temperatures
-    })
-
 
 
 @app.route('/')
@@ -52,6 +32,19 @@ def get_temp_hum_distance():
     except requests.exceptions.RequestException as e:
         print(f"에러 발생: {e}")
         return jsonify({"error": "센서 데이터를 가져오지 못했습니다."}), 500
+
+
+# 임의 데이터 생성해서 그래프 그려보기
+@app.route('/temp-data')
+def temp_data():
+    # 가짜 데이터 생성: 시간, 온도 (°C)
+    data = {
+        'labels': [f'Time {i}' for i in range(10)],
+        'data': [random.uniform(20, 30) for _ in range(10)]  # 20 ~ 30 사이의 임의 온도 데이터
+    }
+    return jsonify(data)
+# 여기까지 그래프 테스트
+
 # 2. 로드셀
 # 3. 수위센서
 @app.route('/distance-data', methods=['GET'])
