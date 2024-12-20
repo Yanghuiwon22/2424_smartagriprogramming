@@ -115,7 +115,7 @@
                     TempItem.textContent = `온도: ${data.temp}`;
                     sensortempList.appendChild(TempItem);
                 } else {
-                    sensortempList.innerHTML = '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
+                    sensortempList.innerHTML = '<div>습도 데이터를 가져오는 데 실패했습니다.</div>';
                 }
 
                 if (data.error) {
@@ -125,16 +125,16 @@
                     Humitem.textContent = `습도: ${data.hum}`;
                     sensorHumList.appendChild(Humitem);
                 } else {
-                    sensorHumList.innerHTML = '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
+                    sensorHumList.innerHTML = '<div>습도 데이터를 가져오는 데 실패했습니다.</div>';
                 }
             })
             .catch(error => {
                 document.getElementById('sensor-temp').innerHTML =
-                    '<li>온도 데이터를 가져오는 데 실패했습니다.</li>';
+                    '<div>온도 데이터를 가져오는 데 실패했습니다.</div>';
                 console.error('에러 발생:', error);
 
                 document.getElementById('sensor-humidity').innerHTML =
-                    '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
+                    '<div>습도 데이터를 가져오는 데 실패했습니다.</div>';
                 console.error('에러 발생:', error);
             });
     }
@@ -153,7 +153,7 @@
                     WaterItem.textContent = `수위: ${data.distance}`;
                     sensorWaterList.appendChild(WaterItem);
                 } else {
-                    sensorWaterList.innerHTML = '<li>관수 데이터를 가져오는 데 실패했습니다.</li>';
+                    sensorWaterList.innerHTML = '<div>관수 데이터를 가져오는 데 실패했습니다.</div>';
                 }
             })
             .catch(error => {

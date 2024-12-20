@@ -1,7 +1,32 @@
 from flask import Flask, render_template, jsonify
 # from input_data import generate_fake_data, get_latest_sensor_data
 import requests
+
+import matplotlib.pyplot as plt
+import io
+import base64
+import numpy as np
+
 app = Flask(__name__)
+
+
+# 가짜 데이터 생성
+def create_fake_data():
+    # 임의의 월별 평균 온도 데이터 생성
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    temperatures = np.random.normal(loc=20, scale=5, size=12)  # 평균 20도, 표준 편차 5도
+    temperatures = np.clip(temperatures, 0, 40)  # 범위 제한
+
+    return months, temperatures
+@app.route('/data', methods=['GET'])
+def get_data():
+    months, temperatures = create_fake_data()
+    return jsonify({
+        'labels': months,
+        'data': temperatures
+    })
+
+
 
 @app.route('/')
 def home():
