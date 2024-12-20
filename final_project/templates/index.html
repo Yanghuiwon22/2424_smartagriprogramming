@@ -59,7 +59,7 @@
             <div class="icon-container">
                 <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #3c53ec;
                         vertical-align: middle;">water_medium</span>
-                    <span id="sensor-water">-</span> cm</p>
+                    <span id="sensor-water">-</span></p>
             </div>
         </div>
         <div class="card" onclick="scrollToSection('irrigation-section')">
@@ -102,7 +102,7 @@
         fetch('/sensor-data') // Flask API 호출
             .then(response => response.json()) // JSON 응답 파싱
             .then(data => {
-                const sensorIrrigationList = document.getElementById('sensor-irrigation');
+                const sensorIrrigationList = document.getElementById('sensor-water');
                 sensorIrrigationList.innerHTML = ''; // 기존 데이터 삭제
 
                 if (data.error) {
