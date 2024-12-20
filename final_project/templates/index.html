@@ -8,7 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <!--온도 아이콘-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--습도 아이콘-->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+        <--! 수위 아이콘-->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
      <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -17,17 +22,17 @@
     <!-- Navigation Bar -->
     <nav class="top-nav">
         <ul>
-            <li><a href="#image-section">이미지</a></li>
-            <li><a href="#temp-humidity-section">온습도</a></li>
+            <li><a href="#temp-section">온도</a></li>
+            <li><a href="#humidity-section">습도</a></li>
             <li><a href="#water-level-section">물의 양</a></li>
-            <li><a href="#irrigation-section">관수</a></li>
+            <li><a href="#image-section">이미지</a></li>
         </ul>
     </nav>
 
     <!-- Header -->
     <header>
         <h1>농업 작물 모니터링</h1>
-        <p>이미지, 온습도, 물의 양, 관수 모니터링 시스템</p>
+        <p>이미지, 온습도, 수위, 관수 모니터링 시스템</p>
     </header>
 
 {#    <div class="sidebar">#}
@@ -54,15 +59,21 @@
             </div>
 
             <div class="card" onclick="scrollToSection('humidity-section')">
-{#                <h3>습도 모니터링</h3>#}
-                <p>습도</p>
-                <p><span id="sensor-humidity">-</span> %</p>
+                <h3>습도 </h3>
+                <div class="icon-container">
+                    <p><span class="material-symbols-outlined" style="font-size: 4.5rem; color: #5332db;
+                    vertical-align: middle;">humidity_percentage</span>
+                    <span id="sensor-humidity">-</span> %</p>
+                </div>
             </div>
 
             <div class="card" onclick="scrollToSection('water-level-section')">
-{#                <h3>물의 양 모니터링</h3>#}
-                <p>물의 양</p>
-                <p><span id="sensor-water">-</span> %</p>
+                <h3>수위 모니터링</h3>
+                <div class="icon-container">
+                     <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #3c53ec;
+                        vertical-align: middle;">water_medium</span>
+                         <span id="sensor-water">-</span> cm</p>
+                </div>
             </div>
 {#            <div class="card" onclick="scrollToSection('irrigation-section')">#}
 {#                <h3>관수 모니터링</h3>#}
@@ -76,15 +87,20 @@
         </section>
 
         <!-- Sections -->
+        <section id="temp-section" class="content-section">
+            <h2>온도 모니터링</h2>
+            <p>온도: <span id="sensor-temp">-</span> °C</p>
+
+        </section>
+
+        <section id="humidity-section" class="content-section">
+            <h2>습도 모니터링</h2>
+            <p>습도: <span id="sensor-humidity">-</span> %</p>
+        </section>
+
         <section id="image-section" class="content-section">
             <h2>이미지 모니터링</h2>
             <img id="sensor-image" src="" alt="작물 이미지" style="max-width: 100%; border-radius: 10px;">
-        </section>
-
-        <section id="temp-humidity-section" class="content-section">
-            <h2>온습도 모니터링</h2>
-            <p>온도: <span id="sensor-temp">-</span> °C</p>
-            <p>습도: <span id="sensor-humidity">-</span> %</p>
         </section>
 
         <section id="water-level-section" class="content-section">
@@ -92,10 +108,6 @@
             <p>현재 물의 양: <span id="sensor-water">-</span> %</p>
         </section>
 
-        <section id="irrigation-section" class="content-section">
-            <h2>관수 모니터링</h2>
-            <p>관수 상태: <span id="sensor-irrigation">-</span></p>
-        </section>
     </main>
 
     <!-- Footer -->
