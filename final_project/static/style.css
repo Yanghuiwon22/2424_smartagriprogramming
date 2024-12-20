@@ -76,46 +76,6 @@ header p {
     font-size: 1.2rem;
 }
 
-/*!* Sidebar *!*/
-/*.sidebar {*/
-/*    position: fixed;*/
-/*    top: 0;*/
-/*    left: 0;*/
-/*    width: 200px; !* 사이드바 너비 *!*/
-/*    height: 100vh; !* 전체 화면 높이 *!*/
-/*    background-color: #6a11cb; !* 템플릿에 맞춘 사이드바 색상 *!*/
-/*    padding: 10px;*/
-/*    color: white; !* 텍스트 색상 *!*/
-/*    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);*/
-/*    overflow-y: auto; !* 스크롤 활성화 *!*/
-/*    z-index: 1000;*/
-/*    border-radius: 10px;*/
-/*    margin-right: 20px;*/
-/*}*/
-
-/*.sidebar ul {*/
-/*    list-style: none;*/
-/*    padding: 0;*/
-/*    margin: 0;*/
-/*}*/
-
-/*.sidebar li {*/
-/*    margin: 0;*/
-/*    padding: 10px 0;*/
-/*}*/
-
-/*.sidebar a {*/
-/*    text-decoration: none;*/
-/*    color: white;*/
-/*    font-weight: bold;*/
-/*    display: block;*/
-/*    padding: 10px;*/
-/*    transition: background-color 0.3s;*/
-/*}*/
-
-/*.sidebar a:hover {*/
-/*    background-color: rgba(255, 255, 255, 0.2); !* 배경 밝기 효과 *!*/
-/*}*/
 
 /* Cards Section */
 main {
@@ -200,7 +160,7 @@ footer {
         align-items: center;
     }
     .card {
-        width: 50%;
+        width: 90%;
         height: auto;
     }
     .card p {

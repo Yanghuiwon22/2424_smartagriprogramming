@@ -109,9 +109,9 @@
 
 
                 if (data.error) {
-                    sensortempList.innerHTML = `<li>${data.error}</li>`;
+                    sensortempList.innerHTML = `<div>${data.error}</div>`;
                 } else if (data) { // message 값이 있을 경우
-                    const TempItem = document.createElement('li');
+                    const TempItem = document.createElement('div');
                     TempItem.textContent = `온도: ${data.temp}`;
                     sensortempList.appendChild(TempItem);
                 } else {
@@ -119,9 +119,9 @@
                 }
 
                 if (data.error) {
-                    sensorHumList.innerHTML = `<li>${data.error}</li>`;
+                    sensorHumList.innerHTML = `<div>${data.error}</div>`;
                 } else if (data) { // message 값이 있을 경우
-                    const Humitem = document.createElement('li');
+                    const Humitem = document.createElement('div');
                     Humitem.textContent = `습도: ${data.hum}`;
                     sensorHumList.appendChild(Humitem);
                 } else {
@@ -147,9 +147,9 @@
                 sensorWaterList.innerHTML = ''; // 기존 데이터 삭제
 
                 if (data.error) {
-                    sensorIrrigationList.innerHTML = `<li>${data.error}</li>`;
+                    sensorIrrigationList.innerHTML = `<div>${data.error}</div>`;
                 } else if (data) { // message 값이 있을 경우
-                    const WaterItem = document.createElement('li');
+                    const WaterItem = document.createElement('div');
                     WaterItem.textContent = `수위: ${data.distance}`;
                     sensorWaterList.appendChild(WaterItem);
                 } else {
@@ -158,7 +158,7 @@
             })
             .catch(error => {
                 document.getElementById('sensor-water').innerHTML =
-                    '<li>수위 데이터를 가져오는 데 실패했습니다.</li>';
+                    '<div>수위 데이터를 가져오는 데 실패했습니다.</div>';
                 console.error('에러 발생:', error);
             });
     }
