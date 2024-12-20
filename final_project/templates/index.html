@@ -8,178 +8,128 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-        <!--온도 아이콘-->
+    <!--온도 아이콘-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!--습도 아이콘-->
+    <!--습도 아이콘-->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-        <--! 수위 아이콘-->
+    <--! 수위 아이콘-->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-     <!-- Chart.js -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="top-nav">
-        <ul>
-            <li><a href="#temp-section">온도</a></li>
-            <li><a href="#humidity-section">습도</a></li>
-            <li><a href="#water-level-section">물의 양</a></li>
-            <li><a href="#irrigation-section">수위</a></li>
-            <li><a href="#image-section">이미지</a></li>
-        </ul>
-    </nav>
-{##}
-{#    <!-- Header -->#}
-{#    <header>#}
-{#        <h1>농업 작물 모니터링</h1>#}
-{#        <p>이미지, 온습도, 수위, 관수 모니터링 시스템</p>#}
-{#    </header>#}
-
-{#    <div class="sidebar">#}
-{#    <ul>#}
-{#        <li><a href="#section1">Home</a></li>#}
-{#        <li><a href="#section2">Section 2</a></li>#}
-{#        <li><a href="#section3">Section 3</a></li>#}
-{#    </ul>#}
-{#    </div>#}
+<!-- Navigation Bar -->
+<nav class="top-nav">
+    <ul>
+        <li><a href="#temp-section">온도</a></li>
+        <li><a href="#humidity-section">습도</a></li>
+        <li><a href="#water-level-section">물의 양</a></li>
+        <li><a href="#irrigation-section">수위</a></li>
+        <li><a href="#image-section">이미지</a></li>
+    </ul>
+</nav>
 
 
-    <!-- Main Section -->
-    <main>
-        <!-- Cards for Navigation -->
-        <section class="cards">
+<!-- Main Section -->
+<main>
+    <!-- Cards for Navigation -->
+    <section class="cards">
 
-            <div class="card" onclick="scrollToSection('temp-section')">
-                <h3>온도</h3>
-                <div class="icon-container">
-                    <p><span class="material-icons" style="font-size: 4.5rem; color: #6a11cb;
+        <div class="card" onclick="scrollToSection('temp-section')">
+            <h3>온도</h3>
+            <div class="icon-container">
+                <p><span class="material-icons" style="font-size: 4.5rem; color: #6a11cb;
                     vertical-align: middle;">device_thermostat</span>
                     <span id="sensor-temp">-</span>°C</p>
-                </div>
             </div>
+        </div>
 
-            <div class="card" onclick="scrollToSection('humidity-section')">
-                <h3>습도 </h3>
-                <div class="icon-container">
-                    <p><span class="material-symbols-outlined" style="font-size: 4.5rem; color: #5332db;
+        <div class="card" onclick="scrollToSection('humidity-section')">
+            <h3>습도 </h3>
+            <div class="icon-container">
+                <p><span class="material-symbols-outlined" style="font-size: 4.5rem; color: #5332db;
                     vertical-align: middle;">humidity_percentage</span>
                     <span id="sensor-humidity">-</span> %</p>
-                </div>
             </div>
+        </div>
 
-            <div class="card" onclick="scrollToSection('water-level-section')">
-                <h3>수위 모니터링</h3>
-                <div class="icon-container">
-                     <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #3c53ec;
+        <div class="card" onclick="scrollToSection('water-level-section')">
+            <h3>수위 모니터링</h3>
+            <div class="icon-container">
+                <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #3c53ec;
                         vertical-align: middle;">water_medium</span>
-                         <span id="sensor-water">-</span> cm</p>
-                </div>
+                    <span id="sensor-water">-</span> cm</p>
             </div>
-{#            <div class="card" onclick="scrollToSection('irrigation-section')">#}
-{#                <h3>관수 모니터링</h3>#}
-{#                <p>관수 상태: <span id="sensor-irrigation">-</span></p>#}
-{##}
-            {#            </div>#}
-            <div class="card" onclick="scrollToSection('image-section')">
-                {#                <h3>이미지 모니터링</h3>#}
-{#                <p>관수 모니터링</p>#}
-{#    <ul id="sensor-data">#}
-{#        <!-- 데이터가 여기에 업데이트됩니다. -->#}
-{#    </ul>{#                <img id="sensor-image" src="" alt="작물 이미지" style="max-width: 100%; border-radius: 10px;">#}
-            </div>
-        </section>
+        </div>
+        <div class="card" onclick="scrollToSection('irrigation-section')">
+            <h3>관수 모니터링</h3>
+            <ul id="sensor-irrigation">안들어옴</ul>
+        </div>
+    </section>
 
-        <!-- Sections -->
-        <section id="temp-section" class="content-section">
-            <h2>온도 그래프</h2>
-            <p>온도: <span id="sensor-temp">-</span> °C</p>
+    <!-- Sections -->
+    <section id="temp-section" class="content-section">
+        <h2>온도 그래프</h2>
+        <p>온도: <span id="sensor-temp">-</span> °C</p>
 
-        </section>
+    </section>
 
-        <section id="humidity-section" class="content-section">
-            <h2>습도 모니터링</h2>
-            <p>습도: <span id="sensor-humidity">-</span> %</p>
-        </section>
+    <section id="humidity-section" class="content-section">
+        <h2>습도 모니터링</h2>
+        <p>습도: <span id="sensor-humidity">-</span> %</p>
+    </section>
 
-        <section id="image-section" class="content-section">
-            <h2>이미지 모니터링</h2>
-            <img id="sensor-image" src="" alt="작물 이미지" style="max-width: 100%; border-radius: 10px;">
-        </section>
+    <section id="image-section" class="content-section">
+        <h2>이미지 모니터링</h2>
+        <img id="sensor-image" src="" alt="작물 이미지" style="max-width: 100%; border-radius: 10px;">
+    </section>
 
-        <section id="water-level-section" class="content-section">
-            <h2>물의 양 모니터링</h2>
-            <p>현재 물의 양: <span id="sensor-water">-</span> %</p>
-        </section>
+    <section id="water-level-section" class="content-section">
+        <h2>물의 양 모니터링</h2>
+        <p>현재 물의 양: <span id="sensor-data">-</span> %</p>
+    </section>
 
-    </main>
+</main>
 
-    <!-- Footer -->
-    <footer>
-        <small>&copy; 2024 농업 작물 모니터링 시스템</small>
-    </footer>
+<!-- Footer -->
+<footer>
+    <small>&copy; 2024 농업 작물 모니터링 시스템</small>
+</footer>
 
-    <!-- JavaScript -->
-    <script>
-        {#  function updateSensorData() {#}
-        {#    fetch('/sensor-data') // Flask API 호출#}
-        {#        .then(response => response.json()) // JSON 응답 파싱#}
-        {#        .then(data => {#}
-        {#            const sensorList = document.getElementById('sensor-data');#}
-        {#            sensorList.innerHTML = ''; // 기존 데이터 삭제#}
-        {#            if (data.error) {#}
-        {#                sensorList.innerHTML = `<li>${data.error}</li>`;#}
-        {#            } else {#}
-        {#                for (const [key, value] of Object.entries(data)) {#}
-        {#                    const listItem = document.createElement('li');#}
-        {#                    listItem.textContent = `${key}: ${value}`;#}
-        {#                    sensorList.appendChild(listItem);#}
-        {#                }#}
-        {#            }#}
-        {#        })#}
-        {#        .catch(error => {#}
-        {#            document.getElementById('sensor-data').innerHTML =#}
-        {#                '<li>센서 데이터를 가져오는 데 실패했습니다.</li>';#}
-        {#        });#}
-        {#}#}
-        {##}
-        {#// 5초마다 데이터 업데이트#}
-        {#setInterval(updateSensorData, 5000);#}
-        {##}
-        {#// 페이지 로드 시 초기 데이터 업데이트#}
-        {#window.onload = updateSensorData;#}
-
-    // 페이지 로드 시 실행
-    document.addEventListener('DOMContentLoaded', function() {
-        // 첫 데이터 로드
-        fetch('/api/sensor_data')
-            .then(response => response.json())
+<!-- JavaScript --><!-- JavaScript --><script>
+    function updateSensorData() {
+        fetch('/sensor-data') // Flask API 호출
+            .then(response => response.json()) // JSON 응답 파싱
             .then(data => {
-                document.getElementById('sensor-image').src = data.image_url;
-                document.getElementById('sensor-temp').textContent = data.temperature;
-                document.getElementById('sensor-humidity').textContent = data.humidity;
-                document.getElementById('sensor-water').textContent = data.water_level;
-                document.getElementById('sensor-irrigation').textContent = data.irrigation_status;
+                const sensorIrrigationList = document.getElementById('sensor-irrigation');
+                sensorIrrigationList.innerHTML = ''; // 기존 데이터 삭제
+
+                if (data.error) {
+                    sensorIrrigationList.innerHTML = `<li>${data.error}</li>`;
+                } else if (data.message) { // message 값이 있을 경우
+                    const irrigationItem = document.createElement('li');
+                    irrigationItem.textContent = `수위: ${data.message}`;
+                    sensorIrrigationList.appendChild(irrigationItem);
+                } else {
+                    sensorIrrigationList.innerHTML = '<li>관수 데이터를 가져오는 데 실패했습니다.</li>';
+                }
+            })
+            .catch(error => {
+                document.getElementById('sensor-irrigation').innerHTML =
+                    '<li>관수 데이터를 가져오는 데 실패했습니다.</li>';
+                console.error('에러 발생:', error);
             });
+    }
 
-        // 5초마다 업데이트
-        setInterval(() => {
-            fetch('/api/sensor_data')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('sensor-image').src = data.image_url;
-                    document.getElementById('sensor-temp').textContent = data.temperature;
-                    document.getElementById('sensor-humidity').textContent = data.humidity;
-                    document.getElementById('sensor-water').textContent = data.water_level;
-                    document.getElementById('sensor-irrigation').textContent = data.irrigation_status;
-                });
-        }, 3000); //
+    document.addEventListener('DOMContentLoaded', function () {
+        // 페이지 로드 시 초기 데이터 업데이트
+        updateSensorData();
+
+        // 5초마다 데이터 업데이트
+        setInterval(updateSensorData, 5000);
     });
-        function scrollToSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            section.scrollIntoView({ behavior: 'smooth' });
-        }
+</script>
 
-    </script>
 </body>
 </html>
