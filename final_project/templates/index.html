@@ -69,15 +69,14 @@
 
     <!-- Sections -->
 {#    임의 온도 그래프 그려보기#}
-    <section id="temp-section" class="content-section">
-        <h2>온도 그래프</h2>
-        <canvas id="temp-chart"></canvas>
-    </section>
+{#    <section id="temp-section" class="content-section">#}
+{#        <h2>온도 그래프</h2>#}
+{#        <canvas id="temp-chart" width="400" height="200"></canvas> <!-- 크기 조정 -->#}
+{#    </section>#}
 {#   여기까지 임의 온도 그래프 #}
 
     <section id="temp-section" class="content-section">
         <h2>온도 그래프</h2>
-{#        <canvas id="temp-chart" width="600" height="400"></canvas>#}
         <p>온도: <span id="sensor-temp">-</span> °C</p>
 
     </section>
@@ -104,10 +103,12 @@
     <small>&copy; 2024 농업 작물 모니터링 시스템</small>
 </footer>
 
-<!-- JavaScript --><!-- JavaScript --><script>
+<!-- JavaScript --><!-- JavaScript -->
 {#    임의 온도 그래프 그려보기#}
-{#function fetchDataAndRenderChart(url, canvasId) {#}
-{#        fetch('/temp-data')#}
+{#<script>#}
+{#    document.addEventListener('DOMContentLoaded', function () {#}
+{#    function fetchDataAndRenderChart(url, canvasId) {#}
+{#        fetch(url)#}
 {#            .then(response => response.json()) // JSON 응답 파싱#}
 {#            .then(data => {#}
 {#                const ctx = document.getElementById(canvasId).getContext('2d');#}
@@ -127,10 +128,19 @@
 {#                        maintainAspectRatio: false,#}
 {#                        scales: {#}
 {#                            x: {#}
-{#                                beginAtZero: true#}
+{#                                beginAtZero: true,#}
+{#                                ticks: {#}
+{#                                    maxTicksLimit: 10#}
+{#                                }#}
 {#                            },#}
 {#                            y: {#}
-{#                                beginAtZero: true#}
+{#                                beginAtZero: true,#}
+{#                                ticks: {#}
+{#                                    maxTicksLimit: 10,#}
+{#                                    callback: function(value) {#}
+{#                                        return value.toFixed(1);#}
+{#                                    }#}
+{#                                }#}
 {#                            }#}
 {#                        }#}
 {#                    }#}
@@ -138,12 +148,19 @@
 {#            })#}
 {#            .catch(error => {#}
 {#                console.error('에러 발생:', error);#}
+{#                document.getElementById(canvasId).innerHTML = '<div>데이터를 가져오는 데 실패했습니다.</div>';#}
 {#            });#}
 {#    }#}
 {##}
-{#    document.addEventListener('DOMContentLoaded', function () {#}
-{#        fetchDataAndRenderChart('/temp-data', 'temp-chart');#}
+{#    // 초기 차트 생성#}
+{#    fetchDataAndRenderChart('/temp-data', 'temp-chart');#}
+{##}
+{#    // 3초마다 데이터 업데이트#}
+{#    setInterval(() => fetchDataAndRenderChart('/temp-data', 'temp-chart'), 3000); // 3000ms = 3초#}
+{#});#}
+{#</script>#}
     {#    여기까지 임의 온도 그래프 그리기#}
+<script>
     function updateTempHumData() {
         fetch('/temp-hum-data') // Flask API 호출
             .then(response => response.json()) // JSON 응답 파싱

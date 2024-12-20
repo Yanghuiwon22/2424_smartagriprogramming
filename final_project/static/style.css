@@ -146,6 +146,10 @@ main {
     max-width: 800px;
     text-align: center;
 }
+canvas {
+    max-height: 400px;  /* 그래프의 최대 높이 */
+    width: 100%;       /* 부모 요소에 맞게 확대 */
+}
 
 /* Footer */
 footer {
