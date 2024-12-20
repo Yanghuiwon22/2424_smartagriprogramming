@@ -25,6 +25,7 @@
             <li><a href="#temp-section">온도</a></li>
             <li><a href="#humidity-section">습도</a></li>
             <li><a href="#water-level-section">물의 양</a></li>
+            <li><a href="#irrigation-section">수위</a></li>
             <li><a href="#image-section">이미지</a></li>
         </ul>
     </nav>
@@ -75,10 +76,17 @@
                          <span id="sensor-water">-</span> cm</p>
                 </div>
             </div>
-
+{#            <div class="card" onclick="scrollToSection('irrigation-section')">#}
+{#                <h3>관수 모니터링</h3>#}
+{#                <p>관수 상태: <span id="sensor-irrigation">-</span></p>#}
+{##}
+            {#            </div>#}
             <div class="card" onclick="scrollToSection('image-section')">
-{#                <h3>이미지 모니터링</h3>#}
-                <img id="sensor-image" src="" alt="작물 이미지" style="max-width: 100%; border-radius: 10px;">
+                {#                <h3>이미지 모니터링</h3>#}
+                <p>관수 모니터링</p>
+    <ul id="sensor-data">
+        <!-- 데이터가 여기에 업데이트됩니다. -->
+    </ul>{#                <img id="sensor-image" src="" alt="작물 이미지" style="max-width: 100%; border-radius: 10px;">#}
             </div>
         </section>
 
@@ -113,6 +121,34 @@
 
     <!-- JavaScript -->
     <script>
+          function updateSensorData() {
+            fetch('/sensor-data') // Flask API 호출
+                .then(response => response.json()) // JSON 응답 파싱
+                .then(data => {
+                    const sensorList = document.getElementById('sensor-data');
+                    sensorList.innerHTML = ''; // 기존 데이터 삭제
+                    if (data.error) {
+                        sensorList.innerHTML = `<li>${data.error}</li>`;
+                    } else {
+                        for (const [key, value] of Object.entries(data)) {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `${key}: ${value}`;
+                            sensorList.appendChild(listItem);
+                        }
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('sensor-data').innerHTML =
+                        '<li>센서 데이터를 가져오는 데 실패했습니다.</li>';
+                });
+        }
+
+        // 5초마다 데이터 업데이트
+        setInterval(updateSensorData, 5000);
+
+        // 페이지 로드 시 초기 데이터 업데이트
+        window.onload = updateSensorData;
+
     // 페이지 로드 시 실행
     document.addEventListener('DOMContentLoaded', function() {
         // 첫 데이터 로드
