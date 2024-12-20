@@ -136,7 +136,7 @@ main {
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 440px;
+    width: 400px;
     max-width: 300px;
     height: 200px;
     text-align: center;
@@ -200,7 +200,7 @@ footer {
         align-items: center;
     }
     .card {
-        width: 90%;
+        width: 50%;
         height: auto;
     }
     .card p {
