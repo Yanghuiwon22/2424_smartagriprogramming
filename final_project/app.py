@@ -12,12 +12,27 @@ def home():
 
 # 센서 받아오기
 # 1. 온습도
-# 2. 로드셀
-# 3. 수위센서
-@app.route('/sensor-data', methods=['GET'])
-def get_water_distance():
+@app.route('/temp-hum-data', methods=['GET'])
+def get_temp_hum_distance():
     print("수위센서 데이터를 가져옵니다.")
     url = "http://113.198.63.27:30250/temp_hum"
+    try:
+        response = requests.get(url, timeout=10)  # 타임아웃 추가
+        print(f"HTTP 상태 코드: {response.status_code}")
+        print(f"응답 내용: {response.text}")
+        response.raise_for_status()  # HTTP 오류 발생 시 예외 처리
+
+        data = response.json()
+        return jsonify(data)
+    except requests.exceptions.RequestException as e:
+        print(f"에러 발생: {e}")
+        return jsonify({"error": "센서 데이터를 가져오지 못했습니다."}), 500
+# 2. 로드셀
+# 3. 수위센서
+@app.route('/distance-data', methods=['GET'])
+def get_water_distance():
+    print("수위센서 데이터를 가져옵니다.")
+    url = "http://113.198.63.27:30250/distance"
     try:
         response = requests.get(url, timeout=10)  # 타임아웃 추가
         print(f"HTTP 상태 코드: {response.status_code}")

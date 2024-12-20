@@ -30,7 +30,6 @@
     </ul>
 </nav>
 
-
 <!-- Main Section -->
 <main>
     <!-- Cards for Navigation -->
@@ -98,36 +97,81 @@
 </footer>
 
 <!-- JavaScript --><!-- JavaScript --><script>
-    function updateSensorData() {
-        fetch('/sensor-data') // Flask API 호출
+    function updateTempHumData() {
+        fetch('/temp-hum-data') // Flask API 호출
             .then(response => response.json()) // JSON 응답 파싱
             .then(data => {
-                const sensorIrrigationList = document.getElementById('sensor-water');
-                sensorIrrigationList.innerHTML = ''; // 기존 데이터 삭제
+                const sensortempList = document.getElementById('sensor-temp');
+                sensortempList.innerHTML = ''; // 기존 데이터 삭제
+
+                const sensorHumList = document.getElementById('sensor-humidity');
+                sensorHumList.innerHTML = ''; // 기존 데이터 삭제
+
 
                 if (data.error) {
-                    sensorIrrigationList.innerHTML = `<li>${data.error}</li>`;
-                } else if (data.message) { // message 값이 있을 경우
-                    const irrigationItem = document.createElement('li');
-                    irrigationItem.textContent = `수위: ${data.message}`;
-                    sensorIrrigationList.appendChild(irrigationItem);
+                    sensortempList.innerHTML = `<li>${data.error}</li>`;
+                } else if (data) { // message 값이 있을 경우
+                    const TempItem = document.createElement('li');
+                    TempItem.textContent = `온도: ${data.temp}`;
+                    sensortempList.appendChild(TempItem);
                 } else {
-                    sensorIrrigationList.innerHTML = '<li>관수 데이터를 가져오는 데 실패했습니다.</li>';
+                    sensortempList.innerHTML = '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
+                }
+
+                if (data.error) {
+                    sensorHumList.innerHTML = `<li>${data.error}</li>`;
+                } else if (data) { // message 값이 있을 경우
+                    const Humitem = document.createElement('li');
+                    Humitem.textContent = `습도: ${data.hum}`;
+                    sensorHumList.appendChild(Humitem);
+                } else {
+                    sensorHumList.innerHTML = '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
                 }
             })
             .catch(error => {
-                document.getElementById('sensor-irrigation').innerHTML =
-                    '<li>관수 데이터를 가져오는 데 실패했습니다.</li>';
+                document.getElementById('sensor-temp').innerHTML =
+                    '<li>온도 데이터를 가져오는 데 실패했습니다.</li>';
+                console.error('에러 발생:', error);
+
+                document.getElementById('sensor-humidity').innerHTML =
+                    '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
+                console.error('에러 발생:', error);
+            });
+    }
+
+    function updateDistanceData() {
+        fetch('/distance-data') // Flask API 호출
+            .then(response => response.json()) // JSON 응답 파싱
+            .then(data => {
+                const sensorWaterList = document.getElementById('sensor-water');
+                sensorWaterList.innerHTML = ''; // 기존 데이터 삭제
+
+                if (data.error) {
+                    sensorIrrigationList.innerHTML = `<li>${data.error}</li>`;
+                } else if (data) { // message 값이 있을 경우
+                    const WaterItem = document.createElement('li');
+                    WaterItem.textContent = `수위: ${data.distance}`;
+                    sensorWaterList.appendChild(WaterItem);
+                } else {
+                    sensorWaterList.innerHTML = '<li>관수 데이터를 가져오는 데 실패했습니다.</li>';
+                }
+            })
+            .catch(error => {
+                document.getElementById('sensor-water').innerHTML =
+                    '<li>수위 데이터를 가져오는 데 실패했습니다.</li>';
                 console.error('에러 발생:', error);
             });
     }
 
     document.addEventListener('DOMContentLoaded', function () {
         // 페이지 로드 시 초기 데이터 업데이트
-        updateSensorData();
+        updateTempHumData();
+        updateDistanceData();
 
         // 5초마다 데이터 업데이트
-        setInterval(updateSensorData, 5000);
+        setInterval(updateTempHumData, 5000);
+        setInterval(updateDistanceData, 5000);
+
     });
 </script>
 
