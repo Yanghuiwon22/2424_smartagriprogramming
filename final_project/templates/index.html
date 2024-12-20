@@ -152,7 +152,7 @@
     // 페이지 로드 시 실행
     document.addEventListener('DOMContentLoaded', function() {
         // 첫 데이터 로드
-        fetch('/api/sensor_data')
+        fetch('/sensor_data')
             .then(response => response.json())
             .then(data => {
                 document.getElementById('sensor-image').src = data.image_url;
@@ -164,7 +164,7 @@
 
         // 5초마다 업데이트
         setInterval(() => {
-            fetch('/api/sensor_data')
+            fetch('/sensor_data')
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('sensor-image').src = data.image_url;
