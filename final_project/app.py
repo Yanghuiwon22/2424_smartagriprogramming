@@ -5,13 +5,14 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    data = get_water_distance()
-    return render_template('index.html', data=data)
+    # print("수위센서 데이터를 가져옵니다.")
+    # return render_template('index.html')
+    # data = get_water_distance()
+    return render_template('index.html')
 
 # 센서 받아오기
 # 1. 온습도
 # 2. 로드셀
-
 # 3. 수위센서
 @app.route('/sensor-data', methods=['GET'])
 def get_water_distance():
@@ -52,4 +53,4 @@ def get_water_distance():
 #     return jsonify(fake_data)
 #
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True, port=8000)

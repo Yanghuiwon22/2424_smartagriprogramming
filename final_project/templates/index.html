@@ -29,12 +29,12 @@
             <li><a href="#image-section">이미지</a></li>
         </ul>
     </nav>
-
-    <!-- Header -->
-    <header>
-        <h1>농업 작물 모니터링</h1>
-        <p>이미지, 온습도, 수위, 관수 모니터링 시스템</p>
-    </header>
+{##}
+{#    <!-- Header -->#}
+{#    <header>#}
+{#        <h1>농업 작물 모니터링</h1>#}
+{#        <p>이미지, 온습도, 수위, 관수 모니터링 시스템</p>#}
+{#    </header>#}
 
 {#    <div class="sidebar">#}
 {#    <ul>#}
@@ -83,16 +83,16 @@
             {#            </div>#}
             <div class="card" onclick="scrollToSection('image-section')">
                 {#                <h3>이미지 모니터링</h3>#}
-                <p>관수 모니터링</p>
-    <ul id="sensor-data">
-        <!-- 데이터가 여기에 업데이트됩니다. -->
-    </ul>{#                <img id="sensor-image" src="" alt="작물 이미지" style="max-width: 100%; border-radius: 10px;">#}
+{#                <p>관수 모니터링</p>#}
+{#    <ul id="sensor-data">#}
+{#        <!-- 데이터가 여기에 업데이트됩니다. -->#}
+{#    </ul>{#                <img id="sensor-image" src="" alt="작물 이미지" style="max-width: 100%; border-radius: 10px;">#}
             </div>
         </section>
 
         <!-- Sections -->
         <section id="temp-section" class="content-section">
-            <h2>온도 모니터링</h2>
+            <h2>온도 그래프</h2>
             <p>온도: <span id="sensor-temp">-</span> °C</p>
 
         </section>
@@ -121,33 +121,33 @@
 
     <!-- JavaScript -->
     <script>
-          function updateSensorData() {
-            fetch('/sensor-data') // Flask API 호출
-                .then(response => response.json()) // JSON 응답 파싱
-                .then(data => {
-                    const sensorList = document.getElementById('sensor-data');
-                    sensorList.innerHTML = ''; // 기존 데이터 삭제
-                    if (data.error) {
-                        sensorList.innerHTML = `<li>${data.error}</li>`;
-                    } else {
-                        for (const [key, value] of Object.entries(data)) {
-                            const listItem = document.createElement('li');
-                            listItem.textContent = `${key}: ${value}`;
-                            sensorList.appendChild(listItem);
-                        }
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('sensor-data').innerHTML =
-                        '<li>센서 데이터를 가져오는 데 실패했습니다.</li>';
-                });
-        }
-
-        // 5초마다 데이터 업데이트
-        setInterval(updateSensorData, 5000);
-
-        // 페이지 로드 시 초기 데이터 업데이트
-        window.onload = updateSensorData;
+        {#  function updateSensorData() {#}
+        {#    fetch('/sensor-data') // Flask API 호출#}
+        {#        .then(response => response.json()) // JSON 응답 파싱#}
+        {#        .then(data => {#}
+        {#            const sensorList = document.getElementById('sensor-data');#}
+        {#            sensorList.innerHTML = ''; // 기존 데이터 삭제#}
+        {#            if (data.error) {#}
+        {#                sensorList.innerHTML = `<li>${data.error}</li>`;#}
+        {#            } else {#}
+        {#                for (const [key, value] of Object.entries(data)) {#}
+        {#                    const listItem = document.createElement('li');#}
+        {#                    listItem.textContent = `${key}: ${value}`;#}
+        {#                    sensorList.appendChild(listItem);#}
+        {#                }#}
+        {#            }#}
+        {#        })#}
+        {#        .catch(error => {#}
+        {#            document.getElementById('sensor-data').innerHTML =#}
+        {#                '<li>센서 데이터를 가져오는 데 실패했습니다.</li>';#}
+        {#        });#}
+        {#}#}
+        {##}
+        {#// 5초마다 데이터 업데이트#}
+        {#setInterval(updateSensorData, 5000);#}
+        {##}
+        {#// 페이지 로드 시 초기 데이터 업데이트#}
+        {#window.onload = updateSensorData;#}
 
     // 페이지 로드 시 실행
     document.addEventListener('DOMContentLoaded', function() {

@@ -55,7 +55,7 @@ body {
 
 header {
     position: relative;
-    margin-top: 80px; /* 네비게이션 바 높이 */
+    margin-top: 60px; /* 네비게이션 바 높이 */
     /*margin-left: 220px; !* 사이드바 너비만큼 이동 *!*/
     /*width: calc(100% - 220px); !* 헤더 너비 = 전체 화면 - 사이드바 너비 *!*/
     background: linear-gradient(90deg, #6a11cb, #2575fc);
@@ -192,4 +192,24 @@ footer {
     padding: 10px 0;
     background: #343a40;
     color: white;
+}
+
+@media (max-width: 768px) {
+    .cards {
+        flex-direction: column;
+        align-items: center;
+    }
+    .card {
+        width: 90%;
+        height: auto;
+    }
+    .card p {
+        font-size: 2rem;
+    }
+    .top-nav ul {
+        flex-direction: column;
+    }
+    .top-nav a {
+        font-size: 1rem;
+    }
 }
