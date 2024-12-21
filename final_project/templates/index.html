@@ -63,7 +63,11 @@
         </div>
         <div class="card" onclick="scrollToSection('irrigation-section')">
             <h3>관수 모니터링</h3>
-            <ul id="sensor-irrigation">안들어옴</ul>
+            <div class="icon-container">
+                <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #3c53ec;
+                        vertical-align: middle;">water_medium</span>
+                    <span id="sensor-irrigation">-</span></p>
+            </div>
         </div>
     </section>
 
@@ -177,6 +181,8 @@
                     document.getElementById('sensor-temp').textContent = `${data.temp}`;
                     document.getElementById('sensor-humidity').textContent = `${data.hum}`;
                     document.getElementById('sensor-water').textContent = `${data.distance} cm`;
+                    document.getElementById('sensor-irrigation').textContent = `${data.weight} g`;
+
                 })
 
                 .catch(error => {
@@ -188,6 +194,8 @@
                     document.getElementById('sensor-temp').textContent = '온도 데이터를 가져오는 데 실패했습니다.';
                     document.getElementById('sensor-humidity').textContent = '습도 데이터를 가져오는 데 실패했습니다.';
                     document.getElementById('sensor-water').textContent = '거리 데이터를 가져오는 데 실패했습니다.';
+                    document.getElementById('sensor-irrigation').textContent = '무게 데이터를 가져오는 데 실패했습니다.';
+
                 });
         }
 
