@@ -72,32 +72,27 @@
     </section>
 
     <!-- Sections -->
-    {#    임의 온도 그래프 그려보기#}
-    {#    <section id="temp-section" class="content-section">#}
-    {#        <h2>온도 그래프</h2>#}
-    {#        <canvas id="temp-chart" width="400" height="200"></canvas> <!-- 크기 조정 -->#}
-    {#    </section>#}
-    {#   여기까지 임의 온도 그래프 #}
-
+{#        임의 온도 그래프 그려보기#}
     <section id="temp-section" class="content-section">
         <h2>온도 그래프</h2>
-        <p>온도: <span id="sensor-temp">-</span> °C</p>
-
+        <canvas id="temp-chart" width="400" height="200"></canvas> <!-- 크기 조정 -->
     </section>
+{#       여기까지 임의 온도 그래프 #}
+
 
     <section id="humidity-section" class="content-section">
-        <h2>습도 모니터링</h2>
-        <p>습도: <span id="sensor-humidity">-</span> %</p>
-    </section>
-
-    <section id="image-section" class="content-section">
-        <h2>이미지 모니터링</h2>
-        <img id="sensor-image" src="" alt="작물 이미지" style="max-width: 100%; border-radius: 10px;">
+        <h2>습도 그래프</h2>
+        <canvas id="humidity-chart"></canvas>
     </section>
 
     <section id="water-level-section" class="content-section">
-        <h2>물의 양 모니터링</h2>
-        <p>현재 물의 양: <span id="sensor-data">-</span> %</p>
+        <h2>수위 그래프</h2>
+        <canvas id="water-chart"></canvas>
+    </section>
+
+    <section id="irrigation-section" class="content-section">
+        <h2>무게 그래프</h2>
+        <canvas id="weight-chart"></canvas>
     </section>
 
 
@@ -114,136 +109,114 @@
 </footer>
 {##}
 {#<!-- JavaScript --><!-- JavaScript -->#}
-{#    임의 온도 그래프 그려보기#}
-{#<script>#}
-{#    document.addEventListener('DOMContentLoaded', function () {#}
-{#    function fetchDataAndRenderChart(url, canvasId) {#}
-{#        fetch(url)#}
-{#            .then(response => response.json()) // JSON 응답 파싱#}
-{#            .then(data => {#}
-{#                const ctx = document.getElementById(canvasId).getContext('2d');#}
-{#                new Chart(ctx, {#}
-{#                    type: 'line',#}
-{#                    data: {#}
-{#                        labels: data.labels,#}
-{#                        datasets: [{#}
-{#                            label: 'Temperature (°C)',#}
-{#                            data: data.data,#}
-{#                            borderColor: 'rgba(75, 192, 192, 1)',#}
-{#                            backgroundColor: 'rgba(75, 192, 192, 0.2)',#}
-{#                        }]#}
-{#                    },#}
-{#                    options: {#}
-{#                        responsive: true,#}
-{#                        maintainAspectRatio: false,#}
-{#                        scales: {#}
-{#                            x: {#}
-{#                                beginAtZero: true,#}
-{#                                ticks: {#}
-{#                                    maxTicksLimit: 10#}
-{#                                }#}
-{#                            },#}
-{#                            y: {#}
-{#                                beginAtZero: true,#}
-{#                                ticks: {#}
-{#                                    maxTicksLimit: 10,#}
-{#                                    callback: function(value) {#}
-{#                                        return value.toFixed(1);#}
-{#                                    }#}
-{#                                }#}
-{#                            }#}
-{#                        }#}
-{#                    }#}
-{#                });#}
-{#            })#}
-{#            .catch(error => {#}
-{#                console.error('에러 발생:', error);#}
-{#                document.getElementById(canvasId).innerHTML = '<div>데이터를 가져오는 데 실패했습니다.</div>';#}
-{#            });#}
-{#    }#}
-{##}
-{#    // 초기 차트 생성#}
-{#    fetchDataAndRenderChart('/temp-data', 'temp-chart');#}
-{##}
-{#    // 3초마다 데이터 업데이트#}
-{#    setInterval(() => fetchDataAndRenderChart('/temp-data', 'temp-chart'), 3000); // 3000ms = 3초#}
-{# });#}
-{#</script>#}
-{#    여기까지 임의 온도 그래프 그리기#}
+
 <script>
-    function updateSensorData() {
-        fetch('/temp-hum-data') // Flask 서버에서 데이터 가져오기
+    // 차트를 생성하는 공통 함수
+    function renderChart(chartId, label, timestamps, data, color) {
+    // 날짜와 시간을 분리
+    const uniqueDate = timestamps[0].split(' ')[0]; // 첫 번째 데이터에서 날짜 추출
+    const times = timestamps.map(ts => ts.split(' ')[1].split(':')[0] + ':' + ts.split(' ')[1].split(':')[1]); // 시간에서 초 제거
+
+    const ctx = document.getElementById(chartId).getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: times, // 초를 제외한 시간만 라벨로 사용
+            datasets: [{
+                label: label,
+                data: data,
+                borderColor: color,
+                backgroundColor: color + "33",
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    font: {
+                        size: 18 // 텍스트 크기 설정
+                    },
+                    text: `${label} - ${uniqueDate}`, // 그래프 제목에 날짜만 표시
+                },
+                tooltip: {
+                    callbacks: {
+                        title: (context) => {
+                            // 툴팁에는 전체 날짜와 시간 표시
+                            const index = context[0].dataIndex;
+                            return timestamps[index];
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: false // x축 제목 제거
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: label
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+    // 실시간 센서 데이터 업데이트
+    function updateLiveSensorData() {
+        fetch('/temp-hum-data')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json(); // JSON 응답 파싱
+                return response.json();
             })
             .then(data => {
-                // 데이터가 정상적으로 수신된 경우
-                console.log("Received data:", data);
-
-                // 각 센서 데이터를 업데이트
+                // 센서 데이터 업데이트
                 document.getElementById('sensor-temp').textContent = `${data.temp}`;
                 document.getElementById('sensor-humidity').textContent = `${data.hum}`;
                 document.getElementById('sensor-water').textContent = `${data.distance} cm`;
                 document.getElementById('sensor-irrigation').textContent = `${data.weight} g`;
-
             })
-
             .catch(error => {
-                // 오류가 발생한 경우
-                console.error('Error fetching data:', error);
-
-
-                // 오류 메시지를 각 요소에 표시
+                console.error('Error fetching live sensor data:', error);
                 document.getElementById('sensor-temp').textContent = '온도 데이터를 가져오는 데 실패했습니다.';
                 document.getElementById('sensor-humidity').textContent = '습도 데이터를 가져오는 데 실패했습니다.';
                 document.getElementById('sensor-water').textContent = '거리 데이터를 가져오는 데 실패했습니다.';
                 document.getElementById('sensor-irrigation').textContent = '무게 데이터를 가져오는 데 실패했습니다.';
-
             });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // 페이지 로드 시 초기 데이터 업데이트
-        updateSensorData();
-
-        // 5초마다 데이터 업데이트
-        setInterval(updateSensorData, 5000);
-    });
-    function toggleWaterPump() {
-        fetch('/toggle-water-pump', {
-            method: 'POST'
-        })
-            .then(response => {
-                if (response.ok) {
-                    console.log("Water pump toggled successfully.");
-                } else {
-                    console.error("Failed to toggle water pump.");
-                }
+    // 마지막 30개의 데이터로 차트 업데이트
+    function updateLast30DataCharts() {
+        fetch('/last-30-plot')
+            .then(response => response.json())
+            .then(data => {
+                renderChart("temp-chart", "Temperature (°C)", data.timestamps, data.temp, "rgba(255, 99, 132)");
+                renderChart("humidity-chart", "Humidity (%)", data.timestamps, data.hum, "rgba(54, 162, 235)");
+                renderChart("water-chart", "Water Level (cm)", data.timestamps, data.distance, "rgba(75, 192, 192)");
+                renderChart("weight-chart", "Weight (g)", data.timestamps, data.weight, "rgba(255, 206, 86)");
             })
-            .catch(error => {
-                console.error("Error:", error);
-            });
-     }
+            .catch(error => console.error('Error fetching last 30 data:', error));
+    }
 
-    async function sendStateToFlask(state) {
-            try {
-                const response = await fetch("/send_to_fastapi", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ data: state }),
-                });
+    // 페이지 로드 시 데이터 초기화
+    document.addEventListener('DOMContentLoaded', function () {
+        // 실시간 데이터와 과거 데이터 초기화
+        updateLiveSensorData();
+        updateLast30DataCharts();
 
-                const data = await response.json();
-                console.log("Response from Flask:", data);
-            } catch (error) {
-                console.error("Error sending data to Flask:", error);
-            }
-        }
+        // 실시간 데이터는 5초마다 업데이트
+        setInterval(updateLiveSensorData, 5000);
+    });
 </script>
 
 
