@@ -8,8 +8,10 @@ import datetime
 app = Flask(__name__)
 
 # 데이터 저장 파일 경로 설정
-TEMP_HUM_FILE = "temp_hum_data.csv"
-DISTANCE_FILE = "water_distance_data.csv"
+BASE_DIR = "sensor_data"
+os.makedirs(BASE_DIR, exist_ok=True)  # 디렉토리 생성
+
+# DISTANCE_FILE = "water_distance_data.csv"
 
 # 기존 데이터를 파일에서 로드
 def load_existing_data(file_path):
@@ -20,13 +22,10 @@ def load_existing_data(file_path):
             data = [row for row in reader]
     return data
 
-# 데이터 파일 초기화
-temp_hum_data = load_existing_data(TEMP_HUM_FILE)
-distance_data = load_existing_data(DISTANCE_FILE)
 
 @app.route('/')
 def home():
-    data = get_water_distance()
+    data = get_temp_hum_distance()
     return render_template('index.html', data=data)
 
 # 센서 받아오기
@@ -46,8 +45,12 @@ def get_temp_hum_distance():
         data = json.loads(response_temp_hum.text)
         print(data, type(data))
 
+        # 연도별 파일 경로 설정
+        current_year = datetime.datetime.now().year
+        file_path = get_year_based_file_path(current_year)
+
         # 데이터를 파일에 저장
-        save_data_to_csv(TEMP_HUM_FILE, temp_hum_data, data)
+        save_data_to_csv(file_path, load_existing_data(file_path), data)
 
         return jsonify(data)
     except requests.exceptions.RequestException as e:
@@ -55,40 +58,15 @@ def get_temp_hum_distance():
         return jsonify({"error": "센서 데이터를 가져오지 못했습니다."}), 500
 
 
-# # 임의 데이터 생성해서 그래프 그려보기
-# @app.route('/temp-data')
-# def temp_data():
-#     # 가짜 데이터 생성: 시간, 온도 (°C)
-#     max_data_points = 20  # 최대 데이터 수
-#     data = {
-#         'labels': [f'Time {i}' for i in range(max_data_points)],
-#         'data': [random.uniform(20, 30) for _ in range(max_data_points)]  # 20 ~ 30 사이의 임의 온도 데이터
-#     }
-#     return jsonify(data)
-# # 여기까지 그래프 테스트
 
 # 2. 로드셀
 # 3. 수위센서
-@app.route('/distance-data', methods=['GET'])
-def get_water_distance():
-    print("수위센서 데이터를 가져옵니다.")
-    url = "http://113.198.63.27:30250/temp_hum"
-    try:
-        response = requests.get(url, timeout=10)  # 타임아웃 추가
-        print(f"HTTP 상태 코드: {response.status_code}")
-        print(f"응답 내용: {response.text}")
-        response.raise_for_status()  # HTTP 오류 발생 시 예외 처리
 
-        data = response.json()
-
-        # 데이터를 파일에 저장
-        save_data_to_csv(DISTANCE_FILE, distance_data, data)
-
-        return jsonify(data)
-    except requests.exceptions.RequestException as e:
-        print(f"에러 발생: {e}")
-        return jsonify({"error": "센서 데이터를 가져오지 못했습니다."}), 500
-
+def get_year_based_file_path(year):
+    """
+    연도별 데이터 파일 경로를 반환합니다.
+    """
+    return os.path.join(BASE_DIR, f"{year}_sensordata.csv")
 
 # 데이터 저장 함수
 def save_data_to_csv(file_path, data_list, new_data):
@@ -101,19 +79,34 @@ def save_data_to_csv(file_path, data_list, new_data):
     if new_data:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         new_data['timestamp'] = timestamp
+
+        if not data_list:  # 데이터가 없을 때만 컬럼명을 추가
+            fieldnames = ['timestamp', 'temp', 'hum', 'distance', 'weight']  # 모든 필드명 설정
+            with open(file_path, "w", newline='') as file:
+                writer = csv.DictWriter(file, fieldnames=fieldnames)
+                writer.writeheader()  # 헤더 추가
+        else:
+            fieldnames = ['timestamp', 'temp', 'hum', 'distance', 'weight']  # 기존 데이터의 필드명 사용
+
         data_list.append(new_data)  # 새 데이터를 기존 리스트에 추가
-    else:
-        new_data = {}
 
-    fieldnames = ['timestamp'] + list(new_data.keys())
+    # 데이터를 timestamp 기준으로 정렬
+    data_list.sort(key=lambda row: row['timestamp'])
 
-    with open(file_path, "w", newline='') as file:
+    with open(file_path, "a", newline='') as file:
         writer = csv.DictWriter(file, fieldnames=fieldnames)
-        if not os.path.exists(file_path):
-            writer.writeheader()  # 헤더 작성
         writer.writerows(data_list)  # 리스트 데이터를 파일에 기록
 
     print(f"데이터가 {file_path}에 저장되었습니다.")
+
+# 데이터 파일 로드 함수
+def load_existing_data(file_path):
+    data = []
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            reader = csv.DictReader(file)
+            data = [row for row in reader]
+    return data
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True, port=8000)

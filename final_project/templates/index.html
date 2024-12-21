@@ -72,12 +72,12 @@
     </section>
 
     <!-- Sections -->
-    {#    임의 온도 그래프 그려보기#}
-    {#    <section id="temp-section" class="content-section">#}
-    {#        <h2>온도 그래프</h2>#}
-    {#        <canvas id="temp-chart" width="400" height="200"></canvas> <!-- 크기 조정 -->#}
-    {#    </section>#}
-    {#   여기까지 임의 온도 그래프 #}
+{#        임의 온도 그래프 그려보기#}
+    <section id="temp-section" class="content-section">
+        <h2>온도 그래프</h2>
+        <canvas id="temp-chart" width="400" height="200"></canvas> <!-- 크기 조정 -->
+    </section>
+{#       여기까지 임의 온도 그래프 #}
 
     <section id="temp-section" class="content-section">
         <h2>온도 그래프</h2>
@@ -165,48 +165,79 @@
 {#</script>#}
 {#    여기까지 임의 온도 그래프 그리기#}
 <script>
-        function updateSensorData() {
-            fetch('/temp-hum-data') // Flask 서버에서 데이터 가져오기
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+    function updateSensorData() {
+        fetch('/temp-hum-data') // Flask 서버에서 데이터 가져오기
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json(); // JSON 응답 파싱
+            })
+            .then(data => {
+                // 데이터 확인
+                console.log("Received data:", data);
+
+                // 각 센서 데이터를 업데이트
+                document.getElementById('sensor-temp').textContent = `${data.temp}`;
+                document.getElementById('sensor-humidity').textContent = `${data.hum}`;
+                document.getElementById('sensor-water').textContent = `${data.distance} cm`;
+                document.getElementById('sensor-irrigation').textContent = `${data.weight} g`;
+
+                // 차트 업데이트
+                const ctx = document.getElementById('sensor-chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.timestamp, // 시간 데이터 추가
+                        datasets: [{
+                            label: 'Temperature (°C)',
+                            data: data.tempValues,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                title: {
+                                    display: true,
+                                    text: 'Timestamp'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Temperature (°C)'
+                                }
+                            }
+                        }
                     }
-                    return response.json(); // JSON 응답 파싱
-                })
-                .then(data => {
-                    // 데이터가 정상적으로 수신된 경우
-                    console.log("Received data:", data);
-
-                    // 각 센서 데이터를 업데이트
-                    document.getElementById('sensor-temp').textContent = `${data.temp}`;
-                    document.getElementById('sensor-humidity').textContent = `${data.hum}`;
-                    document.getElementById('sensor-water').textContent = `${data.distance} cm`;
-                    document.getElementById('sensor-irrigation').textContent = `${data.weight} g`;
-
-                })
-
-                .catch(error => {
-                    // 오류가 발생한 경우
-                    console.error('Error fetching data:', error);
-
-
-                    // 오류 메시지를 각 요소에 표시
-                    document.getElementById('sensor-temp').textContent = '온도 데이터를 가져오는 데 실패했습니다.';
-                    document.getElementById('sensor-humidity').textContent = '습도 데이터를 가져오는 데 실패했습니다.';
-                    document.getElementById('sensor-water').textContent = '거리 데이터를 가져오는 데 실패했습니다.';
-                    document.getElementById('sensor-irrigation').textContent = '무게 데이터를 가져오는 데 실패했습니다.';
-
                 });
-        }
+            })
+            .catch(error => {
+                // 오류가 발생한 경우
+                console.error('Error fetching data:', error);
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // 페이지 로드 시 초기 데이터 업데이트
-            updateSensorData();
+                // 오류 메시지를 각 요소에 표시
+                document.getElementById('sensor-temp').textContent = '온도 데이터를 가져오는 데 실패했습니다.';
+                document.getElementById('sensor-humidity').textContent = '습도 데이터를 가져오는 데 실패했습니다.';
+                document.getElementById('sensor-water').textContent = '거리 데이터를 가져오는 데 실패했습니다.';
+                document.getElementById('sensor-irrigation').textContent = '무게 데이터를 가져오는 데 실패했습니다.';
+            });
+    }
 
-            // 5초마다 데이터 업데이트
-            setInterval(updateSensorData, 5000);
-        });
-    </script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 페이지 로드 시 초기 데이터 업데이트
+        updateSensorData();
+
+        // 5초마다 데이터 업데이트
+        setInterval(updateSensorData, 5000);
+    });
+</script>
 
 
 </body>
