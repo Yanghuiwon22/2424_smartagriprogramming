@@ -100,6 +100,12 @@
         <p>현재 물의 양: <span id="sensor-data">-</span> %</p>
     </section>
 
+
+    <section id="water-pump-section" class="content-section">
+    <h2>물 펌프 제어</h2>
+    <button onclick="sendStateToFlask('on')">Turn ON</button>
+    <button onclick="sendStateToFlask('off')">Turn OFF</button>
+</section>
 </main>
 
 <!-- Footer -->
@@ -165,48 +171,80 @@
 {#</script>#}
 {#    여기까지 임의 온도 그래프 그리기#}
 <script>
-        function updateSensorData() {
-            fetch('/temp-hum-data') // Flask 서버에서 데이터 가져오기
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json(); // JSON 응답 파싱
-                })
-                .then(data => {
-                    // 데이터가 정상적으로 수신된 경우
-                    console.log("Received data:", data);
+    function updateSensorData() {
+        fetch('/temp-hum-data') // Flask 서버에서 데이터 가져오기
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json(); // JSON 응답 파싱
+            })
+            .then(data => {
+                // 데이터가 정상적으로 수신된 경우
+                console.log("Received data:", data);
 
-                    // 각 센서 데이터를 업데이트
-                    document.getElementById('sensor-temp').textContent = `${data.temp}`;
-                    document.getElementById('sensor-humidity').textContent = `${data.hum}`;
-                    document.getElementById('sensor-water').textContent = `${data.distance} cm`;
-                    document.getElementById('sensor-irrigation').textContent = `${data.weight} g`;
+                // 각 센서 데이터를 업데이트
+                document.getElementById('sensor-temp').textContent = `${data.temp}`;
+                document.getElementById('sensor-humidity').textContent = `${data.hum}`;
+                document.getElementById('sensor-water').textContent = `${data.distance} cm`;
+                document.getElementById('sensor-irrigation').textContent = `${data.weight} g`;
 
-                })
+            })
 
-                .catch(error => {
-                    // 오류가 발생한 경우
-                    console.error('Error fetching data:', error);
+            .catch(error => {
+                // 오류가 발생한 경우
+                console.error('Error fetching data:', error);
 
 
-                    // 오류 메시지를 각 요소에 표시
-                    document.getElementById('sensor-temp').textContent = '온도 데이터를 가져오는 데 실패했습니다.';
-                    document.getElementById('sensor-humidity').textContent = '습도 데이터를 가져오는 데 실패했습니다.';
-                    document.getElementById('sensor-water').textContent = '거리 데이터를 가져오는 데 실패했습니다.';
-                    document.getElementById('sensor-irrigation').textContent = '무게 데이터를 가져오는 데 실패했습니다.';
+                // 오류 메시지를 각 요소에 표시
+                document.getElementById('sensor-temp').textContent = '온도 데이터를 가져오는 데 실패했습니다.';
+                document.getElementById('sensor-humidity').textContent = '습도 데이터를 가져오는 데 실패했습니다.';
+                document.getElementById('sensor-water').textContent = '거리 데이터를 가져오는 데 실패했습니다.';
+                document.getElementById('sensor-irrigation').textContent = '무게 데이터를 가져오는 데 실패했습니다.';
 
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // 페이지 로드 시 초기 데이터 업데이트
+        updateSensorData();
+
+        // 5초마다 데이터 업데이트
+        setInterval(updateSensorData, 5000);
+    });
+    function toggleWaterPump() {
+        fetch('/toggle-water-pump', {
+            method: 'POST'
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Water pump toggled successfully.");
+                } else {
+                    console.error("Failed to toggle water pump.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+     }
+
+    async function sendStateToFlask(state) {
+            try {
+                const response = await fetch("/send_to_fastapi", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ data: state }),
                 });
+
+                const data = await response.json();
+                console.log("Response from Flask:", data);
+            } catch (error) {
+                console.error("Error sending data to Flask:", error);
+            }
         }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            // 페이지 로드 시 초기 데이터 업데이트
-            updateSensorData();
-
-            // 5초마다 데이터 업데이트
-            setInterval(updateSensorData, 5000);
-        });
-    </script>
+</script>
 
 
 </body>
