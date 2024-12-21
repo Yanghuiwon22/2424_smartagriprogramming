@@ -13,16 +13,6 @@ os.makedirs(BASE_DIR, exist_ok=True)  # 디렉토리 생성
 
 # DISTANCE_FILE = "water_distance_data.csv"
 
-# 기존 데이터를 파일에서 로드
-def load_existing_data(file_path):
-    data = []
-    if os.path.exists(file_path):
-        with open(file_path, "r") as file:
-            reader = csv.DictReader(file)
-            data = [row for row in reader]
-    return data
-
-
 @app.route('/')
 def home():
     data = get_temp_hum_distance()
@@ -57,7 +47,25 @@ def get_temp_hum_distance():
         print(f"에러 발생: {e}")
         return jsonify({"error": "센서 데이터를 가져오지 못했습니다."}), 500
 
+@app.route('/last-30-plot')
+def last_30_plot():
+    current_year = datetime.datetime.now().year
+    file_path = get_year_based_file_path(current_year)
+    data = get_last_30_data(file_path)
 
+    if not data:
+        return jsonify({"error": "No data available for plotting."}), 404
+
+    # JSON 데이터 구성
+    response_data = {
+        "timestamps": [row['timestamp'] for row in data],
+        "temp": [float(row['temp']) for row in data],
+        "hum": [float(row['hum']) for row in data],
+        "distance": [float(row['distance']) for row in data],
+        "weight": [float(row['weight']) for row in data],
+    }
+
+    return jsonify(response_data)
 
 # 2. 로드셀
 # 3. 수위센서
@@ -99,6 +107,7 @@ def save_data_to_csv(file_path, data_list, new_data):
 
     print(f"데이터가 {file_path}에 저장되었습니다.")
 
+
 # 데이터 파일 로드 함수
 def load_existing_data(file_path):
     data = []
@@ -107,6 +116,15 @@ def load_existing_data(file_path):
             reader = csv.DictReader(file)
             data = [row for row in reader]
     return data
+
+# 마지막 30개 데이터 가져오기 함수
+def get_last_30_data(file_path):
+    data = []
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            reader = csv.DictReader(file)
+            data = [row for row in reader]
+    return data[-100:] if len(data) >= 100 else data
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True, port=8000)

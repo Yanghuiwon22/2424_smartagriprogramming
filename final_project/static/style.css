@@ -137,6 +137,7 @@ main {
 }
 
 /* Content Sections */
+
 .content-section {
     margin: 50px auto;
     padding: 40px 20px;
@@ -145,10 +146,15 @@ main {
     border-radius: 10px;
     max-width: 800px;
     text-align: center;
+    padding-top: 90px; /* 네비게이션 바 높이 + 약간의 여유 */
 }
 canvas {
     max-height: 400px;  /* 그래프의 최대 높이 */
     width: 100%;       /* 부모 요소에 맞게 확대 */
+}
+
+.content-section + .card {
+    margin-top: 30px; /* 카드와 콘텐츠 섹션 간의 간격 추가 */
 }
 
 /* Footer */
