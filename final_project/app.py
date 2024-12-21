@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, request
 import requests
 
 import json
@@ -47,6 +47,32 @@ def get_temp_hum_distance():
         print(f"에러 발생: {e}")
         return jsonify({"error": "센서 데이터를 가져오지 못했습니다."}), 500
 
+@app.route("/send_to_fastapi", methods=["POST"])
+def send_to_fastapi():
+    print("send_to_fastapi 함수 호출됨")
+    try:
+        print("1. 시도함")
+        FASTAPI_URL = "http://113.198.63.27:30250/receive_data"
+        print("2. FastAPI URL 설정 완료")
+
+        # Flask에서 받은 데이터를 FastAPI로 전송
+        data = request.json.get("data")  # 클라이언트로부터 받은 JSON 데이터
+        print(f"2. 받은 데이터: {data}")
+
+        # 데이터 전송
+        try:
+            response = requests.post(FASTAPI_URL, json={"data": data})  # FastAPI로 전송
+            response.raise_for_status()  # 응답 코드 확인 (200이 아니면 예외 발생)
+            print("3. Success!")
+        except requests.exceptions.RequestException as e:
+            print(f"FastAPI 요청 에러: {e}")
+            raise
+
+        # FastAPI의 응답 반환
+        return jsonify({"fastapi_response": response.json()})
+    except Exception as e:
+        print(f"1-. 에러 발생함: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)})
 @app.route('/last-30-plot')
 def last_30_plot():
     current_year = datetime.datetime.now().year
