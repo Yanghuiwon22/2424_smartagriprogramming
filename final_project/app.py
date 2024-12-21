@@ -23,11 +23,14 @@ def get_temp_hum_distance():
     url_temp_hum = "http://113.198.63.27:30250/temp_hum"
     try:
         response_temp_hum = requests.get(url_temp_hum, timeout=10)  # 타임아웃 추가
+
+
         print(f"HTTP 상태 코드: {response_temp_hum.status_code}")
         print(f"응답 내용: {response_temp_hum.text}")
         response_temp_hum.raise_for_status()  # HTTP 오류 발생 시 예외 처리
 
-        data = response_temp_hum.json()
+        data = json.loads(response_temp_hum.text)
+        print(data, type(data))
         return jsonify(data)
     except requests.exceptions.RequestException as e:
         print(f"에러 발생: {e}")
@@ -51,7 +54,7 @@ def get_temp_hum_distance():
 @app.route('/distance-data', methods=['GET'])
 def get_water_distance():
     print("수위센서 데이터를 가져옵니다.")
-    url = "http://113.198.63.27:30250/distance"
+    url = "http://113.198.63.27:30250/temp_hum"
     try:
         response = requests.get(url, timeout=10)  # 타임아웃 추가
         print(f"HTTP 상태 코드: {response.status_code}")
