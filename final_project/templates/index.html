@@ -112,7 +112,7 @@
                     sensortempList.innerHTML = `<div>${data.error}</div>`;
                 } else if (data) { // message 값이 있을 경우
                     const TempItem = document.createElement('div');
-                    TempItem.textContent = `온도: ${data.temp}`;
+                    TempItem.textContent = `${data.temp}`;
                     sensortempList.appendChild(TempItem);
                 } else {
                     sensortempList.innerHTML = '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
@@ -122,7 +122,7 @@
                     sensorHumList.innerHTML = `<div>${data.error}</div>`;
                 } else if (data) { // message 값이 있을 경우
                     const Humitem = document.createElement('div');
-                    Humitem.textContent = `습도: ${data.hum}`;
+                    Humitem.textContent = `${data.hum}`;
                     sensorHumList.appendChild(Humitem);
                 } else {
                     sensorHumList.innerHTML = '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
@@ -137,40 +137,40 @@
                     '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
                 console.error('에러 발생:', error);
             });
-    }
+    
 
-    function updateDistanceData() {
-        fetch('/distance-data') // Flask API 호출
-            .then(response => response.json()) // JSON 응답 파싱
-            .then(data => {
-                const sensorWaterList = document.getElementById('sensor-water');
-                sensorWaterList.innerHTML = ''; // 기존 데이터 삭제
-
-                if (data.error) {
-                    sensorIrrigationList.innerHTML = `<div>${data.error}</div>`;
-                } else if (data) { // message 값이 있을 경우
-                    const WaterItem = document.createElement('div');
-                    WaterItem.textContent = `수위: ${data.distance}`;
-                    sensorWaterList.appendChild(WaterItem);
-                } else {
-                    sensorWaterList.innerHTML = '<li>관수 데이터를 가져오는 데 실패했습니다.</li>';
-                }
-            })
-            .catch(error => {
-                document.getElementById('sensor-water').innerHTML =
-                    '<div>수위 데이터를 가져오는 데 실패했습니다.</div>';
-                console.error('에러 발생:', error);
-            });
+    {#function updateDistanceData() {#}
+    {#    fetch('/distance-data') // Flask API 호출#}
+    {#        .then(response => response.json()) // JSON 응답 파싱#}
+    {#        .then(data => {#}
+    {#            const sensorWaterList = document.getElementById('sensor-water');#}
+    {#            sensorWaterList.innerHTML = ''; // 기존 데이터 삭제#}
+    {##}
+    {#            if (data.error) {#}
+    {#                sensorIrrigationList.innerHTML = `<div>${data.error}</div>`;#}
+    {#            } else if (data) { // message 값이 있을 경우#}
+    {#                const WaterItem = document.createElement('div');#}
+    {#                WaterItem.textContent = `${data.distance}`;#}
+    {#                sensorWaterList.appendChild(WaterItem);#}
+    {#            } else {#}
+    {#                sensorWaterList.innerHTML = '<li>관수 데이터를 가져오는 데 실패했습니다.</li>';#}
+    {#            }#}
+    {#        })#}
+    {#        .catch(error => {#}
+    {#            document.getElementById('sensor-water').innerHTML =#}
+    {#                '<div>수위 데이터를 가져오는 데 실패했습니다.</div>';#}
+    {#            console.error('에러 발생:', error);#}
+    {#        });#}
     }
 
     document.addEventListener('DOMContentLoaded', function () {
         // 페이지 로드 시 초기 데이터 업데이트
         updateTempHumData();
-        updateDistanceData();
+        {#updateDistanceData();#}
 
         // 5초마다 데이터 업데이트
         setInterval(updateTempHumData, 5000);
-        setInterval(updateDistanceData, 5000);
+        {#setInterval(updateDistanceData, 5000);#}
 
     });
 </script>
