@@ -1,7 +1,12 @@
 from flask import Flask, render_template, jsonify
 # from input_data import generate_fake_data, get_latest_sensor_data
 import requests
+
+import random
+import json
+
 app = Flask(__name__)
+
 
 @app.route('/')
 def home():
@@ -27,6 +32,20 @@ def get_temp_hum_distance():
     except requests.exceptions.RequestException as e:
         print(f"에러 발생: {e}")
         return jsonify({"error": "센서 데이터를 가져오지 못했습니다."}), 500
+
+
+# # 임의 데이터 생성해서 그래프 그려보기
+# @app.route('/temp-data')
+# def temp_data():
+#     # 가짜 데이터 생성: 시간, 온도 (°C)
+#     max_data_points = 20  # 최대 데이터 수
+#     data = {
+#         'labels': [f'Time {i}' for i in range(max_data_points)],
+#         'data': [random.uniform(20, 30) for _ in range(max_data_points)]  # 20 ~ 30 사이의 임의 온도 데이터
+#     }
+#     return jsonify(data)
+# # 여기까지 그래프 테스트
+
 # 2. 로드셀
 # 3. 수위센서
 @app.route('/distance-data', methods=['GET'])

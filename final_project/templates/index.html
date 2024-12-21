@@ -38,7 +38,7 @@
         <div class="card" onclick="scrollToSection('temp-section')">
             <h3>온도</h3>
             <div class="icon-container">
-                <p><span class="material-icons" style="font-size: 4.5rem; color: #6a11cb;
+                <p><span class="material-icons" style="font-size: 4.0rem; color: #6a11cb;
                     vertical-align: middle;">device_thermostat</span>
                     <span id="sensor-temp">-</span>°C</p>
             </div>
@@ -47,7 +47,7 @@
         <div class="card" onclick="scrollToSection('humidity-section')">
             <h3>습도 </h3>
             <div class="icon-container">
-                <p><span class="material-symbols-outlined" style="font-size: 4.5rem; color: #5332db;
+                <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #5332db;
                     vertical-align: middle;">humidity_percentage</span>
                     <span id="sensor-humidity">-</span> %</p>
             </div>
@@ -68,6 +68,13 @@
     </section>
 
     <!-- Sections -->
+{#    임의 온도 그래프 그려보기#}
+{#    <section id="temp-section" class="content-section">#}
+{#        <h2>온도 그래프</h2>#}
+{#        <canvas id="temp-chart" width="400" height="200"></canvas> <!-- 크기 조정 -->#}
+{#    </section>#}
+{#   여기까지 임의 온도 그래프 #}
+
     <section id="temp-section" class="content-section">
         <h2>온도 그래프</h2>
         <p>온도: <span id="sensor-temp">-</span> °C</p>
@@ -96,7 +103,64 @@
     <small>&copy; 2024 농업 작물 모니터링 시스템</small>
 </footer>
 
-<!-- JavaScript --><!-- JavaScript --><script>
+<!-- JavaScript --><!-- JavaScript -->
+{#    임의 온도 그래프 그려보기#}
+{#<script>#}
+{#    document.addEventListener('DOMContentLoaded', function () {#}
+{#    function fetchDataAndRenderChart(url, canvasId) {#}
+{#        fetch(url)#}
+{#            .then(response => response.json()) // JSON 응답 파싱#}
+{#            .then(data => {#}
+{#                const ctx = document.getElementById(canvasId).getContext('2d');#}
+{#                new Chart(ctx, {#}
+{#                    type: 'line',#}
+{#                    data: {#}
+{#                        labels: data.labels,#}
+{#                        datasets: [{#}
+{#                            label: 'Temperature (°C)',#}
+{#                            data: data.data,#}
+{#                            borderColor: 'rgba(75, 192, 192, 1)',#}
+{#                            backgroundColor: 'rgba(75, 192, 192, 0.2)',#}
+{#                        }]#}
+{#                    },#}
+{#                    options: {#}
+{#                        responsive: true,#}
+{#                        maintainAspectRatio: false,#}
+{#                        scales: {#}
+{#                            x: {#}
+{#                                beginAtZero: true,#}
+{#                                ticks: {#}
+{#                                    maxTicksLimit: 10#}
+{#                                }#}
+{#                            },#}
+{#                            y: {#}
+{#                                beginAtZero: true,#}
+{#                                ticks: {#}
+{#                                    maxTicksLimit: 10,#}
+{#                                    callback: function(value) {#}
+{#                                        return value.toFixed(1);#}
+{#                                    }#}
+{#                                }#}
+{#                            }#}
+{#                        }#}
+{#                    }#}
+{#                });#}
+{#            })#}
+{#            .catch(error => {#}
+{#                console.error('에러 발생:', error);#}
+{#                document.getElementById(canvasId).innerHTML = '<div>데이터를 가져오는 데 실패했습니다.</div>';#}
+{#            });#}
+{#    }#}
+{##}
+{#    // 초기 차트 생성#}
+{#    fetchDataAndRenderChart('/temp-data', 'temp-chart');#}
+{##}
+{#    // 3초마다 데이터 업데이트#}
+{#    setInterval(() => fetchDataAndRenderChart('/temp-data', 'temp-chart'), 3000); // 3000ms = 3초#}
+{#});#}
+{#</script>#}
+    {#    여기까지 임의 온도 그래프 그리기#}
+<script>
     function updateTempHumData() {
         fetch('/temp-hum-data') // Flask API 호출
             .then(response => response.json()) // JSON 응답 파싱
@@ -115,7 +179,7 @@
                     TempItem.textContent = `${data.temp}`;
                     sensortempList.appendChild(TempItem);
                 } else {
-                    sensortempList.innerHTML = '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
+                    sensortempList.innerHTML = '<div>습도 데이터를 가져오는 데 실패했습니다.</div>';
                 }
 
                 if (data.error) {
@@ -125,43 +189,44 @@
                     Humitem.textContent = `${data.hum}`;
                     sensorHumList.appendChild(Humitem);
                 } else {
-                    sensorHumList.innerHTML = '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
+                    sensorHumList.innerHTML = '<div>습도 데이터를 가져오는 데 실패했습니다.</div>';
                 }
             })
             .catch(error => {
                 document.getElementById('sensor-temp').innerHTML =
-                    '<li>온도 데이터를 가져오는 데 실패했습니다.</li>';
+                    '<div>온도 데이터를 가져오는 데 실패했습니다.</div>';
                 console.error('에러 발생:', error);
 
                 document.getElementById('sensor-humidity').innerHTML =
-                    '<li>습도 데이터를 가져오는 데 실패했습니다.</li>';
+                    '<div>습도 데이터를 가져오는 데 실패했습니다.</div>';
                 console.error('에러 발생:', error);
             });
     
 
-    {#function updateDistanceData() {#}
-    {#    fetch('/distance-data') // Flask API 호출#}
-    {#        .then(response => response.json()) // JSON 응답 파싱#}
-    {#        .then(data => {#}
-    {#            const sensorWaterList = document.getElementById('sensor-water');#}
-    {#            sensorWaterList.innerHTML = ''; // 기존 데이터 삭제#}
-    {##}
-    {#            if (data.error) {#}
-    {#                sensorIrrigationList.innerHTML = `<div>${data.error}</div>`;#}
-    {#            } else if (data) { // message 값이 있을 경우#}
-    {#                const WaterItem = document.createElement('div');#}
-    {#                WaterItem.textContent = `${data.distance}`;#}
-    {#                sensorWaterList.appendChild(WaterItem);#}
-    {#            } else {#}
-    {#                sensorWaterList.innerHTML = '<li>관수 데이터를 가져오는 데 실패했습니다.</li>';#}
-    {#            }#}
-    {#        })#}
-    {#        .catch(error => {#}
-    {#            document.getElementById('sensor-water').innerHTML =#}
-    {#                '<div>수위 데이터를 가져오는 데 실패했습니다.</div>';#}
-    {#            console.error('에러 발생:', error);#}
-    {#        });#}
+    function updateDistanceData() {
+        fetch('/distance-data') // Flask API 호출
+            .then(response => response.json()) // JSON 응답 파싱
+            .then(data => {
+                const sensorWaterList = document.getElementById('sensor-water');
+                sensorWaterList.innerHTML = ''; // 기존 데이터 삭제
+
+                if (data.error) {
+                    sensorIrrigationList.innerHTML = `<div>${data.error}</div>`;
+                } else if (data) { // message 값이 있을 경우
+                    const WaterItem = document.createElement('div');
+                    WaterItem.textContent = `수위: ${data.distance}`;
+                    sensorWaterList.appendChild(WaterItem);
+                } else {
+                    sensorWaterList.innerHTML = '<div>관수 데이터를 가져오는 데 실패했습니다.</div>';
+                }
+            })
+            .catch(error => {
+                document.getElementById('sensor-water').innerHTML =
+                    '<div>수위 데이터를 가져오는 데 실패했습니다.</div>';
+                console.error('에러 발생:', error);
+            });
     }
+
 
     document.addEventListener('DOMContentLoaded', function () {
         // 페이지 로드 시 초기 데이터 업데이트
