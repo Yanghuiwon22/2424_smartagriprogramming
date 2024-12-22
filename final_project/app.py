@@ -22,27 +22,26 @@ def home():
 # 1. 온습도
 @app.route('/temp-hum-data', methods=['GET'])
 def get_temp_hum_distance():
-    print("수위센서 데이터를 가져옵니다.")
-    url_temp_hum = "http://113.198.63.27:30250/temp_hum"
+    url_temp_hum = "http://192.168.50.61:5000/temp_hum"
     try:
         response_temp_hum = requests.get(url_temp_hum, timeout=10)  # 타임아웃 추가
 
 
-        print(f"HTTP 상태 코드: {response_temp_hum.status_code}")
-        print(f"응답 내용: {response_temp_hum.text}")
+        # print(f"HTTP 상태 코드: {response_temp_hum.status_code}")
+        # print(f"응답 내용: {response_temp_hum.text}")
         response_temp_hum.raise_for_status()  # HTTP 오류 발생 시 예외 처리
 
         data = json.loads(response_temp_hum.text)
-        print(data, type(data))
-
-        # 연도별 파일 경로 설정
-        current_year = datetime.datetime.now().year
-        file_path = get_year_based_file_path(current_year)
-
-        # 데이터를 파일에 저장
-        save_data_to_csv(file_path, load_existing_data(file_path), data)
+        #
+        # # 연도별 파일 경로 설정
+        # current_year = datetime.datetime.now().year
+        # file_path = get_year_based_file_path(current_year)
+        #
+        # # 데이터를 파일에 저장
+        # save_data_to_csv(file_path, load_existing_data(file_path), data)
 
         return jsonify(data)
+
     except requests.exceptions.RequestException as e:
         print(f"에러 발생: {e}")
         return jsonify({"error": "센서 데이터를 가져오지 못했습니다."}), 500
