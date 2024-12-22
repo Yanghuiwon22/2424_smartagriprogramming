@@ -22,10 +22,11 @@
 <!-- Navigation Bar -->
 <nav class="top-nav">
     <ul>
+        <li><a href="#top" onclick="scrollToTop()">상단</a></li>
         <li><a href="#temp-section">온도</a></li>
         <li><a href="#humidity-section">습도</a></li>
         <li><a href="#water-level-section">수위</a></li>
-        <li><a href="#irrigation-section">관수</a></li>
+        <li><a href="#soil-section">토양수분</a></li>
         <li><a href="#image-section">이미지</a></li>
     </ul>
 </nav>
@@ -54,19 +55,19 @@
         </div>
 
         <div class="card" onclick="scrollToSection('water-level-section')">
-            <h3>수위 모니터링</h3>
+            <h3>수위</h3>
             <div class="icon-container">
                 <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #3c53ec;
                         vertical-align: middle;">water_medium</span>
                     <span id="sensor-water">-</span></p>
             </div>
         </div>
-        <div class="card" onclick="scrollToSection('irrigation-section')">
-            <h3>관수 모니터링</h3>
+        <div class="card" onclick="scrollToSection('soil-section')">
+            <h3>토양수분</h3>
             <div class="icon-container">
                 <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #2575fc;
                         vertical-align: middle;">water_drop</span>
-                    <span id="sensor-irrigation">-</span></p>
+                    <span id="sensor-soil">-</span></p>
             </div>
         </div>
     </section>
@@ -78,8 +79,6 @@
         <canvas id="temp-chart" width="400" height="200"></canvas> <!-- 크기 조정 -->
     </section>
 
-
-
     <section id="humidity-section" class="content-section">
         <h2>습도 그래프</h2>
         <canvas id="humidity-chart"></canvas>
@@ -90,9 +89,14 @@
         <canvas id="water-chart"></canvas>
     </section>
 
-    <section id="irrigation-section" class="content-section">
-        <h2>무게 그래프</h2>
-        <canvas id="weight-chart"></canvas>
+    <section id="soil-section" class="content-section">
+        <h2>토양수분 그래프</h2>
+        <canvas id="soil-chart"></canvas>
+    </section>
+
+    <section id="image-section" class="content-section">
+        <h2> 실시간 이미지 </h2>
+        <canvas id="image-chart"></canvas>
     </section>
 
 
@@ -179,16 +183,23 @@
                 document.getElementById('sensor-temp').textContent = `${data.temp}`;
                 document.getElementById('sensor-humidity').textContent = `${data.hum}`;
                 document.getElementById('sensor-water').textContent = `${data.distance} cm`;
-                document.getElementById('sensor-irrigation').textContent = `${data.weight} g`;
+                document.getElementById('sensor-soil').textContent = `${data.weight} g`;
             })
             .catch(error => {
                 console.error('Error fetching live sensor data:', error);
                 document.getElementById('sensor-temp').textContent = '온도 데이터를 가져오는 데 실패했습니다.';
                 document.getElementById('sensor-humidity').textContent = '습도 데이터를 가져오는 데 실패했습니다.';
                 document.getElementById('sensor-water').textContent = '거리 데이터를 가져오는 데 실패했습니다.';
-                document.getElementById('sensor-irrigation').textContent = '무게 데이터를 가져오는 데 실패했습니다.';
+                document.getElementById('sensor-soil').textContent = '무게 데이터를 가져오는 데 실패했습니다.';
             });
     }
+
+    function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
 
     async function sendStateToFlask(state) {
         try {
@@ -216,7 +227,7 @@
                 renderChart("temp-chart", "Temperature (°C)", data.timestamps, data.temp, "rgba(255, 99, 132)");
                 renderChart("humidity-chart", "Humidity (%)", data.timestamps, data.hum, "rgba(54, 162, 235)");
                 renderChart("water-chart", "Water Level (cm)", data.timestamps, data.distance, "rgba(75, 192, 192)");
-                renderChart("weight-chart", "Weight (g)", data.timestamps, data.weight, "rgba(255, 206, 86)");
+                renderChart("soil-chart", "Weight (g)", data.timestamps, data.weight, "rgba(255, 206, 86)");
             })
             .catch(error => console.error('Error fetching last 30 data:', error));
     }
