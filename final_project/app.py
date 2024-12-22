@@ -118,6 +118,28 @@ def get_data():
 
     return jsonify(response_data)
 
+@app.route('/download-data', methods=['GET'])
+def download_data():
+    date = request.args.get('date')  # 다운로드할 특정 날짜 가져오기
+    current_year = datetime.datetime.now().year
+    file_path = get_year_based_file_path(current_year)
+
+    # 특정 날짜의 데이터를 가져옵니다
+    filtered_data = filter_data_by_date(file_path, date)
+    if not filtered_data:
+        return jsonify({"error": "No data available for the selected date."}), 404
+
+    # CSV 파일로 저장
+    output_file_path = os.path.join(BASE_DIR, f"{date}_filtered_sensordata.csv")
+    with open(output_file_path, "w", newline='') as file:
+        fieldnames = ['timestamp', 'temp', 'hum', 'distance', 'weight']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(filtered_data)
+
+    # 파일 다운로드
+    return send_file(output_file_path, as_attachment=True, attachment_filename=f"{date}_sensordata.csv")
+
 # 2. 로드셀
 # 3. 수위센서
 
@@ -197,6 +219,7 @@ def filter_data_by_date(file_path, date):
             for row in reader:
                 if row['timestamp'].startswith(date):  # 날짜가 일치하는 데이터만 가져옴
                     data.append(row)
+                    print(data)
     return data
 
 
