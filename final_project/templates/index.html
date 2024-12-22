@@ -25,6 +25,7 @@
         <li><a href="#top" onclick="scrollToTop()">상단</a></li>
         <li><a href="#temp-section">온도</a></li>
         <li><a href="#humidity-section">습도</a></li>
+
         <li><a href="#water-level-section">수위</a></li>
         <li><a href="#soil-section">토양수분</a></li>
         <li><a href="#image-section">이미지</a></li>
@@ -76,6 +77,9 @@
 
     <section id="temp-section" class="content-section">
         <h2>온도 그래프</h2>
+        <input type="date" id="date-picker">
+        <button onclick="fetchData()">Show Data</button>
+        <button id="download-data-btn">데이터 다운로드</button>
         <canvas id="temp-chart" width="400" height="200"></canvas> <!-- 크기 조정 -->
     </section>
 
@@ -168,6 +172,81 @@
         });
     }
 
+    // 디폴트: 페이지 로드 시 최근 데이터 표시
+        window.onload = function() {
+            fetchData(); // 디폴트 데이터 요청
+        };
+
+        // 선택한 날짜의 데이터를 가져오기
+        function fetchData() {
+            const date = document.getElementById("date-picker").value; // 사용자가 선택한 날짜
+            const url = date ? `/get-data?date=${date}` : `/get-data`; // 날짜 없으면 기본 데이터
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        updateChart(data);
+                    }
+                })
+                .catch(err => console.error(err));
+        }
+
+        // 차트 업데이트
+        function updateChart(data) {
+            const ctx = document.getElementById('dataChart').getContext('2d');
+
+            // 기존 차트 삭제 (필요할 경우)
+            if (window.myChart) window.myChart.destroy();
+
+            // 새 차트 생성
+            window.myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.timestamps,
+                    datasets: [
+                        {
+                            label: 'Temperature',
+                            data: data.temp,
+                            borderColor: 'red',
+                            fill: false,
+                        },
+                        {
+                            label: 'Humidity',
+                            data: data.hum,
+                            borderColor: 'blue',
+                            fill: false,
+                        },
+                        {
+                            label: 'Distance',
+                            data: data.distance,
+                            borderColor: 'green',
+                            fill: false,
+                        },
+                        {
+                            label: 'Weight',
+                            data: data.weight,
+                            borderColor: 'purple',
+                            fill: false,
+                        },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'minute'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
 
     // 실시간 센서 데이터 업데이트
     function updateLiveSensorData() {
@@ -190,7 +269,7 @@
                 document.getElementById('sensor-temp').textContent = '온도 데이터를 가져오는 데 실패했습니다.';
                 document.getElementById('sensor-humidity').textContent = '습도 데이터를 가져오는 데 실패했습니다.';
                 document.getElementById('sensor-water').textContent = '거리 데이터를 가져오는 데 실패했습니다.';
-                document.getElementById('sensor-soil').textContent = '무게 데이터를 가져오는 데 실패했습니다.';
+                document.getElementById('sensor-soil').textContent = '토양센서 데이터를 가져오는 데 실패했습니다.';
             });
     }
 
