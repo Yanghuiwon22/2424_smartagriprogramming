@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>농업 작물 모니터링</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='plant.png') }}">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <!--온도 아이콘-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!--습도 아이콘-->
+    <!--습도,수위 아이콘-->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <--! 수위 아이콘-->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -25,8 +24,8 @@
     <ul>
         <li><a href="#temp-section">온도</a></li>
         <li><a href="#humidity-section">습도</a></li>
-        <li><a href="#water-level-section">물의 양</a></li>
-        <li><a href="#irrigation-section">수위</a></li>
+        <li><a href="#water-level-section">수위</a></li>
+        <li><a href="#irrigation-section">관수</a></li>
         <li><a href="#image-section">이미지</a></li>
     </ul>
 </nav>
@@ -65,20 +64,20 @@
         <div class="card" onclick="scrollToSection('irrigation-section')">
             <h3>관수 모니터링</h3>
             <div class="icon-container">
-                <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #3c53ec;
-                        vertical-align: middle;">water_medium</span>
+                <p><span class="material-symbols-outlined" style="font-size: 4.0rem; color: #2575fc;
+                        vertical-align: middle;">water_drop</span>
                     <span id="sensor-irrigation">-</span></p>
             </div>
         </div>
     </section>
 
     <!-- Sections -->
-    {#        임의 온도 그래프 그려보기#}
+
     <section id="temp-section" class="content-section">
         <h2>온도 그래프</h2>
         <canvas id="temp-chart" width="400" height="200"></canvas> <!-- 크기 조정 -->
     </section>
-    {#       여기까지 임의 온도 그래프 #}
+
 
 
     <section id="humidity-section" class="content-section">
@@ -97,11 +96,6 @@
     </section>
 
 
-    <section id="water-pump-section" class="content-section">
-        <h2>물 펌프 제어</h2>
-        <button onclick="sendStateToFlask('on')">Turn ON</button>
-        <button onclick="sendStateToFlask('off')">Turn OFF</button>
-    </section>
 </main>
 
 <!-- Footer -->
